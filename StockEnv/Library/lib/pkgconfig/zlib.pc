@@ -1,0 +1,13 @@
+prefix=D:/Python-program/StockCrawler/shixun/StockEnv/Library
+exec_prefix=D:/Python-program/StockCrawler/shixun/StockEnv/Library
+libdir=D:/Python-program/StockCrawler/shixun/StockEnv/Library/lib
+sharedlibdir=D:/Python-program/StockCrawler/shixun/StockEnv/Library/lib
+includedir=D:/Python-program/StockCrawler/shixun/StockEnv/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

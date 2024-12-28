@@ -1,0 +1,5 @@
+# Ignore conda virtual environment folder
+/StockEnv/
+
+# Optionally, ignore conda environment cache
+*.conda

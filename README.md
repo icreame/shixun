@@ -11,3 +11,9 @@
 - 目前只写了用户相关的controller, service, model(文件夹的名称有改动，删去了s)
 - 修改所有数据库的字段为小写字段
 - 目前可以实现新增用户
+- # 数据库配置
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'DATABASE_URL',
+        'mysql+mysqlconnector://shixun:123456@localhost:3306/stocksystem'
+    )
+  - 这里需要修改成为自己的数据库的用户名和密码

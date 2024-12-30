@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .form-container h1 {
+            margin-bottom: 20px;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background: #e65100;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>修改个人信息</h1>
+        <form id="update-form">
+            <input type="email" id="email" placeholder="邮箱">
+            <input type="text" id="bio" placeholder="个人简介">
+            <button type="submit">更新信息</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('update-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const bio = document.getElementById('bio').value;
+
+            const response = await fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: 1, email, bio }), // 假设用户 ID 为 1
+            });
+            const result = await response.json();
+            alert(result.message);
+        });
+    </script>
+</body>
+</html>

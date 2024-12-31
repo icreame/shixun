@@ -34,9 +34,9 @@ class UserService:
         #     return {"success": False, "message": "密码不正确"}
         # 验证明文密码
         if user.password != password:  # 直接比对用户输入的密码和数据库中的密码
-            return {"success": False, "message": "密码不正确"}
+            return {"success": False, "message": "密码不正确","userid":user.user_id}
 
-        return {"success": True, "message": "登录成功"}
+        return {"success": True, "message": "登录成功","userid":user.user_id}
 
     @staticmethod
     def get_user_info(user_id):

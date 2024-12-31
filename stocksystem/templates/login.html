@@ -44,31 +44,30 @@
         .form-container button:hover {
             background: #218838;
         }
+        .form-container .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h1>登录</h1>
-        <form id="login-form">
-            <input type="text" id="username" placeholder="用户名" required>
-            <input type="password" id="password" placeholder="密码" required>
+        <form action="{{ url_for('user.login') }}" method="POST">
+            <input type="text" name="username" placeholder="请输入用户名" required>
+
+            <input type="password" name="password" placeholder="请输入密码" required>
+
             <button type="submit">登录</button>
         </form>
-    </div>
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
 
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-            const result = await response.json();
-            alert(result.message);
-        });
-    </script>
+        {% if message %}
+        <div style="color: red;">{{ message }}</div>
+        {% endif %}
+
+        <p>没有账号？<a href="{{ url_for('user.register') }}">注册</a></p>
+    </div>
 </body>
 </html>

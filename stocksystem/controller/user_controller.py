@@ -32,6 +32,20 @@ def login():
     return jsonify(result)
 
 
+@user_blueprint.route('/user_info/<int:user_id>', methods=['GET'])
+def get_user_info(user_id):
+    """
+    查看用户信息接口
+    :param user_id: 用户ID，从URL路径中获取
+    :return: 用户信息的JSON响应
+    """
+    if not user_id:
+        return jsonify({"success": False, "message": "用户ID不能为空"}), 400
+
+    result = UserService.get_user_info(user_id)
+    return jsonify(result)
+
+
 @user_blueprint.route('/update', methods=['POST'])
 def update_user_info():
     data = request.json

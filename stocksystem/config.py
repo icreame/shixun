@@ -1,12 +1,4 @@
 import os
-
-class Config:
-    SQLALCHEMY_TRACK_MODIFICATIONS = False  # 禁用对象修改追踪
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:947400@localhost/stocksystem'
-
-import os
-
-
 class Config:
     # 基础配置
     # SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')

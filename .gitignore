@@ -1,5 +1,6 @@
 # Ignore conda virtual environment folder
 /StockEnv/
 .idea/
+/stocksystem/config.py
 # Optionally, ignore conda environment cache
 *.conda

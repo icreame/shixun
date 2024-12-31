@@ -1,5 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+from model.__init__ import db
 
 class Sentiment(db.Model):
     __tablename__ = 'sentiment'

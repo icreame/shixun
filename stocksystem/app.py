@@ -1,8 +1,7 @@
 from flask import Flask
-from controller.user_controller import user_blueprint
+from controller.user_controller import user_blueprint, test_db_connection
 from model.user import db
 from config import Config
-
 
 def create_app():
     app = Flask(__name__)

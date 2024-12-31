@@ -4,18 +4,23 @@ CREATE TABLE user (
     userid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,       -- 用户唯一标识，主键
     username VARCHAR(50) NOT NULL,                        -- 用户名
     password VARCHAR(50) NOT NULL,                        -- 用户密码（加密存储）
+    phone NCHAR(13),                                      -- 电话号码
+    email VARCHAR(50),                                    -- 邮箱
+    address VARCHAR(50),                                  -- 地址
+    gender VARCHAR(5),                                    -- 性别
+    profession VARCHAR(20),                               -- 职业
     registrationdate DATE NOT NULL,                       -- 用户注册时间
     permissionlevel INT NOT NULL                          -- 用户权限等级
 );
 
 CREATE TABLE sentiment (
-    sentimentid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  -- 情感属性唯一标识，主键
-    sentimenttype VARCHAR(20) NOT NULL,                   -- 情感类别（正面、负面、中性）
+    sentimentid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,   -- 情感属性唯一标识，主键
+    sentimenttype VARCHAR(20) NOT NULL,                    -- 情感类别（正面、负面、中性）
     description TEXT                                       -- 情感属性的详细描述
 );
 
 CREATE TABLE source (
-    sourceid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,     -- 数据来源唯一标识，主键
+    sourceid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,      -- 数据来源唯一标识，主键
     sourcename VARCHAR(50) NOT NULL,                       -- 数据来源名称（如微博等）
     description TEXT                                       -- 数据来源的详细描述
 );
@@ -27,7 +32,7 @@ CREATE TABLE industry (
 );
 
 CREATE TABLE stock (
-    stockid INT NOT NULL PRIMARY KEY,                     -- 股票唯一标识符
+    stockid INT NOT NULL  AUTO_INCREMENT PRIMARY KEY,      -- 股票唯一标识符
     stockname VARCHAR(100) NOT NULL,                       -- 股票名称
     stockprice FLOAT NOT NULL,                             -- 股票价格
     industryid INT NOT NULL,                               -- 外键，关联行业表

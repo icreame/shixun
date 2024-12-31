@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from model.__init__ import db
 
 class Source(db.Model):
     __tablename__ = 'source'

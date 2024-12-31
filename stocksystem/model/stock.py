@@ -1,6 +1,4 @@
-from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+from model.__init__ import db
 
 class Stock(db.Model):
     __tablename__ = 'stock'
@@ -11,11 +9,9 @@ class Stock(db.Model):
     stockprice = db.Column(db.Float, nullable=False)                        # 股票价格
     industryid = db.Column(db.Integer, db.ForeignKey('industry.industryid'), nullable=False)  # 外键，关联行业表
 
-    # 外键关系
-    industry = db.relationship('Industry', backref='stocks', lazy=True)    # 行业与股票的关系
+    industry = db.relationship("Industry", backref=db.backref("stocks", lazy=True))
 
-    def __repr__(self,stockid, stockname, stockprice, industryid):
-        self.stockid = stockid
+    def __repr__(self,stockname, stockprice, industryid):
         self.stockname = stockname
         self.stockprice = stockprice
         self.industryid = industryid

@@ -2,7 +2,7 @@ import os
 
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # 禁用对象修改追踪
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin123:admin123@localhost/stocksystem'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:947400@localhost/stocksystem'
 
 import os
 
@@ -15,7 +15,7 @@ class Config:
     # 数据库配置
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        'mysql+mysqlconnector://admin123:admin123@localhost/stocksystem' # 配置本地的数据库路径
+        'mysql+mysqlconnector://root:947400@localhost/stocksystem' # 配置本地的数据库路径
     )
 
 

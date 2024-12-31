@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户信息</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h2>用户信息</h2>
+
+    {% if user %}
+    <p>用户名：{{ user.username }}</p>
+    <p>注册日期：{{ user.registration_date }}</p>
+    <p>权限等级：{{ user.permission_level }}</p>
+    {% else %}
+    <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('user.update_user_info', user_id=user.user_id) }}">更新信息</a></p>
+</body>
+</html>

@@ -73,3 +73,4 @@ def test_db_connection():
         return jsonify(result)
     else:
         return jsonify(result), 500
+

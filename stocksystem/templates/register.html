@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f0f8ff;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -35,40 +35,37 @@
         .form-container button {
             width: 100%;
             padding: 10px;
-            background: #007BFF;
+            background: #28a745;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         .form-container button:hover {
-            background: #0056b3;
+            background: #218838;
+        }
+        .form-container .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h1>注册</h1>
-        <form id="register-form">
-            <input type="text" id="username" placeholder="用户名" required>
-            <input type="password" id="password" placeholder="密码" required>
+        <form action="{{ url_for('user.register') }}" method="POST">
+            <input type="text" name="username" placeholder="请输入用户名" required>
+            <input type="password" name="password" placeholder="请输入密码" required>
             <button type="submit">注册</button>
         </form>
-    </div>
-    <script>
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
 
-            const response = await fetch('/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-            const result = await response.json();
-            alert(result.message);
-        });
-    </script>
+        {% if message %}
+        <div style="color: red;">{{ message }}</div>
+        {% endif %}
+
+        <p>已有账号？<a href="{{ url_for('user.login') }}">登录</a></p>
+    </div>
 </body>
 </html>

@@ -34,9 +34,30 @@ class UserService:
         #     return {"success": False, "message": "密码不正确"}
         # 验证明文密码
         if user.password != password:  # 直接比对用户输入的密码和数据库中的密码
-            return {"success": False, "message": "密码不正确"}
+            return {"success": False, "message": "密码不正确","userid":user.user_id}
 
-        return {"success": True, "message": "登录成功"}
+        return {"success": True, "message": "登录成功","userid":user.user_id}
+
+    @staticmethod
+    def get_user_info(user_id):
+        """
+        获取用户信息
+        :param user_id: 用户ID
+        :return: 用户信息字典
+        """
+        user = User.query.get(user_id)
+        if not user:
+            return {"success": False, "message": "用户不存在"}
+
+        # 返回用户信息
+        user_info = {
+            "user_id": user.user_id,
+            "username": user.username,
+            "registration_date": user.registration_date,
+            "permission_level": user.permission_level
+        }
+        return {"success": True, "data": user_info}
+
 
     @staticmethod
     def update_user_info(user_id, new_info):

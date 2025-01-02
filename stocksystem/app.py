@@ -9,6 +9,7 @@ from controller.stock_controller import stock_blueprint
 from model.__init__ import db
 from config import Config
 
+
 def create_app():
     app = Flask(__name__)
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify,render_template, request, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, request, redirect, url_for
 from flask_cors import CORS
 from service.user_service import UserService
 
@@ -6,7 +6,7 @@ user_blueprint = Blueprint('user', __name__)
 CORS(user_blueprint)  # 允许跨域请求
 
 
-@user_blueprint.route('/register', methods=['GET','POST'])
+@user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     username = request.form.get('username')
     password = request.form.get('password')

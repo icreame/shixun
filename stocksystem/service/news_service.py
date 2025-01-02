@@ -10,12 +10,12 @@ class NewsService:
         """
         new_news = News(
             title=title,
-            publishdate=publishdate,
+            publishdate=publishdate or None,
             content=content,
-            sourceid=sourceid,
-            industryid=industryid,
-            sentimentid=sentimentid,
-            stockid=stockid
+            sourceid=sourceid or None,
+            industryid=industryid or None,
+            sentimentid=sentimentid or None,
+            stockid=stockid or None
         )
         try:
             db.session.add(new_news)

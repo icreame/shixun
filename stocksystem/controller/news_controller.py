@@ -8,8 +8,9 @@ news_blueprint = Blueprint('news', __name__)
 def add_news():
     data = request.json
     title = data.get('title')
-    publishdate = data.get('publishdate')
+    url = data.get('url')
     content = data.get('content')
+    publishdate = data.get('publishdate')
     sourceid = data.get('sourceid')
     industryid = data.get('industryid')
     sentimentid = data.get('sentimentid')
@@ -18,7 +19,7 @@ def add_news():
     if not title:
         return jsonify({"success": False, "message": "标题不能为空"}), 400
 
-    result = NewsService.add_news(title, publishdate, content, sourceid, industryid, sentimentid, stockid)
+    result = NewsService.add_news(title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
     return jsonify(result)
 
 
@@ -58,6 +59,7 @@ def update_news():
     data = request.json
     newsid = data.get('newsid')
     title = data.get('title')
+    url = data.get('url')
     content = data.get('content')
     publishdate = data.get('publishdate')
     sourceid = data.get('sourceid')
@@ -68,5 +70,5 @@ def update_news():
     if not newsid:
         return jsonify({"success": False, "message": "newsid 必须提供"}), 400
 
-    result = NewsService.update_news(newsid, title, content, publishdate, sourceid, industryid, sentimentid, stockid)
+    result = NewsService.update_news(newsid, title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
     return jsonify(result)

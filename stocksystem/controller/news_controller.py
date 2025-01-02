@@ -19,7 +19,7 @@ def add_news():
     sentimentid = data.get('sentimentid')
     stockid = data.get('stockid')
 
-    if not title:
+    if not title or not url or not content:
         return jsonify({"success": False, "message": "标题不能为空"}), 400
 
     result = NewsService.add_news(title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
@@ -50,23 +50,17 @@ def get_all_news():
 
 
 
-@news_blueprint.route('/delete', methods=['POST'])
-def delete_news():
+@news_blueprint.route('/delete/<int:newsid>', methods=['DELETE'])
+def delete_news(newsid):
     """
     删除新闻
     """
-    data = request.json
-    newsid = data.get('newsid')
-
-    if not newsid:
-        return jsonify({"success": False, "message": "newsid 必须提供"}), 400
-
     result = NewsService.delete_news(newsid)
     return jsonify(result)
 
 
 
-@news_blueprint.route('/update', methods=['POST'])
+@news_blueprint.route('/update', methods=['PUT'])
 def update_news():
     """
     更新新闻

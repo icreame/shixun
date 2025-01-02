@@ -23,7 +23,7 @@ def create_stock():
     return jsonify(result)
 
 
-@stock_blueprint.route('/update', methods=['POST'])
+@stock_blueprint.route('/update', methods=['PUT'])
 def update_stock():
     """
     更新股票信息
@@ -41,22 +41,16 @@ def update_stock():
     return jsonify(result)
 
 
-@stock_blueprint.route('/delete', methods=['POST'])
-def delete_stock():
+@stock_blueprint.route('/delete/<int:stockid>', methods=['DELETE'])
+def delete_stock(stockid):
     """
     删除股票
     """
-    data = request.json
-    stock_id = data.get('stock_id')
-
-    if not stock_id:
-        return jsonify({"success": False, "message": "股票ID不能为空"}), 400
-
-    result = StockService.delete_stock(stock_id)
+    result = StockService.delete_industry(stockid)
     return jsonify(result)
 
 
-@stock_blueprint.route('/get_all', methods=['GET'])
+@stock_blueprint.route('/all', methods=['GET'])
 def get_all_stocks():
     """
     获取所有股票信息

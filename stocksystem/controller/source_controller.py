@@ -41,7 +41,7 @@ def get_source_by_id(sourceid):
         return jsonify({"success": False, "message": "数据来源不存在"}), 404
 
 
-@source_blueprint.route('/update', methods=['POST'])
+@source_blueprint.route('/update', methods=['PUT'])
 def update_source():
     """
     更新数据来源
@@ -58,7 +58,7 @@ def update_source():
     return jsonify(result)
 
 
-@source_blueprint.route('/<int:sourceid>', methods=['DELETE'])
+@source_blueprint.route('/delete/<int:sourceid>', methods=['DELETE'])
 def delete_source(sourceid):
     """
     删除数据来源

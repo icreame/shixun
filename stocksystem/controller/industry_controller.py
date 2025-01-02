@@ -37,7 +37,7 @@ def get_industry_by_id(industryid):
     result = IndustryService.get_industry_by_id(industryid)
     return jsonify(result)
 
-@industry_blueprint.route('/<int:industryid>', methods=['POST'])
+@industry_blueprint.route('/<int:industryid>', methods=['PUT'])
 def update_industry(industryid):
     """
     更新某个行业信息
@@ -49,7 +49,7 @@ def update_industry(industryid):
     result = IndustryService.update_industry(industryid, new_name, new_description)
     return jsonify(result)
 
-@industry_blueprint.route('/<int:industryid>', methods=['DELETE'])
+@industry_blueprint.route('/delete/<int:industryid>', methods=['DELETE'])
 def delete_industry(industryid):
     """
     删除某个行业

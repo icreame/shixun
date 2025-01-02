@@ -52,7 +52,7 @@ def get_user_info(user_id):
         return render_template('user_info.html', message=result['message'])
 
 
-@user_blueprint.route('/update', methods=['POST'])
+@user_blueprint.route('/update', methods=['PUT'])
 def update_user_info():
     data = request.json
     user_id = data.get('user_id')  # 从请求中获取用户ID

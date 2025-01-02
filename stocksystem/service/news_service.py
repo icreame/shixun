@@ -4,18 +4,19 @@ from model.news import News,db
 class NewsService:
 
     @staticmethod
-    def add_news(title, publishdate, content, sourceid, industryid, sentimentid, stockid):
+    def add_news(title, url, content, publishdate, sourceid, industryid, sentimentid, stockid):
         """
         添加新闻
         """
         new_news = News(
             title=title,
-            publishdate=publishdate,
+            url=url,
             content=content,
-            sourceid=sourceid,
-            industryid=industryid,
-            sentimentid=sentimentid,
-            stockid=stockid
+            publishdate=publishdate or None,
+            sourceid=sourceid or None,
+            industryid=industryid or None,
+            sentimentid=sentimentid or None,
+            stockid=stockid or None
         )
         try:
             db.session.add(new_news)
@@ -30,16 +31,44 @@ class NewsService:
         """
         根据新闻ID获取新闻
         """
-        news = News.query.get(newsid)
-        return news  # 如果新闻存在，返回 News 对象，否则返回 None
+        try:
+            news = News.query.get(newsid)
+            news_list=[{
+                "newsid": news.newsid,
+                "title": news.title,
+                "url": news.url,
+                "content": news.content,
+                "publishdate": news.publishdate,
+                "source":news.source.sourcename,
+                "industry":news.industry.industryname,
+                "sentiment":news.sentiment.sentimenttype,
+                "stock":news.stock.stockname
+            }]
+            return {"success": True, "data": news_list}
+        except Exception as e:
+            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 
     @staticmethod
     def get_all_news():
         """
         获取所有新闻
         """
-        news_list = News.query.all()
-        return news_list  # 返回新闻对象列表
+        try:
+            new_news = News.query.all()
+            news_list = [{
+                "newsid": news.newsid,
+                "title": news.title,
+                "url": news.url,
+                "content": news.content,
+                "publishdate": news.publishdate,
+                "source": news.source.sourcename,
+                "industry": news.industry.industryname,
+                "sentiment": news.sentiment.sentimenttype,
+                "stock": news.stock.stockname
+            }for news in new_news]
+            return {"success": True, "data": news_list}
+        except Exception as e:
+            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 
     @staticmethod
     def delete_news(newsid):
@@ -59,7 +88,7 @@ class NewsService:
             return {"success": False, "message": "新闻不存在"}
 
     @staticmethod
-    def update_news(newsid, title=None, content=None, publishdate=None, sourceid=None, industryid=None,
+    def update_news(newsid, title=None, url=None, content=None, publishdate=None, sourceid=None, industryid=None,
                     sentimentid=None, stockid=None):
         """
         更新新闻信息
@@ -71,6 +100,8 @@ class NewsService:
         try:
             if title:
                 news.title = title
+            if url:
+                news.url = url
             if content:
                 news.content = content
             if publishdate:

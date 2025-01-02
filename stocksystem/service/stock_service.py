@@ -60,11 +60,9 @@ class StockService:
     def get_all_stocks():
         try:
             stocks = Stock.query.all()
-            print(2)
             stock_list = [{"stock_id": stock.stockid, "stockname": stock.stockname,
                            "stockprice": stock.stockprice, "industry": stock.industry.industryname}
                           for stock in stocks]
-            print(3)
             return {"success": True, "data": stock_list}
         except Exception as e:
             return {"success": False, "message": str(e)}

@@ -57,11 +57,6 @@ class UserService:
         user_info = {
             "user_id": user.user_id,
             "username": user.username,
-            "phone":user.phone,
-            "email":user.email,
-            "address":user.address,
-            "gender":user.gender,
-            "profession":user.profession,
             "registration_date": user.registration_date,
             "permission_level": user.permission_level
         }

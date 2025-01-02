@@ -1,5 +1,6 @@
 from model.__init__ import db
 
+
 class SelfSelect(db.Model):
     __tablename__ = 'selfselect'
 

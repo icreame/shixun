@@ -2,6 +2,7 @@
 /StockEnv/
 .idea/
 /stocksystem/config.py
+**/__pycache__/git
 /stocksystem/common/
 /common/
 # Optionally, ignore conda environment cache

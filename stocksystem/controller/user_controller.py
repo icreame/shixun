@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify,render_template, request, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, request, redirect, url_for, session
 from flask_cors import CORS
 from service.user_service import UserService
 
@@ -32,10 +32,16 @@ def login():
         result = UserService.login(username, password)
 
         if result['success']:
-            return redirect(url_for('user.get_user_info', user_id=result['userid']))
+            return redirect(url_for('home', user_id=result['userid']))
         else:
             return render_template('login.html', message=result['message'])
     return render_template('login.html')
+
+@user_blueprint.route('/logout', methods=['GET'])
+def logout():
+    # 注销逻辑
+    session.clear()
+    return redirect(url_for('home'))
 
 
 @user_blueprint.route('/user_info/<int:user_id>', methods=['GET'])

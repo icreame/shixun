@@ -3,9 +3,12 @@ from service.selfselect_service import SelfSelectService
 
 selfselect_blueprint = Blueprint('selfselect', __name__)
 
-# 添加自选股
+
 @selfselect_blueprint.route('/add', methods=['POST'])
 def add_self_select():
+    """
+    添加自选股
+    """
     data = request.json
     userid = data.get('userid')
     stockid = data.get('stockid')
@@ -16,15 +19,21 @@ def add_self_select():
     result = SelfSelectService.add_self_select(userid, stockid)
     return jsonify(result)
 
-# 获取某个用户的所有自选股
+
 @selfselect_blueprint.route('/<int:userid>', methods=['GET'])
 def get_user_self_selects(userid):
+    """
+    获取某用户的自选股
+    """
     selfselects = SelfSelectService.get_user_self_selects(userid)
     return jsonify({"success": True, "selfselects": selfselects})
 
-# 删除自选股
+
 @selfselect_blueprint.route('/remove', methods=['POST'])
 def remove_self_select():
+    """
+    移除自选股
+    """
     data = request.json
     userid = data.get('userid')
     stockid = data.get('stockid')

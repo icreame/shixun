@@ -85,5 +85,7 @@ def update_news():
     if not newsid:
         return jsonify({"success": False, "message": "newsid 必须提供"}), 400
 
+
     result = NewsService.update_news(newsid, title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
     return jsonify(result)
+

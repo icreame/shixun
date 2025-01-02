@@ -2,5 +2,7 @@
 /StockEnv/
 .idea/
 /stocksystem/config.py
+/stocksystem/common/
+/common/
 # Optionally, ignore conda environment cache
 *.conda

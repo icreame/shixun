@@ -15,7 +15,7 @@ class News(db.Model):
     sentimentid = db.Column(db.Integer, db.ForeignKey('sentiment.sentimentid'))  # 外键，关联情感
     stockid = db.Column(db.Integer, db.ForeignKey('stock.stockid'))  # 外键，关联股票表
 
-    def __repr__(self, title, content, url):
+    def __repr__(self, title, url, content):
         self.title = title
         self.url = url
         self.content = content

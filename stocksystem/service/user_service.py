@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from model.user import User, db
 from sqlalchemy.sql import text
 
+
 class UserService:
     @staticmethod
     def register(username, password):

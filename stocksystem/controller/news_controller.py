@@ -26,7 +26,6 @@ def add_news():
     return jsonify(result)
 
 
-
 @news_blueprint.route('/<int:newsid>', methods=['GET'])
 def get_news(newsid):
     """
@@ -39,7 +38,6 @@ def get_news(newsid):
         return jsonify({"success": False, "message": "新闻不存在"}), 404
 
 
-
 @news_blueprint.route('/all', methods=['GET'])
 def get_all_news():
     """
@@ -47,7 +45,6 @@ def get_all_news():
     """
     news_list = NewsService.get_all_news()
     return jsonify(news_list)
-
 
 
 @news_blueprint.route('/delete', methods=['POST'])
@@ -63,7 +60,6 @@ def delete_news():
 
     result = NewsService.delete_news(newsid)
     return jsonify(result)
-
 
 
 @news_blueprint.route('/update', methods=['POST'])
@@ -84,8 +80,6 @@ def update_news():
 
     if not newsid:
         return jsonify({"success": False, "message": "newsid 必须提供"}), 400
-
-
     result = NewsService.update_news(newsid, title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
     return jsonify(result)
 

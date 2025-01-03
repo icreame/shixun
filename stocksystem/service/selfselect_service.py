@@ -18,7 +18,7 @@ class SelfSelectService:
     @staticmethod
     def get_user_self_selects(userid):
         selfselects = SelfSelect.query.filter_by(userid=userid).all()
-        return [selfselect.stock.stockname for selfselect in selfselects]  # 返回股票id的列表
+        return [selfselect.stockid for selfselect in selfselects]  # 返回股票id的列表
 
     @staticmethod
     def remove_self_select(userid, stockid):

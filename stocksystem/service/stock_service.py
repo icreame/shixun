@@ -2,6 +2,11 @@
 from model.stock import Stock,db
 from model.industry import Industry
 from sqlalchemy.sql import text
+import tushare as ts
+
+# 设置你的 Tushare Token
+ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
+pro = ts.pro_api()
 
 class StockService:
     @staticmethod
@@ -60,9 +65,11 @@ class StockService:
     def get_all_stocks():
         try:
             stocks = Stock.query.all()
+            print(2)
             stock_list = [{"stock_id": stock.stockid, "stockname": stock.stockname,
                            "stockprice": stock.stockprice, "industry": stock.industry.industryname}
                           for stock in stocks]
+            print(3)
             return {"success": True, "data": stock_list}
         except Exception as e:
             return {"success": False, "message": str(e)}
@@ -99,3 +106,30 @@ class StockService:
             return {"success": True, "data": stock_list}
         except Exception as e:
             return {"success": False, "message": str(e)}
+
+    def get_company_name(ts_code):
+        """
+        根据股票代码获取公司名称
+        """
+        df = pro.stock_basic(ts_code=ts_code, fields='ts_code,name')
+        if not df.empty:
+            return df.iloc[0]['name']
+        else:
+            return None
+
+    @staticmethod
+    def get_top10_stocks():
+        df = pro.daily(trade_date='20250102')  # 修改为需要的日期
+
+        # 排序：按照涨跌幅 (pct_chg) 排序，降序
+        top10 = df.sort_values(by='pct_chg', ascending=False).head(10)
+
+        # 选择股票代码和涨跌幅，转换为适合前端的格式
+        top10_data = []
+        for _, row in top10.iterrows():
+            top10_data.append({
+                "name": row['ts_code'],  # 股票代码，或者可以通过额外接口查找公司名称
+                "change": row['pct_chg'],  # 涨跌幅
+            })
+
+        return top10_data

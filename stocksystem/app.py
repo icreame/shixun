@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, session
 from controller.user_controller import user_blueprint, test_db_connection
 from controller.industry_controller import industry_blueprint
 from controller.news_controller import news_blueprint
@@ -6,13 +6,14 @@ from controller.selfselect_controller import selfselect_blueprint
 from controller.sentiment_controller import sentiment_blueprint
 from controller.source_controller import source_blueprint
 from controller.stock_controller import stock_blueprint
+from service.stock_service import StockService
 from model.__init__ import db
 from config import Config
 
 
 def create_app():
     app = Flask(__name__)
-
+    app.secret_key = 'your_secret_key'
     # 加载配置
     app.config.from_object(Config)
 
@@ -34,7 +35,17 @@ def create_app():
 
     @app.route('/')
     def home():
-        return " 路由访问 ：Go to /user/register or /user/login."
+        my_stocks = [
+            {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
+            {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
+        ]
+        my_stock_news = [
+            "阿里云科技发布最新财报",
+            "海尔之家连续三日涨停",
+        ]
+        top10_data = StockService.get_top10_stocks()
+
+        return render_template('index.html', my_stocks=my_stocks, my_stock_news=my_stock_news,top10_data=top10_data)
 
     return app
 

@@ -41,7 +41,7 @@ def get_sentiment_by_id(sentimentid):
         return jsonify({"success": False, "message": "情感不存在"}), 404
 
 
-@sentiment_blueprint.route('/update', methods=['POST'])
+@sentiment_blueprint.route('/update', methods=['PUT'])
 def update_sentiment():
     """
     更新情感
@@ -58,8 +58,10 @@ def update_sentiment():
     return jsonify(result)
 
 
-@sentiment_blueprint.route('/<int:sentimentid>', methods=['DELETE'])
+@sentiment_blueprint.route('/delete/<int:sentimentid>', methods=['DELETE'])
 def delete_sentiment(sentimentid):
-    """删除情感"""
+    """
+    删除情感
+    """
     result = SentimentService.delete_sentiment(sentimentid)
     return jsonify(result)

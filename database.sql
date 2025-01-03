@@ -51,13 +51,12 @@ CREATE TABLE selfselect (
 CREATE TABLE news (
     newsid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,      -- 舆情新闻唯一标识，主键
     title VARCHAR(200) NOT NULL,                          -- 新闻标题
-    url VARCHAR(200) NOT NULL ,                   -- 新闻url
+    publishdate DATE NOT NULL,                            -- 新闻发布时间
     content TEXT NOT NULL,                                -- 新闻内容
-    publishdate DATE ,                            -- 新闻发布时间
-    sourceid INT ,                                -- 外键，关联数据来源
-    industryid INT ,                              -- 外键，关联行业
-    sentimentid INT ,                             -- 外键，关联情感属性
-    stockid INT ,                                 -- 外键，关联股票表
+    sourceid INT NOT NULL,                                -- 外键，关联数据来源
+    industryid INT NOT NULL,                              -- 外键，关联行业
+    sentimentid INT NOT NULL,                             -- 外键，关联情感属性
+    stockid INT NOT NULL,                                 -- 外键，关联股票表
     FOREIGN KEY (sourceid) REFERENCES source(sourceid),  -- 外键关联数据来源表
     FOREIGN KEY (industryid) REFERENCES industry(industryid), -- 外键关联行业表
     FOREIGN KEY (sentimentid) REFERENCES sentiment(sentimentid), -- 外键关联情感属性表

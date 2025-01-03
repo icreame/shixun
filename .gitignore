@@ -3,8 +3,9 @@
 .idea/
 stocksystem/config.py
 /stocksystem/__pycache__
-stocksystem/controller/__pycache__
-stocksystem/model/__pycache__
-stocksystem/service/__pycache__
+/stocksystem/controller/__pycache__
+/stocksystem/model/__pycache__
+/stocksystem/service/__pycache__
+/stocksystem/config
 # Optionally, ignore conda environment cache
 *.conda

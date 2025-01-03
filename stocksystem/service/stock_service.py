@@ -3,6 +3,7 @@ from model.stock import Stock,db
 from model.industry import Industry
 from sqlalchemy.sql import text
 import tushare as ts
+import datetime
 
 # 设置你的 Tushare Token
 ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
@@ -117,19 +118,61 @@ class StockService:
         else:
             return None
 
+
     @staticmethod
     def get_top10_stocks():
-        df = pro.daily(trade_date='20250102')  # 修改为需要的日期
+        """
+        获取涨跌幅前10的股票数据
+        :param trade_date: 交易日期，默认为'20250102'
+        :return: 包含股票代码和涨跌幅的字典列表
+        """
 
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
+        trade_time = yesterday.strftime('%Y%m%d')
+
+        df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
         # 排序：按照涨跌幅 (pct_chg) 排序，降序
-        top10 = df.sort_values(by='pct_chg', ascending=False).head(10)
+        top10_up = df.sort_values(by='pct_chg', ascending=False).head(10)
+        top10_down = df.sort_values(by='pct_chg', ascending=True).head(10)
 
         # 选择股票代码和涨跌幅，转换为适合前端的格式
         top10_data = []
-        for _, row in top10.iterrows():
-            top10_data.append({
-                "name": row['ts_code'],  # 股票代码，或者可以通过额外接口查找公司名称
-                "change": row['pct_chg'],  # 涨跌幅
-            })
+        for _, row in top10_up.iterrows():
+            try:
+                # 获取实时行情，包含股票名称
+                realtime_data = ts.realtime_quote(row['ts_code'])  # 单次调用实时行情
+                stock_name = realtime_data.loc[0, 'NAME']  # 获取股票名称
 
-        return top10_data
+                # 添加到返回数据中
+                top10_data.append({
+                    "name": stock_name,  # 股票名称
+                    # "code": row['ts_code'],  # 股票代码
+                    "change": row['pct_chg'],  # 涨跌幅
+                })
+            except Exception as e:
+                print(f"Error fetching real-time data for {row['ts_code']}: {e}")
+                continue  # 跳过错误的股票
+
+        for _, row in top10_down.iterrows():
+            try:
+                # 获取实时行情，包含股票名称
+                realtime_data = ts.realtime_quote(row['ts_code'])  # 单次调用实时行情
+                print(realtime_data)
+                print(row['pct_chg'])
+                stock_name = realtime_data.loc[0, 'NAME']  # 获取股票名称
+
+                # 添加到返回数据中
+                top10_data.append({
+                    "name": stock_name,  # 股票名称
+                    # "code": row['ts_code'],  # 股票代码
+                    "change": row['pct_chg'],  # 涨跌幅
+                })
+            except Exception as e:
+                print(f"Error fetching real-time data for {row['ts_code']}: {e}")
+                continue  # 跳过错误的股票
+        return top10_data  # 返回最终的前10数据
+
+
+
+
+

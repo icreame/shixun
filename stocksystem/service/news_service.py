@@ -38,11 +38,11 @@ class NewsService:
                 "title": news.title,
                 "url": news.url,
                 "content": news.content,
-                "publishdate": news.publishdate,
-                "source": news.source.sourcename,
-                "industry": news.industry.industryname,
-                "sentiment": news.sentiment.sentimenttype,
-                "stock": news.stock.stockname
+                "publishdate": news.publishdate if news.publishdate else "未知",
+                "source": news.source.sourcename if news.source else "未知",
+                "industry": news.industry.industryname if news.industry else "未知",
+                "sentiment": news.sentiment.sentimenttype if news.sentiment else "未知",
+                "stock": news.stock.stockname if news.stock and news.stock else "未知"
             }]
             return {"success": True, "data": news_list}
         except Exception as e:

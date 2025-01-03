@@ -5,8 +5,8 @@ class Sentiment(db.Model):
 
     # 数据库字段定义
     sentimentid = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 情感唯一标识
-    positive = db.Column(db.Float, nullable=False)
-    negative = db.Column(db.Float, nullable=False)
+    positive = db.Column(db.Double, nullable=False)
+    negative = db.Column(db.Double, nullable=False)
 
     def __repr__(self,sentimentid,positive, negative):
         self.sentimentid = sentimentid

@@ -1,15 +1,14 @@
 import pymysql
 
 # 数据库连接配置
-conn = pymysql.connect(host='localhost', user='admin123', password='admin123', database='stocksystem',charset='utf8mb4')
+conn = pymysql.connect(host='localhost', user='shixun', password='123456', database='stocksystem', charset='utf8mb4')
 cursor = conn.cursor()
 
 # 读取 CSV 文件
 import pandas as pd
 
 # 文件路径
-df = pd.read_csv('D:\\pycharmProject\\shixun\\stocksystem\\news_data\\板块数据-3-utf8.csv')
-
+df = pd.read_csv('D:\\Python-program\\StockCrawler\\shixun\\stocksystem\\news_data\\板块数据-3-utf8.csv')
 # 清洗数据，移除包含nan值的行
 df_cleaned = df.dropna(subset=['行业'])
 

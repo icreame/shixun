@@ -6,6 +6,6 @@
 /stocksystem/controller/__pycache__
 /stocksystem/model/__pycache__
 /stocksystem/service/__pycache__
-/config
+/stocksystem/config
 # Optionally, ignore conda environment cache
 *.conda

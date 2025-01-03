@@ -1,3 +1,4 @@
+from flask import session
 from werkzeug.security import generate_password_hash, check_password_hash
 from model.user import User, db
 from sqlalchemy.sql import text
@@ -36,6 +37,9 @@ class UserService:
         # 验证明文密码
         if user.password != password:  # 直接比对用户输入的密码和数据库中的密码
             return {"success": False, "message": "密码不正确","userid":user.user_id}
+        session['logged_in'] = True
+        session['username'] = user.username
+        session['userid'] = user.user_id
 
         return {"success": True, "message": "登录成功","userid":user.user_id}
 

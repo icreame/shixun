@@ -31,16 +31,44 @@ class NewsService:
         """
         根据新闻ID获取新闻
         """
-        news = News.query.get(newsid)
-        return news  # 如果新闻存在，返回 News 对象，否则返回 None
+        try:
+            news = News.query.get(newsid)
+            news_list = [{
+                "newsid": news.newsid,
+                "title": news.title,
+                "url": news.url,
+                "content": news.content,
+                "publishdate": news.publishdate,
+                "source": news.source.sourcename,
+                "industry": news.industry.industryname,
+                "sentiment": news.sentiment.sentimenttype,
+                "stock": news.stock.stockname
+            }]
+            return {"success": True, "data": news_list}
+        except Exception as e:
+            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 
     @staticmethod
     def get_all_news():
         """
         获取所有新闻
         """
-        news_list = News.query.all()
-        return news_list  # 返回新闻对象列表
+        try:
+            new_news = News.query.all()
+            news_list = [{
+                "newsid": news.newsid,
+                "title": news.title,
+                "url": news.url,
+                "content": news.content,
+                "publishdate": news.publishdate if news.publishdate else "未知",
+                "source": news.source.sourcename if news.source else "未知",
+                "industry": news.industry.industryname if news.industry else "未知",
+                "sentiment": news.sentiment.sentimenttype if news.sentiment else "未知",
+                "stock": news.stock.stockname if news.stock and news.stock else "未知"
+            } for news in new_news]
+            return {"success": True, "data": news_list}
+        except Exception as e:
+            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 
     @staticmethod
     def delete_news(newsid):

@@ -30,7 +30,7 @@ def get_news(newsid):
     else:
         return jsonify({"success": False, "message": "新闻不存在"}), 404
 
-# 获取所有新闻
+# 获取新闻列表
 @news_blueprint.route('/all', methods=['GET'])
 def get_all_news():
     news_list = NewsService.get_all_news()
@@ -64,5 +64,6 @@ def update_news():
     if not newsid:
         return jsonify({"success": False, "message": "newsid 必须提供"}), 400
 
-    result = NewsService.update_news(newsid, title, content, publishdate, sourceid, industryid, sentimentid, stockid)
+    result = NewsService.update_news(newsid, title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
+
     return jsonify(result)

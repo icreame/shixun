@@ -55,7 +55,7 @@ def test():
     for newsid, content in news_data:
         # 进行情感分析
         result = semantic_cls(input=content)
-        print(f"新闻ID: {newsid}, 内容: {content}")
+        # print(f"新闻ID: {newsid}, 内容: {content}")
         print(f"情感分析结果: {result}")
 
         # 将情感分析结果插入数据库
@@ -63,7 +63,7 @@ def test():
             '正面': result['scores'][0],
             '负面': result['scores'][1]
         }
-        insert_sentiment_to_db(sentiment_data, newsid)
+        # insert_sentiment_to_db(sentiment_data, newsid)
 
 
 if __name__ == '__main__':

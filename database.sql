@@ -47,6 +47,7 @@ CREATE TABLE selfselect (
     FOREIGN KEY (userid) REFERENCES user(userid)           -- 外键关联用户表
 );
 
+
 CREATE TABLE news (
     newsid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,      -- 舆情新闻唯一标识，主键
     title VARCHAR(200) NOT NULL,                          -- 新闻标题

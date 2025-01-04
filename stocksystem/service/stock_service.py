@@ -157,8 +157,6 @@ class StockService:
             try:
                 # 获取实时行情，包含股票名称
                 realtime_data = ts.realtime_quote(row['ts_code'])  # 单次调用实时行情
-                print(realtime_data)
-                print(row['pct_chg'])
                 stock_name = realtime_data.loc[0, 'NAME']  # 获取股票名称
 
                 # 添加到返回数据中

@@ -1,22 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户信息</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <h2>用户信息</h2>
+{% extends "base.html" %}
 
-    {% if user %}
-    <p>用户名：{{ user.username }}</p>
-    <p>注册日期：{{ user.registration_date }}</p>
-    <p>权限等级：{{ user.permission_level }}</p>
-    {% else %}
-    <p style="color: red;">{{ message }}</p>
-    {% endif %}
+{% block title %}用户信息{% endblock %}
 
-    <p><a href="{{ url_for('user.update_user_info', user_id=user.user_id) }}">更新信息</a></p>
-</body>
-</html>
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4">用户信息</h2>
+
+        {% if user %}
+        <div class="card">
+            <div class="card-body">
+                <p><strong>用户名：</strong>{{ user.username }}</p>
+                <p><strong>性别：</strong>{{ user.gender }}</p>
+                <p><strong>职业：</strong>{{ user.profession }}</p>
+                <p><strong>手机号码：</strong>{{ user.phone }}</p>
+                <p><strong>邮箱：</strong>{{ user.email }}</p>
+                <p><strong>地址：</strong>{{ user.address }}</p>
+                <p><strong>注册日期：</strong>{{ user.registration_date }}</p>
+
+                <!-- 更新信息和修改密码按钮 -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateInfoModal">更新信息</button>
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">修改密码</button>
+            </div>
+        </div>
+        {% else %}
+        <p style="color: red;">{{ message }}</p>
+        {% endif %}
+    </div>
+
+    <!-- 更新信息模态框 -->
+    <div class="modal fade" id="updateInfoModal" tabindex="-1" aria-labelledby="updateInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateInfoModalLabel">更新用户信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('user.update_user_info', user_id=user.user_id) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">性别</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="男" {% if user.gender == '男' %}selected{% endif %}>男</option>
+                                <option value="女" {% if user.gender == '女' %}selected{% endif %}>女</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profession" class="form-label">职业</label>
+                            <input type="text" class="form-control" id="profession" name="profession" value="{{ user.profession }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">手机号码</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">邮箱</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">地址</label>
+                            <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存更改</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改密码模态框 -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">修改密码</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('user.change_password', user_id=user.user_id) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">当前密码</label>
+                            <input type="password" class="form-control" id="current_password" name="old_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">新密码</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">确认新密码</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">更新密码</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

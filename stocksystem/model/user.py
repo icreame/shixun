@@ -4,6 +4,7 @@ from model.__init__ import db
 
 class User(db.Model):
     __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
 
     # 数据库字段定义
     user_id = db.Column("userid", db.Integer, primary_key=True, autoincrement=True)  # 数据库字段 userid

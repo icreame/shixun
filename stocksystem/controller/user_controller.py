@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify, render_template, request, redirect, url_for, session
+from flask import Blueprint, request, jsonify, render_template, request, redirect, url_for, session, flash
 from flask_cors import CORS
-from service.user_service import UserService
+from stocksystem.service.user_service import UserService
 
 user_blueprint = Blueprint('user', __name__)
 CORS(user_blueprint)  # 允许跨域请求
@@ -80,3 +80,6 @@ def test_db_connection():
     else:
         return jsonify(result), 500
 
+@user_blueprint.route('/update/change_password', methods=['POST'])
+def change_password():
+    pass

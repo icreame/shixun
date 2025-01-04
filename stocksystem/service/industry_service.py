@@ -1,6 +1,7 @@
 from model.industry import db, Industry
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class IndustryService:
     @staticmethod
     def create_industry(industryname, description=None):

@@ -20,7 +20,7 @@ class StockService:
             new_stock = Stock(stockname=stockname, stockprice=stockprice, industryid=industryid)
             db.session.add(new_stock)
             db.session.commit()
-            return {"success": True, "message": "股票创建成功", "data": new_stock}
+            return {"id":new_stock.stockid,"stockname":stockname,"stockprice":stockprice,"industry":new_stock.industry.industryname}
         except Exception as e:
             db.session.rollback()
             return {"success": False, "message": str(e)}

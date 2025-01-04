@@ -5,10 +5,10 @@ class Sentiment(db.Model):
 
     # 数据库字段定义
     sentimentid = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 情感唯一标识
-    sentimenttype = db.Column(db.String(20), nullable=False)                   # 情感类别
-    description = db.Column(db.Text)                                           # 描述
+    positive = db.Column(db.Double, nullable=False)
+    negative = db.Column(db.Double, nullable=False)
 
-    def __repr__(self,sentimentid,sentimenttype, description=None):
+    def __repr__(self,sentimentid,positive, negative):
         self.sentimentid = sentimentid
-        self.description= description
-        self.sentimenttype = sentimenttype
+        self.positive = positive
+        self.negative = negative

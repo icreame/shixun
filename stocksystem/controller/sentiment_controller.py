@@ -10,13 +10,13 @@ def add_sentiment():
     添加情感
     """
     data = request.json
-    sentimenttype = data.get('sentimenttype')
-    description = data.get('description')
+    positive = data.get('positive')
+    negative = data.get('negative')
 
-    if not sentimenttype:
-        return jsonify({"success": False, "message": "情感类别不能为空"}), 400
+    if not positive or not negative:
+        return jsonify({"success": False, "message": "数据因子不能为空"}), 400
 
-    sentiment = SentimentService.add_sentiment(sentimenttype, description)
+    sentiment = SentimentService.add_sentiment(positive, negative)
     return jsonify({"success": True, "message": "情感已添加", "sentiment": sentiment})
 
 
@@ -26,7 +26,7 @@ def get_all_sentiments():
     获取所有情感
     """
     sentiments = SentimentService.get_all_sentiments()
-    return jsonify({"success": True, "sentiments": [sentiment.sentimenttype for sentiment in sentiments]})
+    return jsonify({"success": True, "sentiments": [sentiment for sentiment in sentiments]})
 
 
 @sentiment_blueprint.route('/<int:sentimentid>', methods=['GET'])
@@ -36,25 +36,24 @@ def get_sentiment_by_id(sentimentid):
     """
     sentiment = SentimentService.get_sentiment_by_id(sentimentid)
     if sentiment:
-        return jsonify({"success": True, "sentiment": {"id": sentiment.sentimentid, "type": sentiment.sentimenttype, "description": sentiment.description}})
+        return jsonify({"success": True, "sentiment": {"id": sentiment.sentimentid, "positive":sentiment.positive, "negative": sentiment.negative}})
     else:
         return jsonify({"success": False, "message": "情感不存在"}), 404
 
 
-@sentiment_blueprint.route('/update', methods=['PUT'])
-def update_sentiment():
+@sentiment_blueprint.route('/update/<int:sentimentid>', methods=['PUT'])
+def update_sentiment(sentimentid):
     """
     更新情感
     """
     data = request.json
-    sentimentid = data.get('sentimentid')
-    sentimenttype = data.get('sentimenttype')
-    description = data.get('description')
+    positive = data.get('positive')
+    negative = data.get('negative')
 
-    if not sentimentid:
-        return jsonify({"success": False, "message": "sentimentid不能为空"}), 400
+    if not positive and not negative:
+        return jsonify({"success": False, "message": "数据因子不能为空"}), 400
 
-    result = SentimentService.update_sentiment(sentimentid, sentimenttype, description)
+    result = SentimentService.update_sentiment(sentimentid, positive, negative)
     return jsonify(result)
 
 

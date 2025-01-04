@@ -47,17 +47,11 @@ def get_all_news():
     return jsonify(news_list)
 
 
-@news_blueprint.route('/delete', methods=['POST'])
-def delete_news():
+@news_blueprint.route('/delete/<int:newsid>', methods=['DELETE'])
+def delete_news(newsid):
     """
     删除新闻
     """
-    data = request.json
-    newsid = data.get('newsid')
-
-    if not newsid:
-        return jsonify({"success": False, "message": "newsid 必须提供"}), 400
-
     result = NewsService.delete_news(newsid)
     return jsonify(result)
 

@@ -15,8 +15,8 @@ CREATE TABLE user (
 
 CREATE TABLE sentiment (
     sentimentid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,   -- 情感属性唯一标识，主键
-    sentimenttype VARCHAR(20) NOT NULL,                    -- 情感类别（正面、负面、中性）
-    description TEXT                                       -- 情感属性的详细描述
+    positive DOUBLE NOT NULL,                               -- 情感的正面因子
+    negative DOUBLE NOT NULL                                -- 情感的负面因子
 );
 
 CREATE TABLE source (
@@ -56,7 +56,7 @@ CREATE TABLE news (
     publishdate DATE ,                            -- 新闻发布时间
     sourceid INT ,                                -- 外键，关联数据来源
     industryid INT ,                              -- 外键，关联行业
-    sentimentid INT ,                             -- 外键，关联情感属性
+    sentimentid INT ,                                -- 外键，关联情感属性
     stockid INT ,                                 -- 外键，关联股票表
     FOREIGN KEY (sourceid) REFERENCES source(sourceid),  -- 外键关联数据来源表
     FOREIGN KEY (industryid) REFERENCES industry(industryid), -- 外键关联行业表

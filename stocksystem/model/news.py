@@ -15,6 +15,12 @@ class News(db.Model):
     sentimentid = db.Column(db.Integer, db.ForeignKey('sentiment.sentimentid'))  # 外键，关联情感
     stockid = db.Column(db.Integer, db.ForeignKey('stock.stockid'))  # 外键，关联股票表
 
+    # 外键关系
+    stock = db.relationship('Stock', backref='news', lazy=True)
+    industry = db.relationship('Industry', backref='news', lazy=True)
+    sentiment = db.relationship('Sentiment', backref='news', lazy=True)
+    source = db.relationship('Source', backref='news', lazy=True)
+
     def __repr__(self, title, url, content):
         self.title = title
         self.url = url

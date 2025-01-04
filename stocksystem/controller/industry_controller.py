@@ -37,7 +37,7 @@ def update_industry(industryid):
     result = IndustryService.update_industry(industryid, new_name, new_description)
     return jsonify(result)
 
-@industry_blueprint.route('/<int:industryid>', methods=['DELETE'])
+@industry_blueprint.route('/delete/<int:industryid>', methods=['DELETE'])
 def delete_industry(industryid):
     result = IndustryService.delete_industry(industryid)
     return jsonify(result)

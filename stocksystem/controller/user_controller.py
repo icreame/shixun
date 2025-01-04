@@ -60,15 +60,19 @@ def get_user_info(user_id):
 
 @user_blueprint.route('/update', methods=['POST'])
 def update_user_info():
-    data = request.json
-    user_id = data.get('user_id')  # 从请求中获取用户ID
-    new_info = data.get('new_info')  # 新的用户信息
+    userid = request.args.get('user_id', type=int)
+    username = request.form.get('username')
+    gender=request.form.get('gender')
+    profession=request.form.get('profession')
+    phone=request.form.get('phone')
+    email=request.form.get('email')
+    address=request.form.get('address')
 
-    if not user_id or not new_info:
-        return jsonify({"success": False, "message": "用户ID和更新信息不能为空"}), 400
-
-    result = UserService.update_user_info(user_id, new_info)
-    return jsonify(result)
+    if not username:
+        return jsonify({"success": False, "message": "用户名不能为空"}), 400
+    result = UserService.update_user_info(userid, username, gender, profession, phone, email, address)
+    if result['success']:
+        return redirect(url_for('user.get_user_info',user_id=userid))  # 更新成功后跳转到个人信息页
 
 
 @user_blueprint.route('/test_db', methods=['GET'])
@@ -82,4 +86,12 @@ def test_db_connection():
 
 @user_blueprint.route('/update/change_password', methods=['POST'])
 def change_password():
-    pass
+    userid = request.args.get('user_id', type=int)
+    old_password=request.form.get('old_password')
+    new_password = request.form.get('new_password')
+    confirm_password=request.form.get('confirm_password')
+    result=UserService.change_password(userid, old_password, new_password,confirm_password)
+    if result["success"]:
+        return redirect(url_for('user.get_user_info',user_id=userid))
+    else:
+        return jsonify(result)

@@ -54,7 +54,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label">手机号码</label>
-                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}"
+                                   pattern="^1[3-9]\d{9}$" title="请输入有效的手机号码（例如：13812345678）">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">邮箱</label>

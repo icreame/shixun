@@ -69,25 +69,27 @@ class UserService:
 
 
     @staticmethod
-    def update_user_info(user_id, new_info):
+    def update_user_info(userid,username,gender,profession,phone,email,address):
         """
         更新用户信息
         :param user_id: 用户ID
         :param new_info: 字典类型，包含要更新的字段和值
         :return: 操作结果字典
         """
-        user = User.query.get(user_id)
+        user = User.query.get(userid)
         if not user:
             return {"success": False, "message": "用户不存在"}
 
-        # 遍历 new_info，更新对应字段
-        for key, value in new_info.items():
-            if hasattr(user, key):  # 确保 User 模型具有该属性
-                setattr(user, key, value)
+        user.username=username
+        user.gender=gender
+        user.profession=profession
+        user.phone=phone
+        user.email=email
+        user.address=address
 
         try:
             db.session.commit()
-            return {"success": True, "message": "信息更新成功"}
+            return{"success":True}
         except Exception as e:
             db.session.rollback()  # 回滚事务以防止数据损坏
             return {"success": False, "message": f"信息更新失败: {str(e)}"}
@@ -104,3 +106,29 @@ class UserService:
             return {"success": True, "message": "数据库连接成功"}
         except Exception as e:
             return {"success": False, "message": f"数据库连接失败: {str(e)}"}
+
+    @staticmethod
+    def change_password(userid,old_password,new_password,confirm_password):
+        """
+        :param userid:
+        :param old_password:
+        :param new_password:
+        :param confirm_password:
+        :return:
+        """
+        user = User.query.get(userid)
+        if not user:
+            return {"success": False, "message": "用户不存在"}
+        if user.password!=old_password:
+            return {"success":False,"message":"原密码错误"}
+        if new_password!=confirm_password:
+            return {"success":False,"message":"新密码与确认的密码不一致"}
+
+        user.password=new_password
+        try:
+            db.session.commit()
+            return {"success": True}
+        except Exception as e:
+            db.session.rollback()  # 回滚事务以防止数据损坏
+            return {"success": False, "message": f"密码修改失败: {str(e)}"}
+

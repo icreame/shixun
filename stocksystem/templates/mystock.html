@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>我的股票</h1>
+
+        <!-- 搜索股票功能 -->
+        <div class="mb-3">
+            <label for="search-input" class="form-label">搜索股票</label>
+            <input type="text" id="search-input" class="form-control" placeholder="输入股票名称或代码">
+        </div>
+        <button class="btn btn-primary" onclick="searchStock()">搜索</button>
+
+        <!-- 搜索结果 -->
+        <div id="search-results" class="mt-4">
+            <!-- 搜索结果通过 JavaScript 动态加载 -->
+        </div>
+
+        <!-- 舆情新闻 -->
+        <div class="container mt-4">
+            <div class="card shadow-sm">
+                <div class="card-header ">
+                    <h5 class="mb-0">舆情新闻</h5>
+                </div>
+                <div class="card-body">
+                    <!-- 新闻列表 -->
+                    <div class="news-list">
+                        {% for news in stock_news %}
+                            <div class="news-item card mb-4 border-0">
+                                <div class="card-body p-4">
+                                    <!-- 新闻标题 -->
+                                    <h5 class="card-title mb-3 font-weight-bold">
+                                        {{ news.title }}
+                                    </h5>
+
+                                    <!-- 新闻来源和时间 -->
+                                    <p class="text-muted small mb-3">
+                                        来源：{{ news.source }} | {{ news.date }}
+                                    </p>
+
+                                    <!-- 新闻标签 -->
+                                    <div class="mb-2">
+                                        {% for tag in news.tags %}
+                                        <span class="badge bg-primary">{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- 新闻摘要 -->
+                                    <p class="card-text text-muted mb-3">
+                                        {{ news.summary }}
+                                    </p>
+
+                                    <!-- 交互功能 -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="interaction-buttons">
+                                            <button class="btn btn-outline-primary btn-sm mr-2">
+                                                <i class="bi bi-hand-thumbs-up"></i> 点赞
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm mr-2">
+                                                <i class="bi bi-chat-left-text"></i> 评论
+                                            </button>
+                                            <button class="btn btn-outline-success btn-sm">
+                                                <i class="bi bi-share"></i> 分享
+                                            </button>
+                                        </div>
+
+                                        <!-- 情感分析 -->
+<!--                                        <span class="badge bg-{{ 'success' if news.sentiment == '正面' else 'danger' }} text-white">-->
+<!--                                            {{ news.sentiment }}-->
+<!--                                        </span>-->
+                                        <span class="text-muted small">{{ news.sentiment }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block right_sidebar %}
+<h3>自选股列表</h3>
+<ul id="stock-list" class="list-group">
+    <!-- 自选股列表通过 JavaScript 动态加载 -->
+</ul>
+
+{% endblock %}
+
+ {% block java_script %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+        /**
+         * 动态加载自选股列表
+         */
+        function loadStocks() {
+            const stockList = document.getElementById("stock-list");
+
+            // 调用后端 API 获取自选股数据
+            axios.get('/selfselect') // 替换为实际的后端 API 路径
+                .then(response => {
+                    if (response.data.success) {
+                        const stocks = response.data.selfselects;
+                        stockList.innerHTML = ""; // 清空当前列表
+
+                        if (stocks.length === 0) {
+                            stockList.innerHTML = "<li class='list-group-item'>暂无自选股</li>";
+                            return;
+                        }
+
+                        // 遍历自选股数据并渲染到页面
+                        stocks.forEach(stock => {
+                            const stockItem = document.createElement("li");
+                            stockItem.classList.add("stock-item", "list-group-item");
+
+                            stockItem.innerHTML = `
+                                <div class="stock-info">
+                                    <h5>${stock.stock_name}</h5>
+                                    <p>当前价格：<span class="price">¥${stock.price}</span></p>
+                                    <p class="mb-0">
+                                        所属行业：${stock.industry || '未知行业'} |
+                                        涨跌幅：<span class="change-rate ${parseFloat(stock.change_rate) > 0 ? 'positive' : 'negative'}">
+                                            ${stock.change_rate}
+                                        </span> | 舆情新闻：${stock.news_count} 条
+                                    </p>
+                                </div>
+                                <div class="stock-actions">
+                                    <button class="btn btn-danger btn-sm" onclick="removeStock(${stock.stock_id})">取消关注</button>
+                                </div>
+                            `;
+                            stockList.appendChild(stockItem);
+                        });
+                    } else {
+                        stockList.innerHTML = "<li class='list-group-item text-danger'>加载失败，请稍后重试。</li>";
+                    }
+                })
+                .catch(error => {
+                    console.error("加载自选股失败:", error);
+                    stockList.innerHTML = "<li class='list-group-item text-danger'>加载失败，请稍后重试。</li>";
+                });
+        }
+
+        /**
+         * 取消自选股
+         */
+        function removeStock(stockId) {
+            if (!confirm("确定要取消关注这只股票吗？")) {
+                return;
+            }
+
+            axios.post(`/selfselect/remove`) // 替换为实际的后端 API 路径
+                .then(response => {
+                    if (response.data.success) {
+                        alert("取消成功");
+                        loadStocks(); // 重新加载列表
+                    } else {
+                        alert("取消失败：" + response.data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("取消自选股失败:", error);
+                    alert("取消失败，请稍后重试。");
+                });
+        }
+
+        // 页面加载完成后调用
+        document.addEventListener("DOMContentLoaded", loadStocks);
+    </script>
+{% endblock %}

@@ -18,12 +18,15 @@ class SentimentService:
 
     @staticmethod
     def get_all_sentiments():
+        print("sentiments")
         try:
-            sentiments = Sentiment.query.all()
+            # 使用distinct()去重
+            sentiments = Sentiment.query.with_entities(Sentiment.sentiment).distinct().all()
             sentiment_list =[{
-                "sentimentid": sent.sentimentid,
-                "positive": sent.positive,
-                "negative": sent.negative
+                # "sentimentid": sent.sentimentid,
+                # "positive": sent.positive,
+                # "negative": sent.negative,
+                "sentiment": sent.sentiment
             }for sent in sentiments]
             return sentiment_list
         except SQLAlchemyError as e:

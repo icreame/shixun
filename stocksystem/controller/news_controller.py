@@ -43,8 +43,9 @@ def get_all_news():
     """
     获取所有新闻
     """
-    news_list = NewsService.get_all_news()
-    return jsonify(news_list)
+    news_list = NewsService.get_all_news(1,5)
+
+    return news_list
 
 
 @news_blueprint.route('/delete/<int:newsid>', methods=['DELETE'])

@@ -16,8 +16,19 @@ class SourceService:
 
     @staticmethod
     def get_all_sources():
+        # try:
+        #     return Source.query.all()
+        # except SQLAlchemyError as e:
+        #     return {"success": False, "message": str(e)}
+
+        print("source")
         try:
-            return Source.query.all()
+            sources = Source.query.with_entities(Source.sourcename).distinct().all()
+            source_list = [{
+                # "sourceid": sent.sourceid,
+                "sourcename": sent.sourcename,
+            } for sent in sources]
+            return source_list
         except SQLAlchemyError as e:
             return {"success": False, "message": str(e)}
 

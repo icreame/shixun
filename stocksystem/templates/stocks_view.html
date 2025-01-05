@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <!-- IPO/募集对比 -->
+    <div class="col-md-6">
+        <h3>IPO/上证指数对比</h3>
+        <div id="ipo_chart" style="width: 100%; height: 500px;"></div>
+    </div>
+
+<!-- 指数对比 -->
+    <div class="col-md-6">
+        <h3> PE对比 </h3>
+        <div id="index_chart" style="width: 100%; height: 500px;"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block right_sidebar %}
+<!-- A股上市数量 -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">A股上市数量</h5>
+        <div class="d-flex justify-content-around">
+            <div>
+                <h1>{{ data['sz_count'] }}</h1>
+                <p>sz - Count</p>
+            </div>
+            <div>
+                <h1>{{ data['sh_count'] }}</h1>
+                <p>sh - Count</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block java_script %}
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script>
+
+    // 动态数据
+    const pe_data = {{ data['pe_data'] | tojson }};
+    const ipo_data = {{ data['ipo_data'] | tojson }};  // 从后端获取 IPO 数据
+    const sh_index = {{ data['sh_index'] | tojson }};  // 获取后端传来的上证指数数据
+
+     // 指数对比图表
+    const indexChart = echarts.init(document.getElementById('index_chart'));
+    indexChart.setOption({
+<!--        title: { text: '近五年四大指数对比' },-->
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['上证指数', '深证成指', '中小板指数', '创业板指数'] },
+        xAxis: {
+            type: 'category',
+            data: pe_data.quarter  // X轴为季度数据
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value}'
+            }
+        },
+        series: [
+            {
+                name: '上证指数',
+                type: 'line',
+                data: pe_data['sh1'],  // 上证指数数据
+                smooth: true,
+                lineStyle: { color: '#FF4500' }
+            },
+            {
+                name: '深证成指',
+                type: 'line',
+                data: pe_data['sz1'],  // 深证成指数据
+                smooth: true,
+                lineStyle: { color: '#1E90FF' }
+            },
+            {
+                name: '中小板指数',
+                type: 'line',
+                data: pe_data['sz5'],  // 中小板指数数据
+                smooth: true,
+                lineStyle: { color: '#32CD32' }
+            },
+            {
+                name: '创业板指数',
+                type: 'line',
+                data: pe_data['sz6'],  // 创业板指数数据
+                smooth: true,
+                lineStyle: { color: '#FFD700' }
+            }
+        ]
+    });
+
+    // IPO数量和上证指数对比图表
+    const ipoShIndexChart = echarts.init(document.getElementById('ipo_chart'));
+
+ipoShIndexChart.setOption({
+    title: {
+<!--        text: 'IPO数量 / 上证指数对比',-->
+        subtext: '数据来源: 自定义数据源',
+        left: 'center',
+        top: '10',
+        textStyle: {
+            fontSize: 18,
+            fontWeight: 'bold',
+            color: '#333'
+        }
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            crossStyle: {
+                color: '#999'
+            }
+        }
+    },
+    legend: {
+        data: ['IPO数量', '上证指数'],
+        left: 'center',
+        top: '40',
+        textStyle: {
+            fontSize: 14,
+            fontWeight: 'bold'
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: ipo_data.dates, // 年份或日期数据
+        axisLine: {
+            lineStyle: {
+                color: '#333'
+            }
+        },
+        axisLabel: {
+            interval: 3,  // 设置不跳过任何标签
+            rotate: 45,  // 使 x 轴标签倾斜45度，避免重叠
+            textStyle: {
+                fontSize: 12
+            }
+        },
+        boundaryGap: ['20%', '20%'],
+    },
+    yAxis: [
+        {
+            type: 'value',
+            name: 'IPO数量',
+            axisLine: { lineStyle: { color: '#FF8C00' } }, // 更好看的橙色
+            axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                    color: '#FF8C00'
+                }
+            },
+            splitLine: { show: false }
+        },
+        {
+            type: 'value',
+            name: '上证指数',
+            axisLine: { lineStyle: { color: '#1E90FF' } }, // 更好看的蓝色
+            axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                    color: '#1E90FF'
+                }
+            },
+            splitLine: { show: false }
+        }
+    ],
+    series: [
+        {
+            name: 'IPO数量',
+            type: 'bar',
+            data: ipo_data.ipo_count,  // IPO数量数据
+            yAxisIndex: 0,  // 使用左侧纵坐标
+            barWidth: '20%',  // 设置柱状图宽度，减少柱状图之间的空隙
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [  // 渐变色
+                    { offset: 0, color: '#FF7F50' },  // 从红色到橙色
+                    { offset: 1, color: '#FF4500' }
+                ]),
+                borderRadius: [5, 5, 0, 0]  // 设置柱状图圆角
+            },
+            label: {
+                show: true,
+                position: 'top',
+                textStyle: {
+                    color: '#FF4500',
+                    fontSize: 12
+                }
+            },
+             // 设置柱状图不超出边界
+            barCategoryGap: '10%'  // 增加柱子之间的空隙，避免重叠
+        },
+        {
+            name: '上证指数',
+            type: 'line',
+            data: sh_index.values,  // 上证指数数据
+            yAxisIndex: 1,  // 使用右侧纵坐标
+            smooth: true,  // 使线条平滑
+            lineStyle: { color: '#1E90FF', width: 3 },
+            symbolSize: 8,  // 设置线上的点大小
+            label: {
+                show: false,
+                position: 'top',
+                textStyle: {
+                    color: '#1E90FF',
+                    fontSize: 12
+                }
+            }
+        }
+    ],
+    grid: {
+        left: '10%',
+        right: '10%',
+        bottom: '10%',
+        top: '80'
+    }
+});
+
+    // 调用 resize 方法确保图表自适应
+    window.addEventListener('resize', () => {
+        ipoChart.resize();
+        indexChart.resize();
+    });
+</script>
+{% endblock %}

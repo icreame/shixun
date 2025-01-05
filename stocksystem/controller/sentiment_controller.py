@@ -26,6 +26,7 @@ def get_all_sentiments():
     获取所有情感
     """
     sentiments = SentimentService.get_all_sentiments()
+    print("true")
     return jsonify({"success": True, "sentiments": [sentiment for sentiment in sentiments]})
 
 

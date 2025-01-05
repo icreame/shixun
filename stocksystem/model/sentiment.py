@@ -7,8 +7,10 @@ class Sentiment(db.Model):
     sentimentid = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 情感唯一标识
     positive = db.Column(db.Double, nullable=False)
     negative = db.Column(db.Double, nullable=False)
+    sentiment =db.Column(db.String(200))
 
-    def __repr__(self,sentimentid,positive, negative):
+    def __repr__(self,sentimentid,positive, negative,sentiment):
         self.sentimentid = sentimentid
         self.positive = positive
         self.negative = negative
+        self.sentiment = sentiment

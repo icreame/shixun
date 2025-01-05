@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Stock Analysis System{% endblock %}</title>
+     <!-- 引入 Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -50,6 +52,100 @@
         .right-sidebar .card {
             margin-bottom: 20px;
         }
+         .news-list {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .news-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .news-item .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+    .news-item .badge {
+        margin-right: 5px;
+    }
+    .interaction-buttons .btn {
+        margin-right: 10px;
+    }
+     .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .stock-info {
+            flex: 1;
+        }
+        .stock-actions {
+            margin-left: 15px;
+        }
+        .price {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .change-rate {
+            font-size: 0.9em;
+        }
+        .change-rate.positive {
+            color: green;
+        }
+        .change-rate.negative {
+            color: red;
+        }
+        .arrow-icon {
+            color: #808080;  /* 设置为灰色 */
+            font-size: 1.5rem;
+        }
+        .arrow-icon:hover {
+            color: #595959;  /* 当鼠标悬停时变为稍微深一些的灰色 */
+        }
+/* 自定义分页样式 */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;  /* 居中分页按钮 */
+    align-items: center;      /* 垂直居中 */
+    max-width: 100%;
+    overflow-x: auto;         /* 允许在宽度溢出时横向滚动 */
+    padding: 0;
+}
+
+.pagination .page-item {
+    margin: 0 5px;  /* 每个分页按钮之间的间距 */
+}
+
+.pagination .page-link {
+    border-radius: 50px; /* 设置按钮圆角 */
+    padding: 8px 12px;   /* 设置按钮的内边距 */
+    font-size: 16px;     /* 设置字体大小 */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.page-link:hover {
+    cursor: pointer;
+}
+
+.pagination .page-item {
+    white-space: nowrap;  /* 确保分页按钮文本不换行 */
+}
+
     </style>
 </head>
 <body>
@@ -60,9 +156,9 @@
             <div class="logo">Stock System</div>
             <div class="nav-links">
                 <a href="/"><i class="bi bi-house"></i> 首页</a>
-                <a href="/stocks"><i class="bi bi-bar-chart"></i> 股票大盘数据</a>
+                <a href="/stock"><i class="bi bi-bar-chart"></i> 股票大盘数据</a>
                 <a href="/news"><i class="bi bi-newspaper"></i> 舆情检测</a>
-                <a href="/watchlist"><i class="bi bi-star"></i> 我的股票</a>
+                <a href="/stock/mystock"><i class="bi bi-star"></i> 我的股票</a>
             </div>
         </div>
         <div class="user-profile">
@@ -100,8 +196,8 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js">
-        {% block java_script %}
-        {% endblock %}
     </script>
+    {% block java_script %}
+        {% endblock %}
 </body>
 </html>

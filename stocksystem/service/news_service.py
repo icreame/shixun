@@ -1,5 +1,5 @@
 from model.news import News,db
-
+from flask_sqlalchemy import SQLAlchemy
 
 class NewsService:
 
@@ -49,12 +49,13 @@ class NewsService:
             return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 
     @staticmethod
-    def get_all_news():
+    def get_all_news(page, per_page):
         """
         获取所有新闻
         """
         try:
-            new_news = News.query.all()
+            new_news = News.query.paginate(page=page, per_page=per_page, error_out=False).items
+            total_news = News.query.count()
             news_list = [{
                 "newsid": news.newsid,
                 "title": news.title,
@@ -63,10 +64,11 @@ class NewsService:
                 "publishdate": news.publishdate if news.publishdate else "未知",
                 "source": news.source.sourcename if news.source else "未知",
                 "industry": news.industry.industryname if news.industry else "未知",
-                "sentiment": news.sentiment.sentimenttype if news.sentiment else "未知",
+                "sentiment": news.sentiment.sentimentid if news.sentiment else "未知",
                 "stock": news.stock.stockname if news.stock and news.stock else "未知"
             } for news in new_news]
-            return {"success": True, "data": news_list}
+
+            return {"total": total_news,"data": news_list}
         except Exception as e:
             return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 

@@ -4,75 +4,160 @@
 
 {% block content %}
       <!-- Main Content -->
-        <div class="container-fluid">
-            <!-- 筛选栏 -->
-            <div class="row filter-bar">
-                <div class="col">
-                    <h5>筛选条件</h5>
-                    <form>
-                        <!-- 行业筛选 -->
-                        <div class="mb-3">
-                            <label class="form-label">选择行业</label>
-                            <div class="btn-group" role="group" aria-label="Industry filter" id="industry-filter">
-                                <button type="button" class="btn btn-outline-primary" onclick="filterIndustry('科技')">科技</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filterIndustry('金融')">金融</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filterIndustry('消费品')">消费品</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filterIndustry('能源')">能源</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filterIndustry('医疗')">医疗</button>
-                            </div>
-                        </div>
+    <div class="container-fluid">
 
-                        <!-- 情感属性筛选 -->
-                        <div class="mb-3">
-                            <label class="form-label">情感属性</label>
-                            <div class="btn-group" role="group" aria-label="Sentiment filter" id="sentiment-filter">
-                                <button type="button" class="btn btn-outline-secondary" onclick="toggleSentiment('积极')">积极</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="toggleSentiment('中立')">中立</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="toggleSentiment('消极')">消极</button>
-                            </div>
-                        </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="border p-3 rounded">
+                    <!-- 筛选栏标题 -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">筛选条件</h5>
+                        <span class="badge bg-primary">总采集数据量：45694条</span>
+                    </div>
 
-                        <!-- 来源筛选 -->
-                        <div class="mb-3">
-                            <label class="form-label">选择来源</label>
-                            <div class="btn-group" role="group" aria-label="Source filter" id="source-filter">
-                                <button type="button" class="btn btn-outline-success" onclick="toggleSource('来源 1')">来源 1</button>
-                                <button type="button" class="btn btn-outline-success" onclick="toggleSource('来源 2')">来源 2</button>
-                                <button type="button" class="btn btn-outline-success" onclick="toggleSource('来源 3')">来源 3</button>
-                                <button type="button" class="btn btn-outline-success" onclick="toggleSource('来源 4')">来源 4</button>
+                    <!-- 行业筛选 -->
+                    <div class="mb-4">
+                        <h6>涉及行业</h6>
+                        <div class="collapse" id="industry-options">
+                            <div class="d-flex flex-wrap">
+                                {% for industry in industries %}
+                                <button type="button" class="btn btn-outline-primary me-2 mb-2">{{ industry['industryname'] }}</button>
+                                {% endfor %}
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
+                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#industry-options" aria-expanded="false">
+                            展开更多
+                        </button>
+                    </div>
 
-            <!-- 舆情新闻 -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>舆情新闻</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <h6 class="mb-1">新闻标题 1</h6>
-                                    <p class="mb-1">这是新闻摘要内容，涉及到市场动态。</p>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <h6 class="mb-1">新闻标题 2</h6>
-                                    <p class="mb-1">这是另一条新闻摘要内容，谈论金融变动。</p>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <h6 class="mb-1">新闻标题 3</h6>
-                                    <p class="mb-1">这条新闻讲述的是股票市场的趋势。</p>
-                                </a>
+                    <!-- 情感属性筛选 -->
+                    <div class="mb-4">
+                        <h6>情感属性</h6>
+                        <div class="collapse" id="sentiment-options">
+                            <div class="d-flex flex-wrap">
+                                {% for sentiment in sentiments %}
+                                <button type="button" class="btn btn-outline-secondary me-2 mb-2">{{ sentiment.sentiment }}</button>
+                                {% endfor %}
                             </div>
                         </div>
+                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#sentiment-options" aria-expanded="false">
+                            展开更多
+                        </button>
+                    </div>
+
+                    <!-- 数据来源筛选 -->
+                    <div class="mb-4">
+                        <h6>数据来源</h6>
+                        <div class="collapse" id="source-options">
+                            <div class="d-flex flex-wrap">
+                                {% for source in sources %}
+                                <button type="button" class="btn btn-outline-success me-2 mb-2">{{ source.sourcename }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#source-options" aria-expanded="false">
+                            展开更多
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+
+          <!-- 舆情新闻 -->
+            <div class="container mt-4">
+                <div class="card shadow-sm">
+                    <div class="card-header ">
+                        <h5 class="mb-0">舆情新闻</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- 新闻列表 -->
+                        <div class="news-list">
+                            {% for news in stock_news %}
+                                <div class="news-item card mb-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title mb-3 font-weight-bold">
+                                            {{ news.title }}
+                                            <!-- 添加跳转箭头图标 -->
+                                            <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
+                                                <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
+                                            </a>
+                                        </h5>
+                                        <!-- 新闻来源和时间 -->
+                                        <p class="text-muted small mb-3">
+                                            来源：{{ news.source }} | {{ news.publishdate }}
+                                        </p>
+
+                                        <!-- 新闻标签 -->
+                                        <div class="mb-2">
+                                            {% for tag in news.tags %}
+                                                <span class="badge bg-primary">{{ tag }}</span>
+                                            {% endfor %}
+                                        </div>
+
+                                        <!-- 新闻摘要 -->
+                                        <p class="card-text text-muted mb-3">
+                                            {{ news.content | truncate(100, True) }}
+                                        </p>
+
+                                        <!-- 交互功能 -->
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="interaction-buttons">
+                                                <button class="btn btn-outline-primary btn-sm mr-2">
+                                                    <i class="bi bi-hand-thumbs-up"></i> 点赞
+                                                </button>
+                                                <button class="btn btn-outline-secondary btn-sm mr-2">
+                                                    <i class="bi bi-chat-left-text"></i> 评论
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm">
+                                                    <i class="bi bi-share"></i> 分享
+                                                </button>
+                                            </div>
+                                            <!-- 情感分析 -->
+                                            <span class="text-muted small">{{ news.sentiment }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- 分页按钮 -->
+                        <div class="pagination">
+                            <ul class="pagination justify-content-center">
+                                <!-- 上一页 -->
+                                <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <!-- 页码 -->
+                                {% for page_num in page_range %}
+                                    {% if page_num == '...' %}
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    {% else %}
+                                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                                            <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- 下一页 -->
+                                <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    </div>
 
 
 {% endblock %}
@@ -166,4 +251,21 @@
                 </div>
             </div>
         </div>
+{% endblock %}
+
+ {% block java_script %}
+<script>
+function toggleOptions(sectionId, toggleButton) {
+    const section = document.getElementById(sectionId);
+    const isCollapsed = section.classList.contains('collapsed');
+
+    if (isCollapsed) {
+        section.classList.remove('collapsed');
+        toggleButton.textContent = '收起';
+    } else {
+        section.classList.add('collapsed');
+        toggleButton.textContent = '展开更多';
+    }
+}
+</script>
 {% endblock %}

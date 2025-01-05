@@ -1,14 +1,21 @@
-from flask import Flask, render_template, session
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask, render_template, session, g, jsonify,request
 from controller.user_controller import user_blueprint, test_db_connection
 from controller.industry_controller import industry_blueprint
 from controller.news_controller import news_blueprint
 from controller.selfselect_controller import selfselect_blueprint
 from controller.sentiment_controller import sentiment_blueprint
 from controller.source_controller import source_blueprint
-from controller.stock_controller import stock_blueprint
 from service.stock_service import StockService
 from model.__init__ import db
 from config import Config
+from stocksystem.controller.stock_controller import stock_blueprint
+from stocksystem.service.industry_service import IndustryService
+from stocksystem.service.news_service import NewsService
+from math import ceil
+
+from stocksystem.service.sentiment_service import SentimentService
+from stocksystem.service.source_service import SourceService
 
 
 def create_app():
@@ -33,19 +40,51 @@ def create_app():
     app.register_blueprint(source_blueprint, url_prefix='/source')
     app.register_blueprint(stock_blueprint, url_prefix='/stock')
 
+    # 启动调度器
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(StockService.update_data, 'interval', weeks=4)  # 每4周（一个月）更新一次数据
+    scheduler.start()
+
     @app.route('/')
     def home():
+        industries=IndustryService.get_all_industries()['industries']
+        for industry in industries:
+            print(industry['industryname'])
+        sources=SourceService.get_all_sources()
+        sentiments=SentimentService.get_all_sentiments()
+        print(sentiments)
         my_stocks = [
             {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
             {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
         ]
-        my_stock_news = [
-            "阿里云科技发布最新财报",
-            "海尔之家连续三日涨停",
-        ]
+        per_page = 5
+        page = request.args.get('page', 1, type=int)  # 获取当前页，默认为1
+
+        # 获取新闻数据，限制每页的条数
+        news_data = NewsService.get_all_news(page, per_page)
+        news_list = news_data["data"]
+
+        # 获取总新闻数，用于计算总页数
+        total_news = news_data['total']
+        total_pages = ceil(total_news / per_page)
         top10_data = StockService.get_top10_stocks()
 
-        return render_template('index.html', my_stocks=my_stocks, my_stock_news=my_stock_news,top10_data=top10_data)
+        # 分页显示范围：当前页前后各两页
+        page_range = list(range(max(1, page - 2), min(total_pages + 1, page + 3)))
+
+        # 如果总页数超过一定范围，显示“省略号”
+        if page_range[0] > 1:
+            page_range = [1, '...'] + page_range
+        if page_range[-1] < total_pages:
+            page_range = page_range + ['...'] + [total_pages]
+
+        return render_template('index.html', my_stocks=my_stocks,
+                               stock_news=news_list,top10_data=top10_data,total_pages=total_pages,
+                               current_page=page,page_range=page_range,
+                               industries=industries,
+                               sources=sources,
+                               sentiments=sentiments,
+                               )
 
     return app
 

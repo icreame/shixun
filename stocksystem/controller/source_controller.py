@@ -26,7 +26,7 @@ def get_all_sources():
     获取数据来源
     """
     sources = SourceService.get_all_sources()
-    return jsonify({"success": True, "sources": [source.sourcename for source in sources]})
+    return jsonify({"success": True, "sources": sources})
 
 
 @source_blueprint.route('/<int:sourceid>', methods=['GET'])

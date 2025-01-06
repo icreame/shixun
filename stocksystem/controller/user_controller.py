@@ -84,6 +84,7 @@ def test_db_connection():
     else:
         return jsonify(result), 500
 
+
 @user_blueprint.route('/update/change_password', methods=['POST'])
 def change_password():
     userid = request.args.get('user_id', type=int)

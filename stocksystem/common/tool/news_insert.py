@@ -21,18 +21,28 @@ for _, row in df_cleaned.iterrows():
     title = row['标题']
     content = row['内容']
     url = row['url']
+    industry_name=row['行业']
 
-    # 检查标题对应的 URL 是否已经存在
-    cursor.execute("SELECT COUNT(*) FROM news WHERE url = %s", (url,))
-    result = cursor.fetchone()
+    # 获取 industryid
+    cursor.execute("SELECT industryid FROM industry WHERE industryname = %s", (industry_name,))
+    industry_result = cursor.fetchone()
 
-    # 如果 URL 不存在，准备插入
-    if result[0] == 0:
-        insert_data.append((title, content, url))
+    # 如果行业存在，获取其 industryid
+    if industry_result:
+        industryid = industry_result[0]
+
+        # 检查股票是否已存在
+        cursor.execute("SELECT COUNT(*) FROM news WHERE title = %s", (title,))
+        news_exists = cursor.fetchone()
+
+        if news_exists[0] == 0:  # 如果股票不存在，添加到插入列表
+            insert_data.append((title,content,url,industryid))
+    else:
+        print(f"未找到行业: {industry_name}，请检查行业表中的数据。")
 
 # 批量插入
 if insert_data:
-    cursor.executemany("INSERT INTO news (title, content, url) VALUES (%s, %s, %s)", insert_data)
+    cursor.executemany("INSERT INTO news (title, content, url, industryid) VALUES (%s, %s, %s,%s)", insert_data)
     conn.commit()
 
 # 关闭数据库连接

@@ -82,22 +82,38 @@ class NewsService:
         try:
             new_news = News.query.paginate(page=page, per_page=per_page, error_out=False).items
             total_news = News.query.count()
-            news_list = [{
-                "newsid": news.newsid,
-                "title": news.title,
-                "url": news.url,
-                "content": news.content,
-                "publishdate": news.publishdate if news.publishdate else "未知",
-                "source": news.source.sourcename if news.source else "未知",
-                "industry": news.industry.industryname if news.industry else "未知",
-                "sentiment": news.sentiment.sentiment if news.sentiment else "未知",
-                "stock": news.stock.stockname if news.stock and news.stock else "未知"
-            } for news in new_news]
 
-            return {"total": total_news,"data": news_list}
+            news_list = []
+            for news in new_news:
+                news_item = {
+                    "newsid": news.newsid,
+                    "title": news.title,
+                    "url": news.url,
+                    "content": news.content if news.content else None,
+                    "publishdate": news.publishdate if news.publishdate else None,
+                }
+
+                if news.sourceid:
+                    source = Source.query.get(news.sourceid)
+                    news_item["sourcename"] = source.sourcename if source else None
+
+                if news.industryid:
+                    industry = Industry.query.get(news.industryid)
+                    news_item["industryname"] = industry.industryname if industry else None
+
+                if news.sentimentid:
+                    sentiment = Sentiment.query.get(news.sentimentid)
+                    news_item["sentimenttype"] = sentiment.sentimenttype if sentiment else None
+
+                if news.stockid:
+                    stock = Stock.query.get(news.stockid)
+                    news_item["stockname"] = stock.stockname if stock else None
+
+                news_list.append(news_item)
+
+            return {"total":total_news,"data":news_list}
         except Exception as e:
             return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
-
     @staticmethod
     def delete_news(newsid):
         """

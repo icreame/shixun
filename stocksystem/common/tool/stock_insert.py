@@ -41,7 +41,7 @@ for _, row in df_cleaned.iterrows():
 # 批量插入
 if insert_data:
     cursor.executemany(
-        "INSERT INTO stock (stockid, stockname, stockprice, industryid) VALUES (%s, %s, %s, %s)",
+        "INSERT INTO stock (stockcode, stockname, stockprice, industryid) VALUES (%s, %s, %s, %s)",
         insert_data
     )
     conn.commit()

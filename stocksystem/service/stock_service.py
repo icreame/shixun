@@ -74,10 +74,18 @@ class StockService:
         try:
             stocks = Stock.query.all()
 
-            stock_list = [{"stock_id": stock.stockid,
-                           "stockname": stock.stockname,
-                           "stockprice": stock.stockprice, "industry": stock.industry.industryname}
-                          for stock in stocks]
+            stock_list = []
+            for stock in stocks:
+                stock_item =  {"stock_id": stock.stockcode,
+                "stockname": stock.stockname,
+                "stockprice": stock.stockprice}
+
+                if stock.industryid:
+                    industry = Industry.query.get(stock.industryid)
+                    stock_item["industryname"] = industry.industryname if industry else None
+
+                stock_list.append(stock_item)
+
 
             return {"success": True, "data": stock_list}
         except Exception as e:

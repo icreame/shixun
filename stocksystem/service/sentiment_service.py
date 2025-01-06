@@ -20,8 +20,8 @@ class SentimentService:
     def get_all_sentiments():
         print("sentiments")
         try:
-            # 使用distinct()去重
-            sentiments = Sentiment.query.with_entities(Sentiment.sentiment).distinct().all()
+            # [0106修改去除 distinct() ]
+            sentiments = Sentiment.query.all()
             sentiment_list =[{
                 "sentimentid": sent.sentimentid,
                 "sentiment": sent.sentiment,

@@ -15,8 +15,8 @@ CREATE TABLE user (
 
 CREATE TABLE sentiment (
     sentimentid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,   -- 情感属性唯一标识，主键
-    positive DOUBLE NOT NULL,                               -- 情感的正面因子
-    negative DOUBLE NOT NULL                                -- 情感的负面因子
+    sentiment VARCHAR(255) NOT NULL,                       -- 情感描述，字符串类型
+    score DOUBLE NOT NULL                                  -- 预测得分
 );
 
 CREATE TABLE source (

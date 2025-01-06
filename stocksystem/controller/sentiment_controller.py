@@ -10,13 +10,13 @@ def add_sentiment():
     添加情感
     """
     data = request.json
-    positive = data.get('positive')
-    negative = data.get('negative')
+    sentiment = data.get('sentiment')
+    score = data.get('score')
 
-    if not positive or not negative:
+    if not sentiment or not score:
         return jsonify({"success": False, "message": "数据因子不能为空"}), 400
 
-    sentiment = SentimentService.add_sentiment(positive, negative)
+    sentiment = SentimentService.add_sentiment(sentiment, score)
     return jsonify({"success": True, "message": "情感已添加", "sentiment": sentiment})
 
 
@@ -37,7 +37,7 @@ def get_sentiment_by_id(sentimentid):
     """
     sentiment = SentimentService.get_sentiment_by_id(sentimentid)
     if sentiment:
-        return jsonify({"success": True, "sentiment": {"id": sentiment.sentimentid, "positive":sentiment.positive, "negative": sentiment.negative}})
+        return jsonify({"success": True, "sentiment": {"id": sentiment.sentimentid, "sentiment": sentiment.sentiment, "score": sentiment.score}})
     else:
         return jsonify({"success": False, "message": "情感不存在"}), 404
 
@@ -48,13 +48,13 @@ def update_sentiment(sentimentid):
     更新情感
     """
     data = request.json
-    positive = data.get('positive')
-    negative = data.get('negative')
+    sentiment = data.get('sentiment')
+    score = data.get('score')
 
-    if not positive and not negative:
+    if not sentiment and not score:
         return jsonify({"success": False, "message": "数据因子不能为空"}), 400
 
-    result = SentimentService.update_sentiment(sentimentid, positive, negative)
+    result = SentimentService.update_sentiment(sentimentid, sentiment, score)
     return jsonify(result)
 
 

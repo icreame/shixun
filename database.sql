@@ -52,7 +52,7 @@ CREATE TABLE news (
     newsid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,      -- 舆情新闻唯一标识，主键
     title VARCHAR(200) NOT NULL,                          -- 新闻标题
     url VARCHAR(200) NOT NULL ,                   -- 新闻url
-    content TEXT NOT NULL,                                -- 新闻内容
+    content TEXT,                                -- 新闻内容 【0106 修改字段为可以是null】
     publishdate DATE ,                            -- 新闻发布时间
     sourceid INT ,                                -- 外键，关联数据来源
     industryid INT ,                              -- 外键，关联行业
@@ -63,3 +63,24 @@ CREATE TABLE news (
     FOREIGN KEY (sentimentid) REFERENCES sentiment(sentimentid), -- 外键关联情感属性表
     FOREIGN KEY (stockid) REFERENCES stock(stockid)      -- 外键关联股票表
 );
+
+-- 用于存放实时获取的新闻
+CREATE TABLE IF NOT EXISTS news_internet (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            keyword VARCHAR(255),
+            title TEXT,
+            content TEXT,
+            url TEXT,
+            publish_date TEXT
+);
+
+-- 存放实时获取新闻的分析
+CREATE TABLE IF NOT EXISTS news_analysis (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            news_id INT,
+            sector VARCHAR(255),
+            trend VARCHAR(50),
+            reason TEXT,
+            sentiment VARCHAR(50),
+            FOREIGN KEY (news_id) REFERENCES news_internet(id)
+        )

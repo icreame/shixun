@@ -78,3 +78,16 @@ def update_news():
     result = NewsService.update_news(newsid, title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
     return jsonify(result)
 
+
+@news_blueprint.route('/analyze', methods=['POST'])
+async def analyze_news():
+    """
+    根据行业标签获取新闻并分析
+    """
+    data = request.json
+    keyword = data.get('keyword')  # 用户选择的行业标签
+    if not keyword:
+        return jsonify({"success": False, "message": "行业标签不能为空"}), 400
+
+    result = await NewsService.fetch_and_analyze_news(keyword)
+    return jsonify(result)

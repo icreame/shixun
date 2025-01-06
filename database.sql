@@ -33,6 +33,7 @@ CREATE TABLE industry (
 
 CREATE TABLE stock (
     stockid INT NOT NULL  AUTO_INCREMENT PRIMARY KEY,      -- 股票唯一标识符
+    stockcode INT NOT NULL,                                -- 股票代码
     stockname VARCHAR(100) NOT NULL,                       -- 股票名称
     stockprice FLOAT,                                      -- 股票价格
     industryid INT                                         -- 外键，关联行业表

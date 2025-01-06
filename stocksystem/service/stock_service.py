@@ -78,7 +78,7 @@ class StockService:
             stocks = Stock.query.all()
             stock_list=[]
             for stock in stocks:
-                stock_data = {"stock_id": stock.stockid,
+                stock_data = {"stock_code": stock.stockcode,
                               "stockname": stock.stockname,
                               "stockprice": stock.stockprice
                 }
@@ -97,7 +97,7 @@ class StockService:
                 return {"success": False, "message": "股票ID无效"}
             industry = Industry.query.get(stock.industryid)
             stock_data = {
-                "stock_id": stock.stockid,
+                "stock_code": stock.stockcode,
                 "stockname": stock.stockname,
                 "stockprice": stock.stockprice,
                 "industry": industry.industryname if industry else None
@@ -114,7 +114,7 @@ class StockService:
                 return {"success": False, "message": "行业ID无效"}
 
             stocks = Stock.query.filter_by(industryid=industry_id).all()
-            stock_list = [{"stock_id": stock.stockid, "stockname": stock.stockname,
+            stock_list = [{"stock_code": stock.stockcode, "stockname": stock.stockname,
                            "stockprice": stock.stockprice, "industry": stock.industry.industryname}
                           for stock in stocks]
 

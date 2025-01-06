@@ -36,7 +36,7 @@ class IndustryService:
             industries_list = [
                 {"industryid": i.industryid, "industryname": i.industryname, "description": i.description} for i in
                 industries]
-            return {"success": True, "industries": industries_list}
+            return industries_list
         except SQLAlchemyError as e:
             return {"success": False, "message": str(e)}
 

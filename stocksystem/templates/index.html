@@ -6,7 +6,7 @@
       <!-- Main Content -->
     <div class="container-fluid">
 
-    <div class="container mt-4">
+        <div class="container mt-4">
         <div class="row">
             <div class="col-12">
                 <div class="border p-3 rounded">
@@ -67,7 +67,7 @@
 
 
           <!-- 舆情新闻 -->
-            <div class="container mt-4">
+        <div class="container mt-4">
                 <div class="card shadow-sm">
                     <div class="card-header ">
                         <h5 class="mb-0">舆情新闻</h5>
@@ -224,13 +224,23 @@
             <div class="card-body">
                 <div class="tab-content" id="myTabContent">
                     <!-- 我的自选股 -->
-                    <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
-                        <ul class="list-group">
-                            <li class="list-group-item">自选股 1</li>
-                            <li class="list-group-item">自选股 2</li>
-                            <li class="list-group-item">自选股 3</li>
-                        </ul>
-                    </div>
+                <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+                    <ul class="list-group">
+                        {% if my_stocks %}
+                            {% for stock in my_stocks %}
+                                <li class="list-group-item">
+                                    <h5>{{ stock.name }}</h5>
+                                    <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
+                                    <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">
+                                        {{ stock.change }}
+                                    </span></p>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">暂无自选股</li>
+                        {% endif %}
+                    </ul>
+                </div>
                     <!-- 自选股新闻 -->
                     <div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
                         <div class="list-group">
@@ -239,7 +249,7 @@
                                 <p class="mb-1">这条新闻关于自选股的市场分析。</p>
                             </a>
                             <a href="#" class="list-group-item list-group-item-action">
-                                <h6 class="mb-1">自选股新闻标题 2</h6>
+                                <h6 class="mb-1">自选股新闻标题 </h6>
                                 <p class="mb-1">自选股的最新动态。</p>
                             </a>
                             <a href="#" class="list-group-item list-group-item-action">
@@ -267,5 +277,7 @@ function toggleOptions(sectionId, toggleButton) {
         toggleButton.textContent = '展开更多';
     }
 }
+
+
 </script>
 {% endblock %}

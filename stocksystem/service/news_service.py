@@ -64,7 +64,7 @@ class NewsService:
                 "publishdate": news.publishdate if news.publishdate else "未知",
                 "source": news.source.sourcename if news.source else "未知",
                 "industry": news.industry.industryname if news.industry else "未知",
-                "sentiment": news.sentiment.sentimentid if news.sentiment else "未知",
+                "sentiment": news.sentiment.sentiment if news.sentiment else "未知",
                 "stock": news.stock.stockname if news.stock and news.stock else "未知"
             } for news in new_news]
 

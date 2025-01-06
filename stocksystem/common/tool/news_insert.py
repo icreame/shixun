@@ -8,7 +8,7 @@ cursor = conn.cursor()
 import pandas as pd
 
 # 文件路径
-df = pd.read_csv('D:\\learning\\寒假实训\\shixun\\stocksystem\\news_data\\板块数据-1-utf8.csv')
+df = pd.read_csv('D:\\learning\\寒假实训\\shixun\\stocksystem\\news_data\\板块数据-3-utf8.csv')
 
 # 清洗数据，移除包含 NaN 的行
 df_cleaned = df.dropna(subset=['标题', '内容', 'url'])

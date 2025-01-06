@@ -25,6 +25,7 @@ def get_user_self_selects(userid):
     """
     获取某用户的自选股
     """
+
     selfselects = SelfSelectService.get_user_self_selects(userid)
     return jsonify({"success": True, "selfselects": selfselects})
 

@@ -96,11 +96,12 @@
         /**
          * 动态加载自选股列表
          */
-        function loadStocks() {
+
+        function loadStocks(userid) {
             const stockList = document.getElementById("stock-list");
 
             // 调用后端 API 获取自选股数据
-            axios.get('/selfselect') // 替换为实际的后端 API 路径
+            axios.get(`/selfselect/${userid}`) // 替换为实际的后端 API 路径
                 .then(response => {
                     if (response.data.success) {
                         const stocks = response.data.selfselects;
@@ -166,7 +167,11 @@
                 });
         }
 
-        // 页面加载完成后调用
-        document.addEventListener("DOMContentLoaded", loadStocks);
+
+       // 页面加载完成后调用
+        document.addEventListener("DOMContentLoaded", function() {
+             const userid = {{ userid or 'null' | tojson }};
+            loadStocks(userid); // 在页面加载时调用loadStocks
+        });
     </script>
 {% endblock %}

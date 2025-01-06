@@ -15,6 +15,7 @@ ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
 pro = ts.pro_api()
 
 STOCK_DATA_KEY = "stock_data"
+TOP10_DATA="top10_data"
 class StockService:
     @staticmethod
     def create_stock(stockname, stockprice, industryid):
@@ -72,11 +73,12 @@ class StockService:
     def get_all_stocks():
         try:
             stocks = Stock.query.all()
-            print(2)
-            stock_list = [{"stock_id": stock.stockid, "stockname": stock.stockname,
+
+            stock_list = [{"stock_id": stock.stockid,
+                           "stockname": stock.stockname,
                            "stockprice": stock.stockprice, "industry": stock.industry.industryname}
                           for stock in stocks]
-            print(3)
+
             return {"success": True, "data": stock_list}
         except Exception as e:
             return {"success": False, "message": str(e)}
@@ -127,6 +129,7 @@ class StockService:
     @staticmethod
     def update_data():
         global stock_data
+        global  top10_data
         # 获取pe
         pe_data = StockService.get_pe_data()
 
@@ -141,6 +144,8 @@ class StockService:
         # 上证指数
         sh_index = StockService.get_sh_index_data()
 
+        top10_data=StockService.get_top10_stocks()
+
         stock_data = {
             "pe_data": pe_data,
             "ipo_data": ipo_data,
@@ -150,13 +155,17 @@ class StockService:
 
         }
         stock_data['last_updated'] = time.time()  # 保存更新时间
+        # top10_data['last_updated']= time.time()
         session[STOCK_DATA_KEY] = stock_data
-        print("update")
+        session[TOP10_DATA]=top10_data
+
 
     @staticmethod
     def is_data_expired():
         """检查数据是否过期"""
         if STOCK_DATA_KEY not in session:
+            return True  # 如果没有数据，则认为数据过期
+        if TOP10_DATA not in session:
             return True  # 如果没有数据，则认为数据过期
 
         stock_data = session[STOCK_DATA_KEY]
@@ -173,9 +182,15 @@ class StockService:
         """从 session 加载数据"""
         return session.get(STOCK_DATA_KEY, None)
 
-    def set_data_in_cache(stock_data):
+    @staticmethod
+    def loadtop10_data_from_cache():
+        """从 session 加载数据"""
+        return session.get(TOP10_DATA, None)
+
+    def set_data_in_cache(stock_data,top10_data):
         """将数据存储到 session"""
         session[STOCK_DATA_KEY] = stock_data
+        session[STOCK_DATA_KEY] = top10_data
 
     @staticmethod
     def get_top10_stocks():
@@ -188,7 +203,7 @@ class StockService:
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
-        df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
+        df = pro.daily(trade_date='20250103')  # 获取指定日期的股票数据
         # 排序：按照涨跌幅 (pct_chg) 排序，降序
         top10_up = df.sort_values(by='pct_chg', ascending=False).head(10)
         top10_down = df.sort_values(by='pct_chg', ascending=True).head(10)
@@ -228,6 +243,7 @@ class StockService:
                 continue  # 跳过错误的股票
         return top10_data  # 返回最终的前10数据
 
+    @staticmethod
     # 获取A股上市公司数量（深市和沪市）
     def get_stock_counts():
         try:
@@ -250,6 +266,7 @@ class StockService:
             print(f"获取A股上市公司数据时出错：{e}")
             return None
 
+    @staticmethod
     # 获取PE对比数据
     def get_pe_data():
         try:
@@ -289,6 +306,7 @@ class StockService:
             print(f"获取pe数据时出错：{e}")  # 捕获异常并打印错误信息
             return None  #
 
+    @staticmethod
     # 获取IPO数据
     def get_ipo_data():
         try:
@@ -323,6 +341,7 @@ class StockService:
             print(f"获取IPO数据时出错：{e}")  # 捕获异常并打印错误信息
             return None  # 返回None以表示出错
 
+    @staticmethod
     def get_sh_index_data():
         try:
 

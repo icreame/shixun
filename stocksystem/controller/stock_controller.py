@@ -83,8 +83,9 @@ def before_request():
     cached_data = StockService.load_data_from_cache()
 
     # 如果没有数据或数据过期，更新数据
-    if cached_data is None or StockService.is_data_expired():
+    if cached_data is  None or StockService.is_data_expired():
         StockService.update_data()  # 仅在数据过期时更新
+
 
     # 将 stock_data 存储在 g 对象中，以便在视图中使用
     g.stock_data = StockService.load_data_from_cache()
@@ -138,4 +139,4 @@ def mystock():
     ]
 
 
-    return render_template('mystock.html', user_stocks=user_stocks, stock_news=news_list)
+    return render_template('mystock.html', userid=user_id,user_stocks=user_stocks, stock_news=news_list)

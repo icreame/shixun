@@ -20,13 +20,12 @@ class SentimentService:
     def get_all_sentiments():
         print("sentiments")
         try:
+
             # [0106修改去除 distinct() ]
-            sentiments = Sentiment.query.all()
+            sentiments = Sentiment.query.with_entities(Sentiment.sentiment).distinct().all()
             sentiment_list =[{
-                "sentimentid": sent.sentimentid,
                 "sentiment": sent.sentiment,
-                "score": sent.score
-            }for sent in sentiments]
+           }for sent in sentiments]
             return sentiment_list
         except SQLAlchemyError as e:
             return {"success": False, "message": str(e)}

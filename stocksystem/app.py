@@ -45,14 +45,24 @@ def create_app():
     scheduler.add_job(StockService.update_data, 'interval', weeks=4)  # 每4周（一个月）更新一次数据
     scheduler.start()
 
+    @app.before_request
+    def before_request():
+
+        cached_data1 = StockService.loadtop10_data_from_cache()
+
+        # 如果没有数据或数据过期，更新数据
+        if  cached_data1 is None or StockService.is_data_expired():
+            StockService.update_data()  # 仅在数据过期时更新
+
+        # 将 stock_data 存储在 g 对象中，以便在视图中使用
+        g.top10_data = StockService.loadtop10_data_from_cache()
     @app.route('/')
     def home():
-        industries=IndustryService.get_all_industries()['industries']
-        for industry in industries:
-            print(industry['industryname'])
+        industries=IndustryService.get_all_industries()
         sources=SourceService.get_all_sources()
         sentiments=SentimentService.get_all_sentiments()
-        print(sentiments)
+
+        userid=session['userid']
         my_stocks = [
             {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
             {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
@@ -67,7 +77,8 @@ def create_app():
         # 获取总新闻数，用于计算总页数
         total_news = news_data['total']
         total_pages = ceil(total_news / per_page)
-        top10_data = StockService.get_top10_stocks()
+
+        # top10_data = StockService.get_top10_stocks()
 
         # 分页显示范围：当前页前后各两页
         page_range = list(range(max(1, page - 2), min(total_pages + 1, page + 3)))
@@ -78,8 +89,8 @@ def create_app():
         if page_range[-1] < total_pages:
             page_range = page_range + ['...'] + [total_pages]
 
-        return render_template('index.html', my_stocks=my_stocks,
-                               stock_news=news_list,top10_data=top10_data,total_pages=total_pages,
+        return render_template('index.html', userid=userid,my_stocks=my_stocks,
+                               stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,
                                current_page=page,page_range=page_range,
                                industries=industries,
                                sources=sources,

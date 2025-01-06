@@ -26,7 +26,7 @@ class StockService:
             new_stock = Stock(stockname=stockname, stockprice=stockprice, industryid=industryid)
             db.session.add(new_stock)
             db.session.commit()
-            return {"id":new_stock.stockid,"stockname":stockname,"stockprice":stockprice,"industry":new_stock.industry.industryname}
+            return {"id":new_stock.stockid,"stockname":stockname,"stockprice":stockprice,"industry":industry.industryname}
         except Exception as e:
             db.session.rollback()
             return {"success": False, "message": str(e)}
@@ -35,6 +35,7 @@ class StockService:
     def update_stock(stock_id, stockname=None, stockprice=None, industryid=None):
         try:
             stock = Stock.query.get(stock_id)
+            industry=None
             if not stock:
                 return {"success": False, "message": "股票ID无效"}
 
@@ -49,6 +50,9 @@ class StockService:
                 stock.industryid = industryid
 
             db.session.commit()
+            result={
+                "stock_id": stock.stockid, "stockname": stock.stockname,"industry":industry.industryname
+            }
             return {"success": True, "message": "股票信息更新成功", "data": stock}
         except Exception as e:
             db.session.rollback()
@@ -72,11 +76,15 @@ class StockService:
     def get_all_stocks():
         try:
             stocks = Stock.query.all()
-            print(2)
-            stock_list = [{"stock_id": stock.stockid, "stockname": stock.stockname,
-                           "stockprice": stock.stockprice, "industry": stock.industry.industryname}
-                          for stock in stocks]
-            print(3)
+            stock_list=[]
+            for stock in stocks:
+                stock_data = {"stock_id": stock.stockid,
+                              "stockname": stock.stockname,
+                              "stockprice": stock.stockprice
+                }
+                industry=Industry.query.get(stock.industryid)
+                stock_data["industry"]=industry.industryname if industry else None
+                stock_list.append(stock_data)
             return {"success": True, "data": stock_list}
         except Exception as e:
             return {"success": False, "message": str(e)}
@@ -87,12 +95,12 @@ class StockService:
             stock = Stock.query.get(stock_id)
             if not stock:
                 return {"success": False, "message": "股票ID无效"}
-
+            industry = Industry.query.get(stock.industryid)
             stock_data = {
                 "stock_id": stock.stockid,
                 "stockname": stock.stockname,
                 "stockprice": stock.stockprice,
-                "industry": stock.industry.industryname
+                "industry": industry.industryname if industry else None
             }
             return {"success": True, "data": stock_data}
         except Exception as e:

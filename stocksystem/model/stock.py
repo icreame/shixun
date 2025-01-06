@@ -9,13 +9,14 @@ class Stock(db.Model):
 
     # 数据库字段定义
     stockid = db.Column(db.Integer, primary_key=True, autoincrement=True)                      # 股票唯一标识符
+    stockcode = db.Column(db.Integer, nullable=False)                       # 股票代码
     stockname = db.Column(db.String(100), nullable=False)                   # 股票名称
-    stockprice = db.Column(db.Float, nullable=False)                        # 股票价格
-    industryid = db.Column(db.Integer, db.ForeignKey('industry.industryid'), nullable=False)  # 外键，关联行业表
+    stockprice = db.Column(db.Float)                        # 股票价格
+    industryid = db.Column(db.Integer)  # 外键，关联行业表
 
-    industry = db.relationship("Industry", backref=db.backref("stocks", lazy=True))
 
-    def __repr__(self,stockname, stockprice, industryid):
+    def __repr__(self,stockname, stockcode,stockprice, industryid):
+        self.stockcode = stockcode
         self.stockname = stockname
         self.stockprice = stockprice
         self.industryid = industryid

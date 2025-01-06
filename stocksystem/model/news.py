@@ -1,5 +1,6 @@
 from model.__init__ import db
 
+
 class News(db.Model):
     __table_args__ = {'extend_existing': True}
     __tablename__ = 'news'

@@ -7,6 +7,7 @@ class SelfSelect(db.Model):
     stockid = db.Column(db.Integer, db.ForeignKey('stock.stockid'), primary_key=True)  # 外键，关联股票表
     userid = db.Column(db.Integer, db.ForeignKey('user.userid'), primary_key=True)    # 外键，关联用户表
 
+
     def __repr__(self,userid, stockid):
         self.userid = userid
         self.stockid = stockid

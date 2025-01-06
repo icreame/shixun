@@ -59,11 +59,11 @@ CREATE TABLE news (
 );
 
 CREATE TABLE IF NOT EXISTS news_analysis (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            news_id INT,
-            sector VARCHAR(255),
-            trend VARCHAR(50),
-            reason TEXT,
-            sentiment VARCHAR(50),
-            FOREIGN KEY (id) REFERENCES news(newsid)
-)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    news_id INT,
+    sector VARCHAR(255),
+    trend VARCHAR(50),
+    reason TEXT,
+    sentiment VARCHAR(50),
+    FOREIGN KEY (news_id) REFERENCES news(newsid)  -- 正确的外键关系
+);

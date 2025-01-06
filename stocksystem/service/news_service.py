@@ -8,7 +8,7 @@ import json
 from openai import OpenAI
 import asyncio
 from gdeltdoc import GdeltDoc
-
+from model.analysis_result import AnalysisResult
 from model.news import News,db
 from model.sentiment import Sentiment
 from model.stock import Stock
@@ -137,7 +137,73 @@ class NewsService:
             return {"success": False, "message": str(e)}
 
     @staticmethod
-    async def fetch_and_analyze_news(keyword):
+    def search_news_by_industry_and_sentiment(industryid=None, sentiment=None, page=1, per_page=10,
+                                              sort_by="publishdate", order="desc"):
+        """
+        根据行业和情感标签搜索新闻，支持分页和排序
+        :param industryid: 行业ID
+        :param sentiment: 情感标签（如 "正面", "负面", "中性"）
+        :param page: 当前页码
+        :param per_page: 每页显示的新闻数量
+        :param sort_by: 排序字段（如 "publishdate"）
+        :param order: 排序顺序（"asc" 或 "desc"）
+        :return: 分页后的新闻列表
+        """
+        try:
+            # 构建基础查询
+            query = News.query.join(AnalysisResult, News.newsid == AnalysisResult.news_id)
+
+            # 根据行业筛选
+            if industryid:
+                query = query.filter(News.industryid == industryid)
+
+            # 根据情感标签筛选
+            if sentiment:
+                query = query.filter(AnalysisResult.sentiment == sentiment)
+
+            # 排序
+            if sort_by == "publishdate":
+                if order == "desc":
+                    query = query.order_by(News.publishdate.desc())
+                else:
+                    query = query.order_by(News.publishdate.asc())
+
+            # 分页查询
+            news_list = query.paginate(page=page, per_page=per_page, error_out=False)
+
+            # 构建返回结果
+            result = []
+            for news in news_list.items:
+                # 获取新闻的情感标签（假设每条新闻只有一条分析结果）
+                sentiment_tag = None
+                if news.analysis_results:  # 检查是否有分析结果
+                    sentiment_tag = news.analysis_results[0].sentiment
+
+                result.append({
+                    "newsid": news.newsid,
+                    "title": news.title,
+                    "url": news.url,
+                    "content": news.content,
+                    "publishdate": news.publishdate.strftime("%Y-%m-%d") if news.publishdate else None,
+                    "sourceid": news.sourceid if news.sourceid else None,
+                    "industryid": news.industryid if news.industryid else None,
+                    "sentimentid": news.sentimentid if news.sentimentid else None,
+                    "stockid": news.stockid if news.stockid else None,
+                    "sentiment": sentiment_tag  # 添加情感标签
+                })
+
+            return {
+                "success": True,
+                "data": result,
+                "total": news_list.total,
+                "page": news_list.page,
+                "per_page": news_list.per_page
+            }
+        except Exception as e:
+            return {"success": False, "message": f"搜索新闻失败: {str(e)}"}
+
+    @staticmethod
+    async def fetch_and_analyze_news(keyword, start_date="2025-01-01", end_date="2025-01-06", num_records=20):
         """
         从 API 获取新闻数据并调用大语言模型进行分析
         """
@@ -148,47 +214,44 @@ class NewsService:
         encoded_keyword = urllib.parse.quote(keyword)
         f = Filters(
             keyword=encoded_keyword,
-            start_date="2025-01-01",  # 调整为过去的时间
-            end_date="2025-01-06",
-            num_records=5,  # 仅获取 5 条新闻用于测试
+            start_date=start_date,
+            end_date=end_date,
+            num_records=num_records,
             country="China",
             language="Chinese"
         )
         try:
             articles = gd.article_search(f)
             if not articles.empty:
-                analysis_results = []
-                news_data = []  # 用于存储新闻数据
-                analysis_data = []  # 用于存储分析结果
+                # 并行调用大语言模型分析新闻
+                tasks = [
+                    NewsService.analyze_news_with_llm(article.get("title"))
+                    for article in articles.to_dict("records")
+                ]
+                analysis_results = await asyncio.gather(*tasks)
 
-                for article in articles.to_dict("records"):
-                    # 调用大语言模型分析新闻
-                    analysis_result = await NewsService.analyze_news_with_llm(article.get("title"))
-                    analysis_results.append(analysis_result)
-
-                    # 将新闻数据存储到列表中
-                    news_data.append({
-                        "title": article.get("title"),
-                        "url": article.get("url"),
-                        "content": None,            # 【0106 暂时需要content为空】
-                        "publishdate": article.get("publish_date"),
-                        "sourceid": None,  # 根据实际情况填写
-                        "industryid": None,  # 根据实际情况填写
-                        "sentimentid": None,  # 根据实际情况填写
-                        "stockid": None  # 根据实际情况填写
+                # 构建配对后的数据列表
+                paired_data = []
+                for article, analysis_result in zip(articles.to_dict("records"), analysis_results):
+                    paired_data.append({
+                        "news": {
+                            "title": article.get("title"),
+                            "url": article.get("url"),
+                            "content": None,  # 【0106 暂时需要content为空】
+                            "publishdate": article.get("publish_date"),
+                            "sourceid": None,  # 根据实际情况填写
+                            "industryid": None,  # 根据实际情况填写
+                            "sentimentid": None,  # 根据实际情况填写
+                            "stockid": None  # 根据实际情况填写
+                        },
+                        "analysis": {
+                            "title": article.get("title"),
+                            "analysis_result": analysis_result
+                        }
                     })
 
-                    # 将分析结果存储到列表中
-                    analysis_data.append({
-                        "title": article.get("title"),
-                        "analysis_result": analysis_result
-                    })
-
-                # # 异步将数据存储到数据库
-                # asyncio.create_task(NewsService.save_data_to_db(news_data, analysis_data))
-
-                # 异步将数据存储到数据库[用于测试为什么数据库没写入]
-                await NewsService.save_data_to_db(news_data, analysis_data)  # 使用 await 确保任务完成
+                # 异步将数据存储到数据库
+                await NewsService.save_data_to_db(paired_data, keyword)  # 传递配对后的数据和 keyword
 
                 return {"success": True, "data": analysis_results}
             else:
@@ -197,7 +260,7 @@ class NewsService:
             return {"success": False, "message": f"关键字 '{keyword}' 查询失败，错误信息: {e}"}
 
     @staticmethod
-    async def save_data_to_db(news_data, analysis_data):
+    async def save_data_to_db(paired_data, keyword):
         """
         异步将新闻数据和分析结果存储到数据库
         """
@@ -211,10 +274,14 @@ class NewsService:
             cursor = conn.cursor()
 
             # 存储新闻数据到 news 表
-            for news in news_data:
+            for pair in paired_data:
+                news = pair["news"]
+                analysis = pair["analysis"]
+
                 # 如果 content 为空，设置默认值
                 content = news["content"] if news["content"] else "无内容"
 
+                # 插入新闻数据
                 cursor.execute("""
                     INSERT INTO news (title, url, content, publishdate, sourceid, industryid, sentimentid, stockid)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -233,20 +300,18 @@ class NewsService:
                 news_id = cursor.lastrowid
                 print(f"插入新闻数据成功，news_id: {news_id}")  # 打印日志
 
-                # 存储分析结果到 news_analysis 表
-                for analysis in analysis_data:
-                    if analysis["title"] == news["title"]:
-                        cursor.execute("""
-                            INSERT INTO news_analysis (news_id, sector, trend, reason, sentiment)
-                            VALUES (%s, %s, %s, %s, %s)
-                        """, (
-                            news_id,
-                            analysis["analysis_result"].get("板块"),
-                            analysis["analysis_result"].get("走势"),
-                            analysis["analysis_result"].get("理由"),
-                            analysis["analysis_result"].get("情感标签")
-                        ))
-                        print(f"插入分析结果成功，news_id: {news_id}")  # 打印日志
+                # 插入分析结果
+                cursor.execute("""
+                    INSERT INTO news_analysis (news_id, sector, trend, reason, sentiment)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    news_id,
+                    keyword,  # 将 keyword 插入到 sector 字段
+                    analysis["analysis_result"].get("走势"),
+                    analysis["analysis_result"].get("理由"),
+                    analysis["analysis_result"].get("情感标签")
+                ))
+                print(f"插入分析结果成功，news_id: {news_id}")  # 打印日志
 
             conn.commit()  # 提交事务
             print("数据存储成功")  # 打印日志
@@ -293,3 +358,6 @@ class NewsService:
             response_data = response.json()
             content = response_data["choices"][0]["message"]["content"]
             return json.loads(content)
+
+
+

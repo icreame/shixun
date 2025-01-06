@@ -86,7 +86,6 @@ def before_request():
     if cached_data is  None or StockService.is_data_expired():
         StockService.update_data()  # 仅在数据过期时更新
 
-
     # 将 stock_data 存储在 g 对象中，以便在视图中使用
     g.stock_data = StockService.load_data_from_cache()
 
@@ -94,7 +93,7 @@ def before_request():
 def stocks_view():
     return render_template('stocks_view.html', data=g.stock_data)
 
-@stock_blueprint.route('/mystock', methods=['post','GET'])
+@stock_blueprint.route('/mystock', methods=['GET'])
 def mystock():
     user_id = session.get('userid')
     if not user_id:
@@ -137,6 +136,20 @@ def mystock():
             "sentiment": "正面"
         }
     ]
+    my_stocks = [
+        {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
+        {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
+    ]
+
+    search_query = request.args.get('search_query', '')
+    page = request.args.get('page', 1, type=int)  # 从 URL 参数获取当前页码
+    # 打印调试信息
 
 
-    return render_template('mystock.html', userid=user_id,user_stocks=user_stocks, stock_news=news_list)
+    # 调用 Service 层获取搜索结果
+    search_results = StockService.search_stocks(search_query, page=page)
+    print("Search Query:", search_query)
+    print("Search Results:", search_results)
+
+    return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
+                           userid=user_id, s=search_results,user_stocks=user_stocks, stock_news=news_list,my_stocks=my_stocks)

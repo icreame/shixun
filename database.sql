@@ -33,7 +33,7 @@ CREATE TABLE industry (
 
 CREATE TABLE stock (
     stockid INT NOT NULL  AUTO_INCREMENT PRIMARY KEY,      -- 股票唯一标识符
-    stockcode INT NOT NULL,                                -- 股票代码
+    stockcode VARCHAR(20) NOT NULL,                                -- 股票代码
     stockname VARCHAR(100) NOT NULL,                       -- 股票名称
     stockprice FLOAT,                                      -- 股票价格
     industryid INT                                         -- 外键，关联行业表
@@ -55,7 +55,7 @@ CREATE TABLE news (
     sourceid INT ,                                -- 外键，关联数据来源
     industryid INT ,                              -- 外键，关联行业
     sentimentid INT ,                                -- 外键，关联情感属性
-    stockid INT                                  -- 外键，关联股票表
+    stockid VARCHAR(20)                                 -- 外键，关联股票表
 );
 
 CREATE TABLE IF NOT EXISTS news_analysis (

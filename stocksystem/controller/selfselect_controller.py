@@ -17,7 +17,12 @@ def add_self_select():
         return jsonify({"success": False, "message": "userid 和 stockid 必须提供"}), 400
 
     result = SelfSelectService.add_self_select(userid, stockid)
-    return jsonify(result)
+    # 返回结果
+    if result['success']:
+        return jsonify({"success": True, "message": result['message']})
+    else:
+        return jsonify({"success": False, "message": result['message']}), 400
+
 
 
 @selfselect_blueprint.route('/<int:userid>', methods=['GET'])

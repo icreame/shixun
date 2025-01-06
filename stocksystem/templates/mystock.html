@@ -4,74 +4,129 @@
     <div class="col-md-12">
         <h1>我的股票</h1>
 
-        <!-- 搜索股票功能 -->
-        <div class="mb-3">
-            <label for="search-input" class="form-label">搜索股票</label>
-            <input type="text" id="search-input" class="form-control" placeholder="输入股票名称或代码">
-        </div>
-        <button class="btn btn-primary" onclick="searchStock()">搜索</button>
+        <!-- 搜索功能 -->
+        <form method="GET" action="{{ url_for('stock.mystock') }}">
+            <div class="row mb-4">
+                <div class="col-md-9">
+                    <input type="text" name="search_query" id="search_query" class="form-control" placeholder="输入股票名称或代码进行搜索" autocomplete="off" value="{{ search_query }}">
+                    <div id="search_suggestions" class="list-group" style="display: none;"></div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">搜索</button>
+                </div>
+            </div>
+        </form>
 
         <!-- 搜索结果 -->
-        <div id="search-results" class="mt-4">
-            <!-- 搜索结果通过 JavaScript 动态加载 -->
-        </div>
+        {% if search_query %}  <!-- 只有在有搜索关键词时才显示搜索结果 -->
+        <div class="card mb-4">
+            <div class="card-header">搜索结果</div>
+            <div class="card-body">
+                {% if search_results.data|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>股票名称</th>
+                            <th>股票代码</th>
+                            <th>行业</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in search_results.data %}
+                        <tr>
+                            <td>{{ stock.stockname }}</td>
+                            <td>{{ stock.stock_id }}</td>
+                            <td><span class="badge bg-info">{{ stock.industry }}</span></td>
+                            <td>
+                               <button class="btn btn-sm btn-success" onclick="addStock('{{ stock.stock_id }}')">
+                                    <i class="bi bi-plus"></i> 添加
+                               </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
+                <!-- 分页 -->
+              <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if search_results.page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page-1, search_query=search_query) }}">上一页</a>
+                    </li>
+                    {% endif %}
+                    {% for p in range(1, search_results.total_pages + 1) %}
+                    <li class="page-item {{ 'active' if p == search_results.page else '' }}">
+                        <a class="page-link" href="{{ url_for('stock.mystock', page=p, search_query=search_query) }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if search_results.page < search_results.total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page+1, search_query=search_query) }}">下一页</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+                {% else %}
+                <p class="text-danger mb-0">未找到与“{{ search_query }}”相关的股票。</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
         <!-- 舆情新闻 -->
         <div class="container mt-4">
             <div class="card shadow-sm">
-                <div class="card-header ">
+                <div class="card-header">
                     <h5 class="mb-0">舆情新闻</h5>
                 </div>
                 <div class="card-body">
                     <!-- 新闻列表 -->
                     <div class="news-list">
                         {% for news in stock_news %}
-                            <div class="news-item card mb-4 border-0">
-                                <div class="card-body p-4">
-                                    <!-- 新闻标题 -->
-                                    <h5 class="card-title mb-3 font-weight-bold">
-                                        {{ news.title }}
-                                    </h5>
+                        <div class="news-item card mb-4 border-0">
+                            <div class="card-body p-4">
+                                <!-- 新闻标题 -->
+                                <h5 class="card-title mb-3 font-weight-bold">
+                                    {{ news.title }}
+                                </h5>
 
-                                    <!-- 新闻来源和时间 -->
-                                    <p class="text-muted small mb-3">
-                                        来源：{{ news.source }} | {{ news.date }}
-                                    </p>
+                                <!-- 新闻来源和时间 -->
+                                <p class="text-muted small mb-3">
+                                    来源：{{ news.source }} | {{ news.date }}
+                                </p>
 
-                                    <!-- 新闻标签 -->
-                                    <div class="mb-2">
-                                        {% for tag in news.tags %}
-                                        <span class="badge bg-primary">{{ tag }}</span>
-                                        {% endfor %}
+                                <!-- 新闻标签 -->
+                                <div class="mb-2">
+                                    {% for tag in news.tags %}
+                                    <span class="badge bg-primary">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- 新闻摘要 -->
+                                <p class="card-text text-muted mb-3">
+                                    {{ news.summary }}
+                                </p>
+
+                                <!-- 交互功能 -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="interaction-buttons">
+                                        <button class="btn btn-outline-primary btn-sm mr-2">
+                                            <i class="bi bi-hand-thumbs-up"></i> 点赞
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm mr-2">
+                                            <i class="bi bi-chat-left-text"></i> 评论
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm">
+                                            <i class="bi bi-share"></i> 分享
+                                        </button>
                                     </div>
 
-                                    <!-- 新闻摘要 -->
-                                    <p class="card-text text-muted mb-3">
-                                        {{ news.summary }}
-                                    </p>
-
-                                    <!-- 交互功能 -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="interaction-buttons">
-                                            <button class="btn btn-outline-primary btn-sm mr-2">
-                                                <i class="bi bi-hand-thumbs-up"></i> 点赞
-                                            </button>
-                                            <button class="btn btn-outline-secondary btn-sm mr-2">
-                                                <i class="bi bi-chat-left-text"></i> 评论
-                                            </button>
-                                            <button class="btn btn-outline-success btn-sm">
-                                                <i class="bi bi-share"></i> 分享
-                                            </button>
-                                        </div>
-
-                                        <!-- 情感分析 -->
-<!--                                        <span class="badge bg-{{ 'success' if news.sentiment == '正面' else 'danger' }} text-white">-->
-<!--                                            {{ news.sentiment }}-->
-<!--                                        </span>-->
-                                        <span class="text-muted small">{{ news.sentiment }}</span>
-                                    </div>
+                                    <!-- 情感分析 -->
+                                    <span class="text-muted small">{{ news.sentiment }}</span>
                                 </div>
                             </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -79,99 +134,89 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block right_sidebar %}
-<h3>自选股列表</h3>
-<ul id="stock-list" class="list-group">
-    <!-- 自选股列表通过 JavaScript 动态加载 -->
-</ul>
-
+<div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+    <ul class="list-group">
+        {% if my_stocks %}
+        {% for stock in my_stocks %}
+        <li class="list-group-item">
+            <h5>{{ stock.name }}</h5>
+            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
+            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">
+                {{ stock.change }}
+            </span></p>
+        </li>
+        {% endfor %}
+        {% else %}
+        <li class="list-group-item">暂无自选股</li>
+        {% endif %}
+    </ul>
+</div>
 {% endblock %}
 
- {% block java_script %}
+{% block java_script %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-        /**
-         * 动态加载自选股列表
-         */
-
-        function loadStocks(userid) {
-            const stockList = document.getElementById("stock-list");
-
-            // 调用后端 API 获取自选股数据
-            axios.get(`/selfselect/${userid}`) // 替换为实际的后端 API 路径
-                .then(response => {
-                    if (response.data.success) {
-                        const stocks = response.data.selfselects;
-                        stockList.innerHTML = ""; // 清空当前列表
-
-                        if (stocks.length === 0) {
-                            stockList.innerHTML = "<li class='list-group-item'>暂无自选股</li>";
-                            return;
-                        }
-
-                        // 遍历自选股数据并渲染到页面
-                        stocks.forEach(stock => {
-                            const stockItem = document.createElement("li");
-                            stockItem.classList.add("stock-item", "list-group-item");
-
-                            stockItem.innerHTML = `
-                                <div class="stock-info">
-                                    <h5>${stock.stock_name}</h5>
-                                    <p>当前价格：<span class="price">¥${stock.price}</span></p>
-                                    <p class="mb-0">
-                                        所属行业：${stock.industry || '未知行业'} |
-                                        涨跌幅：<span class="change-rate ${parseFloat(stock.change_rate) > 0 ? 'positive' : 'negative'}">
-                                            ${stock.change_rate}
-                                        </span> | 舆情新闻：${stock.news_count} 条
-                                    </p>
-                                </div>
-                                <div class="stock-actions">
-                                    <button class="btn btn-danger btn-sm" onclick="removeStock(${stock.stock_id})">取消关注</button>
-                                </div>
-                            `;
-                            stockList.appendChild(stockItem);
+    document.getElementById('search_query').addEventListener('input', function() {
+        const query = this.value;
+        if (query.length > 1) {
+            axios.get('/api/search_suggestions', {
+                params: {
+                    query: query
+                }
+            }).then(response => {
+                const suggestions = response.data;
+                const suggestionsContainer = document.getElementById('search_suggestions');
+                suggestionsContainer.innerHTML = '';
+                if (suggestions.length > 0) {
+                    suggestions.forEach(suggestion => {
+                        const item = document.createElement('a');
+                        item.href = '#';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.textContent = suggestion;
+                        item.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            document.getElementById('search_query').value = suggestion;
+                            suggestionsContainer.style.display = 'none';
                         });
-                    } else {
-                        stockList.innerHTML = "<li class='list-group-item text-danger'>加载失败，请稍后重试。</li>";
-                    }
-                })
-                .catch(error => {
-                    console.error("加载自选股失败:", error);
-                    stockList.innerHTML = "<li class='list-group-item text-danger'>加载失败，请稍后重试。</li>";
-                });
+                        suggestionsContainer.appendChild(item);
+                    });
+                    suggestionsContainer.style.display = 'block';
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+        } else {
+            document.getElementById('search_suggestions').style.display = 'none';
         }
+    });
 
-        /**
-         * 取消自选股
-         */
-        function removeStock(stockId) {
-            if (!confirm("确定要取消关注这只股票吗？")) {
-                return;
-            }
-
-            axios.post(`/selfselect/remove`) // 替换为实际的后端 API 路径
-                .then(response => {
-                    if (response.data.success) {
-                        alert("取消成功");
-                        loadStocks(); // 重新加载列表
-                    } else {
-                        alert("取消失败：" + response.data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error("取消自选股失败:", error);
-                    alert("取消失败，请稍后重试。");
-                });
+    function addStock(stockId) {
+    const userid = 1; // 假设当前用户的 userid 是 1，实际项目中可以从 session 或 cookie 中获取
+    axios.post('/selfselect/add', {
+        userid: userid,
+        stockid: stockId
+    })
+    .then(response => {
+        if (response.data.success) {
+            alert(response.data.message);
+            // 可选：刷新页面或更新自选股列表
+            window.location.reload();
+        } else {
+            alert(response.data.message);
         }
+    })
+    .catch(error => {
+        alert('请求失败：' + error.message);
+    });
+}
 
-
-       // 页面加载完成后调用
-        document.addEventListener("DOMContentLoaded", function() {
-             const userid = {{ userid or 'null' | tojson }};
-            loadStocks(userid); // 在页面加载时调用loadStocks
-        });
-    </script>
+    document.addEventListener('click', function(e) {
+        if (e.target.id !== 'search_query') {
+            document.getElementById('search_suggestions').style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}

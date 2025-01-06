@@ -10,6 +10,10 @@ import asyncio
 from gdeltdoc import GdeltDoc
 
 from model.news import News,db
+from model.sentiment import Sentiment
+from model.stock import Stock
+from model.industry import Industry
+from model.source import  Source
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -49,13 +53,23 @@ class NewsService:
                 "newsid": news.newsid,
                 "title": news.title,
                 "url": news.url,
-                "content": news.content if news.publishdate else "未知",
-                "publishdate": news.publishdate if news.publishdate else "未知",
-                "source": news.source.sourcename if news.source else "未知",
-                "industry": news.industry.industryname if news.industry else "未知",
-                "sentiment": news.sentiment.sentimenttype if news.sentiment else "未知",
-                "stock": news.stock.stockname if news.stock and news.stock else "未知"
+
+                "content": news.content if news.content else None,
+                "publishdate": news.publishdate if news.publishdate else None,
+
             }]
+            if news.sourceid:
+                source=Source.query.get(news.sourceid)
+                news_list.append(source.sourcename)
+            if news.industryid:
+                industry=Industry.query.get(news.industryid)
+                news_list.append(industry.industryname)
+            if news.sentimentid:
+                sentiment=Sentiment.query.get(news.sentimentid)
+                news_list.append(sentiment.sentimenttype)
+            if news.stockid:
+                stock=Stock.query.get(news.stockid)
+                news_list.append(stock.stockname)
             return {"success": True, "data": news_list}
         except Exception as e:
             return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
@@ -67,20 +81,7 @@ class NewsService:
         """
         try:
             new_news = News.query.paginate(page=page, per_page=per_page, error_out=False).items
-            total_news = News.query.count()
-            news_list = [{
-                "newsid": news.newsid,
-                "title": news.title,
-                "url": news.url,
-                "content": news.content if news.publishdate else "未知",
-                "publishdate": news.publishdate if news.publishdate else "未知",
-                "source": news.source.sourcename if news.source else "未知",
-                "industry": news.industry.industryname if news.industry else "未知",
-                "sentiment": news.sentiment.sentimentid if news.sentiment else "未知",
-                "stock": news.stock.stockname if news.stock and news.stock else "未知"
-            } for news in new_news]
 
-            return {"total": total_news,"data": news_list}
         except Exception as e:
             return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
 

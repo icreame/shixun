@@ -1,4 +1,6 @@
 from model.selfselect import SelfSelect,db
+from model.stock import  Stock
+from model.industry import Industry
 
 class SelfSelectService:
 
@@ -15,9 +17,17 @@ class SelfSelectService:
     @staticmethod
     def get_user_self_selects(userid):
         selfselects = SelfSelect.query.filter_by(userid=userid).all()
-        stock_list = [{"stock_id": stock.stockid, "stockname": stock.stock.stockname,
-                       "stockprice": stock.stockprice, "industry": stock.industry.industryname}
-                      for stock in selfselects]
+        stock_list = []
+        for select in selfselects:
+            stocks_item = {
+                "userid":userid
+            }
+
+            if select.stockid:
+                stock = Stock.query.get(select.stockid)
+                stocks_item["stockname"] = stock.stockname if stock else None
+                stocks_item["stockcode"]=stock.stockcode if stock else None
+            stock_list.append(stocks_item)
         return stock_list  # 返回股票id的列表
 
     @staticmethod

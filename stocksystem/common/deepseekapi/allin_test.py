@@ -52,14 +52,14 @@ def save_news_to_db(keyword, articles):
 def get_news_from_db(keyword):
     conn = mysql.connector.connect(**MYSQL_CONFIG)
     cursor = conn.cursor()
-    cursor.execute("SELECT title, content FROM news_internet WHERE keyword = %s", (keyword,))
+    cursor.execute("SELECT title FROM news_internet WHERE keyword = %s", (keyword,))
     news_data = cursor.fetchall()
     conn.close()
     return news_data
 
 
 # 调用大模型分析新闻
-def analyze_news_with_llm(news_title, news_content):
+def analyze_news_with_llm(news_title):
     client = OpenAI(
         api_key="sk-10465596f9e847e389a5e22f10c8e58d",
         base_url="https://api.deepseek.com",
@@ -78,7 +78,7 @@ def analyze_news_with_llm(news_title, news_content):
     }
     """
 
-    user_prompt = f"请分析我给你的新闻，用json格式给出输出，新闻如下：{news_title}\n{news_content}"
+    user_prompt = f"请分析我给你的新闻，用json格式给出输出，新闻如下：{news_title}\n"
 
     messages = [
         {"role": "system", "content": system_prompt},
@@ -124,8 +124,8 @@ def main():
 
     # 从数据库中读取新闻并调用大模型分析
     news_data = get_news_from_db(KEYWORD)
-    for title, content in news_data:
-        analysis_result = analyze_news_with_llm(title, content)
+    for title in news_data:
+        analysis_result = analyze_news_with_llm(title)
         print(f"新闻标题: {title}")
         print(f"分析结果: {analysis_result}")
         print("-" * 50)

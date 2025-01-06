@@ -33,18 +33,16 @@ CREATE TABLE industry (
 
 CREATE TABLE stock (
     stockid INT NOT NULL  AUTO_INCREMENT PRIMARY KEY,      -- 股票唯一标识符
+    stockcode INT NOT NULL,                                -- 股票代码
     stockname VARCHAR(100) NOT NULL,                       -- 股票名称
-    stockprice FLOAT NOT NULL,                             -- 股票价格
-    industryid INT NOT NULL,                               -- 外键，关联行业表
-    FOREIGN KEY (industryid) REFERENCES industry(industryid) -- 外键关联行业表
+    stockprice FLOAT,                                      -- 股票价格
+    industryid INT                                         -- 外键，关联行业表
 );
 
 CREATE TABLE selfselect (
     stockid INT NOT NULL,                                  -- 股票唯一标识符
     userid INT NOT NULL,                                    -- 用户ID
-    PRIMARY KEY (stockid, userid),                          -- 组合主键，确保每个用户只能选择每只股票一次
-    FOREIGN KEY (stockid) REFERENCES stock(stockid),        -- 外键关联股票表
-    FOREIGN KEY (userid) REFERENCES user(userid)           -- 外键关联用户表
+    PRIMARY KEY (stockid, userid)                          -- 组合主键，确保每个用户只能选择每只股票一次
 );
 
 
@@ -57,9 +55,15 @@ CREATE TABLE news (
     sourceid INT ,                                -- 外键，关联数据来源
     industryid INT ,                              -- 外键，关联行业
     sentimentid INT ,                                -- 外键，关联情感属性
-    stockid INT ,                                 -- 外键，关联股票表
-    FOREIGN KEY (sourceid) REFERENCES source(sourceid),  -- 外键关联数据来源表
-    FOREIGN KEY (industryid) REFERENCES industry(industryid), -- 外键关联行业表
-    FOREIGN KEY (sentimentid) REFERENCES sentiment(sentimentid), -- 外键关联情感属性表
-    FOREIGN KEY (stockid) REFERENCES stock(stockid)      -- 外键关联股票表
+    stockid INT                                  -- 外键，关联股票表
 );
+
+CREATE TABLE IF NOT EXISTS news_analysis (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            news_id INT,
+            sector VARCHAR(255),
+            trend VARCHAR(50),
+            reason TEXT,
+            sentiment VARCHAR(50),
+            FOREIGN KEY (id) REFERENCES news(newsid)
+)

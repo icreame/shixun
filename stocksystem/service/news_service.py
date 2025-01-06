@@ -148,8 +148,8 @@ class NewsService:
         encoded_keyword = urllib.parse.quote(keyword)
         f = Filters(
             keyword=encoded_keyword,
-            start_date="2023-01-01",  # 调整为过去的时间
-            end_date="2023-12-31",
+            start_date="2025-01-01",  # 调整为过去的时间
+            end_date="2025-01-06",
             num_records=5,  # 仅获取 5 条新闻用于测试
             country="China",
             language="Chinese"

@@ -57,3 +57,13 @@ CREATE TABLE news (
     sentimentid INT ,                                -- 外键，关联情感属性
     stockid INT                                  -- 外键，关联股票表
 );
+
+CREATE TABLE IF NOT EXISTS news_analysis (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            news_id INT,
+            sector VARCHAR(255),
+            trend VARCHAR(50),
+            reason TEXT,
+            sentiment VARCHAR(50),
+            FOREIGN KEY (id) REFERENCES news(newsid)
+)

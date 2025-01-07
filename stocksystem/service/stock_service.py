@@ -4,7 +4,7 @@ import logging
 from model.stock import Stock,db
 from model.industry import Industry
 from sqlalchemy.sql import text
-
+from sqlalchemy import or_
 import tushare as ts
 import datetime
 import akshare as ak
@@ -128,29 +128,45 @@ class StockService:
         :param per_page: 每页显示数量
         :return: 分页后的股票数据
         """
-        all_stocks = StockService.get_all_stocks()['data']
+        try:
+            # 基础查询
+            query_result = Stock.query
 
-        # 过滤股票数据
-        if query:
-            filtered_stocks = [
-                stock for stock in all_stocks
-                if query.lower() in stock['stockname'].lower() or query.lower() in stock['stock_id'].lower()
-            ]
-        else:
-            filtered_stocks = all_stocks
+            # 如果有查询关键词，使用数据库的模糊搜索
+            if query:
+                query_result = query_result.filter(
+                    or_(
+                        Stock.stockname.ilike(f"%{query}%"),
+                        Stock.stockcode.ilike(f"%{query}%")
+                    )
+                )
 
-        # 分页逻辑
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_stocks = filtered_stocks[start:end]
+            # 分页
+            paginated_result = query_result.paginate(page=page, per_page=per_page)
+            stock_list=[]
+            for stock in paginated_result:
+                stock_item = {
+                    "stockid": stock.stockcode,
+                    "stockname": stock.stockname,
+                }
 
-        return {
-            'data': paginated_stocks,
-            'total': len(filtered_stocks),
-            'page': page,
-            'per_page': per_page,
-            'total_pages': (len(filtered_stocks) + per_page - 1) // per_page
-        }
+                if stock.industryid:
+                    industry=Industry.query.get(stock.industryid)
+
+                    stock_item["industry"] = industry.industryname if industry else None
+
+                stock_list.append(stock_item)
+
+            # 返回结果
+            return {
+                'data': stock_list,
+                'total': paginated_result.total,
+                'page': paginated_result.page,
+                'per_page': paginated_result.per_page,
+                'total_pages': paginated_result.pages
+            }
+        except Exception as e:
+            return {"success": False, "message": str(e)}
 
     @staticmethod
     def get_stock_by_id(stock_id):

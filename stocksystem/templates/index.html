@@ -393,9 +393,11 @@
                     {% if my_stocks %}
                         {% for stock in my_stocks %}
                         <li class="list-group-item">
-                            <h5>{{ stock.name }}</h5>
-                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
-                            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">{{ stock.change }}</span></p>
+<!--                            <h5>{{ stock.stockname }}({{stock.stockcode}})</h5>-->
+<!--                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>-->
+<!--                            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">-->
+<!--                                {{ stock.change }}</span></p>-->
+
                         </li>
                         {% endfor %}
                     {% else %}

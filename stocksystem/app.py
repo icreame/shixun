@@ -14,6 +14,7 @@ from stocksystem.service.industry_service import IndustryService
 from stocksystem.service.news_service import NewsService
 from math import ceil
 
+from stocksystem.service.selfselect_service import SelfSelectService
 from stocksystem.service.sentiment_service import SentimentService
 from stocksystem.service.source_service import SourceService
 
@@ -61,18 +62,6 @@ def create_app():
         industries=IndustryService.get_all_industries()
         sources=SourceService.get_all_sources()
         sentiments=SentimentService.get_all_sentiments()
-
-        # 检查会话中是否存在userid
-        if 'userid' in session:  # 判断session中是否有userid
-            userid = session['userid']  # 从会话中获取userid
-        else:
-
-            userid = None
-
-        my_stocks = [
-            {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
-            {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
-        ]
         per_page = 5
         page = request.args.get('page', 1, type=int)  # 获取当前页，默认为1
 
@@ -94,6 +83,19 @@ def create_app():
             page_range = [1, '...'] + page_range
         if page_range[-1] < total_pages:
             page_range = page_range + ['...'] + [total_pages]
+
+        # 检查会话中是否存在userid
+        if 'userid' in session:  # 判断session中是否有userid
+            userid = session['userid']  # 从会话中获取userid
+            my_stocks = SelfSelectService.get_user_self_selects(userid)
+        else:
+
+            userid = None
+
+        my_stocks = [
+            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "change": "5.2%"},
+            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
+        ]
 
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,

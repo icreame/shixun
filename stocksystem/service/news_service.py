@@ -8,6 +8,8 @@ import json
 from openai import OpenAI
 import asyncio
 from gdeltdoc import GdeltDoc
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 from model.analysis_result import AnalysisResult
 from model.news import News,db
 from model.sentiment import Sentiment
@@ -77,43 +79,51 @@ class NewsService:
     @staticmethod
     def get_all_news(page, per_page):
         """
-        获取所有新闻
+        获取所有新闻及其分析结果
+        :param page: 当前页码
+        :param per_page: 每页显示的记录数
+        :return: 包含新闻及其分析结果的 JSON 数据
         """
         try:
-            new_news = News.query.paginate(page=page, per_page=per_page, error_out=False).items
+            # 分页查询新闻及其关联的新闻分析结果
+            paginated_news = (
+                News.query
+                .options(joinedload(News.analysis_results))  # 使用 joinedload 预加载分析结果
+                .paginate(page=page, per_page=per_page, error_out=False)
+            )
             total_news = News.query.count()
 
             news_list = []
-            for news in new_news:
+            for news in paginated_news.items:
                 news_item = {
                     "newsid": news.newsid,
                     "title": news.title,
                     "url": news.url,
-                    "content": news.content if news.content else None,
-                    "publishdate": news.publishdate if news.publishdate else None
+                    "content": news.content,
+                    "publishdate": news.publishdate.isoformat() if news.publishdate else None,
                 }
 
-                if news.sourceid:
-                    source = Source.query.get(news.sourceid)
-                    news_item["sourcename"] = source.sourcename if source else None
-
-                if news.industryid:
-                    industry = Industry.query.get(news.industryid)
-                    news_item["industryname"] = industry.industryname if industry else None
-
-                if news.sentimentid:
-                    sentiment = Sentiment.query.get(news.sentimentid)
-                    news_item["sentiment"] = sentiment.sentiment if sentiment else None
-
-                if news.stockid:
-                    stock = Stock.query.get(news.stockid)
-                    news_item["stockname"] = stock.stockname if stock else None
+                # 添加新闻分析结果
+                if news.analysis_results:
+                    for analysis in news.analysis_results:
+                        news_item.update({
+                            "sector": analysis.sector,
+                            "trend": analysis.trend,
+                            "reason": analysis.reason,
+                            "sentiment": analysis.sentiment,
+                        })
 
                 news_list.append(news_item)
 
-            return {"total":total_news,"data":news_list}
+            return {
+                "total": total_news,
+                "page": page,
+                "per_page": per_page,
+                "data": news_list,
+            }
         except Exception as e:
-            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
+            return {"success": False, "message": f"获取新闻及其分析结果失败: {str(e)}"}
+
     @staticmethod
     def delete_news(newsid):
         """
@@ -164,6 +174,40 @@ class NewsService:
         except Exception as e:
             db.session.rollback()
             return {"success": False, "message": str(e)}
+
+    @staticmethod
+    def get_sentiment_by_industry():
+        """
+        获取每个行业的正面和负面新闻数量
+        """
+        try:
+            # 查询每个行业的正面和负面新闻数量
+            result = (
+                db.session.query(
+                    Industry.industryname,
+                    func.sum(func.if_(AnalysisResult.sentiment == '正面', 1, 0)).label('positive_count'),
+                    func.sum(func.if_(AnalysisResult.sentiment == '负面', 1, 0)).label('negative_count')
+                )
+                .join(News, News.industryid == Industry.industryid)
+                .join(AnalysisResult, AnalysisResult.news_id == News.newsid)
+                .group_by(Industry.industryname)
+                .all()
+            )
+
+            # 将结果转换为字典格式
+            sentiment_data = [
+                {
+                    "industry": row.industryname,
+                    "positive": row.positive_count,
+                    "negative": row.negative_count
+                }
+                for row in result
+            ]
+
+            return {"success": True, "data": sentiment_data}
+        except Exception as e:
+            return {"success": False, "message": f"获取情感分析数据失败: {str(e)}"}
+
 
     @staticmethod
     def search_news_by_industry_and_sentiment(industryid=None, sentiment=None, page=1, per_page=10,
@@ -239,6 +283,7 @@ class NewsService:
         # 初始化 GDELT
         gd = GdeltDoc()
 
+        # TODO
         # 获取新闻数据
         encoded_keyword = urllib.parse.quote(keyword)
         f = Filters(
@@ -279,6 +324,7 @@ class NewsService:
                         }
                     })
 
+                # TODO
                 # 异步将数据存储到数据库
                 await NewsService.save_data_to_db(paired_data, keyword)  # 传递配对后的数据和 keyword
 
@@ -387,6 +433,7 @@ class NewsService:
             response_data = response.json()
             content = response_data["choices"][0]["message"]["content"]
             return json.loads(content)
+
 
 
 

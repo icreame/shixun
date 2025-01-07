@@ -198,3 +198,12 @@ async def analyze_all_news():
         "success": True,
         "data": results
     })
+
+
+@news_blueprint.route('/sentiment-by-industry', methods=['GET'])
+def get_sentiment_by_industry():
+    """
+    获取每个行业的正面和负面新闻数量
+    """
+    result = NewsService.get_sentiment_by_industry()
+    return jsonify(result)

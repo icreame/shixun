@@ -42,3 +42,40 @@ button:hover {
 p {
     color: #555;
 }
+/* 引入颜色配置文件 */
+@import url('color.css');
+
+/* 图表容器样式 */
+#sentimentChart {
+    width: 100%;
+    height: 400px;
+}
+
+/* 卡片样式 */
+.card {
+    margin-top: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 1rem;
+}
+
+.card-header h5 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* 其他全局样式（如果有） */
+.container-fluid {
+    padding: 20px;
+}

@@ -97,6 +97,12 @@ def create_app():
             {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
         ]
 
+        """
+            主页路由，直接返回行业情感分析数据
+            """
+        # 调用服务层方法获取行业情感分析数据【0107新增index渲染的行业情感分析】
+        sentiment_by_indutry = NewsService.get_sentiment_by_industry()
+
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,
                                current_page=page,page_range=page_range,
@@ -104,7 +110,8 @@ def create_app():
                                sources=sources,
                                sentiments=sentiments,
                                threshold=7,
-                               total_news=total_news
+                               total_news=total_news,
+                               sentiment_data=sentiment_by_indutry["data"]
                                )
 
     return app

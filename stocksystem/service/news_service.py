@@ -239,6 +239,7 @@ class NewsService:
         # 初始化 GDELT
         gd = GdeltDoc()
 
+        # TODO
         # 获取新闻数据
         encoded_keyword = urllib.parse.quote(keyword)
         f = Filters(
@@ -279,6 +280,7 @@ class NewsService:
                         }
                     })
 
+                # TODO
                 # 异步将数据存储到数据库
                 await NewsService.save_data_to_db(paired_data, keyword)  # 传递配对后的数据和 keyword
 

@@ -23,23 +23,19 @@ class SelfSelectService:
             # 查询用户自选股
             # 显式使用 join 来连接 SelfSelect 和 Stock 表
             selfselects = db.session.query(SelfSelect, Stock).join(Stock, SelfSelect.stockid == Stock.stockid).filter(SelfSelect.userid == userid).all()
-
-            # selfselects = SelfSelect.query.filter_by(userid=userid).all()  # 根据userid查询自选股
-            if not selfselects:  # 检查是否找到自选股
-                return []  # 如果没有自选股，返回空列表
-
-            # 将查询结果转换为字典列表
-            stock_list = [
-                {
-                    "stock_id": st.stockid,  # 股票ID
-                    "stockname": st.stockname,  # 股票名称
-                    "stockprice": st.stockprice,  # 股票价格
-                    "industry": st.industry.industryname  # 行业名称
+            selfselects = SelfSelect.query.filter_by(userid=userid).all()
+            stock_list = []
+            for select in selfselects:
+                stocks_item = {
+                    "userid": userid
                 }
-                for st in selfselects
-            ]
 
-            return stock_list  # 返回股票信息的列表
+                if select.stockid:
+                    stock = Stock.query.get(select.stockid)
+                    stocks_item["stockname"] = stock.stockname if stock else None
+                    stocks_item["stockcode"] = stock.stockcode if stock else None
+                stock_list.append(stocks_item)
+            return stock_list  # 返回股票id的列表
         except Exception as e:
             # 记录异常信息
             return {"success": False, "message": str(e)}

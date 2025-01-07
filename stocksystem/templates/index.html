@@ -3,281 +3,448 @@
 {% block title %}Stock Analysis System{% endblock %}
 
 {% block content %}
-      <!-- Main Content -->
-    <div class="container-fluid">
+<div class="container-fluid">
+    <div class="style_module-wrapper_sA7">
+    <div class="style_module-header_eYx">
+        <h3>市场一览</h3>
+    </div>
+        <hr class="my-3">
+    <div class="style_market-overview_AJA">
+        <div class="row">
+            <!-- 上证指数 -->
+            <div class="col-md-3">
+                <div class="index_index-chart_2Vn">
+                        <h2 class="index_index-quote-name_17h">上证指数</h2>
+                        <p class="index_index-quote-digit_1mR index_green_3Y4">
+                            <span class="index_quote-current_3wf">3197.77</span>
+                            <span class="index_quote-chg_2C7">-9.15(-0.29%)</span>
+                        </p>
+                        <div style="margin-top: 5px;">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="220" height="85">
+                                <!-- SVG 路径数据 -->
+                                <path fill="none" d="M0.5 60.5L180.5 60.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 40.5L180.5 40.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 20.5L180.5 20.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <text x="183.5" y="78" text-anchor="start" font-size="10px">3195</text>
+                                <text x="183.5" y="58" text-anchor="start" font-size="10px">3200</text>
+                                <text x="183.5" y="38" text-anchor="start" font-size="10px">3205</text>
+                                <text x="183.5" y="18" text-anchor="start" font-size="10px">3210</text>
+                                <path fill="none" d="M0.5 65.08L1.24 53.56L1.99 60L2.73 52.92L3.48 38.52L4.22 51.4L4.96 21.36L5.71 27.28L6.45 25L7.19 22.2L7.94 25.84L8.68 24.4L9.43 20.32L10.17 10.84L10.91 7.56L11.66 10.32L12.4 16.08L13.14 17.28L13.89 15.68L14.63 31.16L15.38 29.16L16.12 33.6L16.86 48.44L17.61 40.96L18.35 36.2L19.1 35.96L19.84 43.72L20.58 42.72L21.33 43.8L22.07 51.64L22.81 36.12L23.56 21.04L24.3 11.24L25.05 22.76L25.79 35.92L26.53 42.36L27.28 43.64L28.02 45.12L28.76 44.52L29.51 38.28L30.25 37.04L31 41.96L31.74 40L32.48 36.56L33.23 38.8L33.97 44.48L34.71 39.44L35.46 43L36.2 47.84L36.95 45.44L37.69 44L38.43 38.04L39.18 39.2L39.92 40.12L40.66 47.28L41.41 44.72L42.15 35.16L42.9 28.84L43.64 27.32L44.38 32.36L45.13 35.12L45.87 38.12L46.62 31.2L47.36 37.56L48.1 45.12L48.85 46.2L49.59 48.48L50.33 60.32L51.08 66L51.82 64.2L52.57 71.96L53.31 64.76L54.05 68.92" stroke="#287DFF" stroke-width="1"></path>
+                                <path d="M0.5 30.5L180.5 30.5" stroke="#c10" stroke-dasharray="1,3"></path>
+                            </svg>
+                        </div>
+                </div>
+            </div>
 
-        <div class="container mt-4">
+            <!-- 深证成指 -->
+            <div class="col-md-3">
+                <div class="index_index-chart_2Vn">
+                        <h2 class="index_index-quote-name_17h">深证成指</h2>
+                        <p class="index_index-quote-digit_1mR index_red_3lM">
+                            <span class="index_quote-current_3wf">9897.1</span>
+                            <span class="index_quote-chg_2C7">+11.45(+0.12%)</span>
+                        </p>
+                        <div style="margin-top: 5px;">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="220" height="85">
+                                <!-- SVG 路径数据 -->
+                                <path fill="none" d="M0.5 60.5L180.5 60.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 40.5L180.5 40.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 20.5L180.5 20.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <text x="183.5" y="78" text-anchor="start" font-size="10px">9800</text>
+                                <text x="183.5" y="58" text-anchor="start" font-size="10px">9850</text>
+                                <text x="183.5" y="38" text-anchor="start" font-size="10px">9900</text>
+                                <text x="183.5" y="18" text-anchor="start" font-size="10px">9950</text>
+                                <path fill="none" d="M0.5 59.66L1.24 52.94L1.99 53.93L2.73 45.18L3.48 35.64L4.22 38.48L4.96 29.58L5.71 31.65L6.45 29.42L7.19 27.52L7.94 32.66L8.68 33.45L9.43 31.44L10.17 26.65L10.91 23.02L11.66 20.55L12.4 23.27L13.14 22.84L13.89 22.47L14.63 25.18L15.38 21.08L16.12 22.69L16.86 28.78L17.61 25.56L18.35 19.99L19.1 18.79L19.84 23.02L20.58 25.89L21.33 26.06L22.07 29.96L22.81 20.08L23.56 18.24L24.3 12.73L25.05 15.82L25.79 18.31L26.53 23.35L27.28 25.78L28.02 26.5L28.76 27.91L29.51 24.67L30.25 23.86L31 28.35L31.74 28.58L32.48 27.36L33.23 28.34L33.97 32.5L34.71 30.51L35.46 31.91L36.2 32.06L36.95 31.06L37.69 31.86L38.43 29.26L39.18 29.82L39.92 30.81L40.66 31.36L41.41 32.31L42.15 28.16L42.9 26.11L43.64 24.35L44.38 29.81L45.13 30.83L45.87 32.13L46.62 26.75L47.36 31.09L48.1 37.28L48.85 38.88L49.59 36.89L50.33 40.82L51.08 42.05L51.82 42.44L52.57 43.81L53.31 40.93L54.05 42.15L54.8 42.9L55.54 43.38L56.29 41.16" stroke="#287DFF" stroke-width="1"></path>
+                                <path d="M0.5 56.5L180.5 56.5" stroke="#c10" stroke-dasharray="1,3"></path>
+                            </svg>
+                        </div>
+
+                </div>
+            </div>
+
+            <!-- 创业板指 -->
+            <div class="col-md-3">
+                <div class="index_index-chart_2Vn">
+                        <h2 class="index_index-quote-name_17h">创业板指</h2>
+                        <p class="index_index-quote-digit_1mR index_green_3Y4">
+                            <span class="index_quote-current_3wf">2004.04</span>
+                            <span class="index_quote-chg_2C7">-10.15(-0.50%)</span>
+                        </p>
+                        <div style="margin-top: 5px;">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="220" height="85">
+                                <!-- SVG 路径数据 -->
+                                <path fill="none" d="M0.5 66.5L180.5 66.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 53.5L180.5 53.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 40.5L180.5 40.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 26.5L180.5 26.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 13.5L180.5 13.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <text x="183.5" y="78" text-anchor="start" font-size="10px">1990</text>
+                                <text x="183.5" y="64.67" text-anchor="start" font-size="10px">1995</text>
+                                <text x="183.5" y="51.33" text-anchor="start" font-size="10px">2000</text>
+                                <text x="183.5" y="38" text-anchor="start" font-size="10px">2005</text>
+                                <text x="183.5" y="24.67" text-anchor="start" font-size="10px">2010</text>
+                                <text x="183.5" y="11.33" text-anchor="start" font-size="10px">2015</text>
+                                <path fill="none" d="M0.5 70.53L1.24 61.52L1.99 57.84L2.73 39.12L3.48 21.25L4.22 21.6L4.96 16.08L5.71 15.92L6.45 16.45L7.19 21.04L7.94 33.6L8.68 36.32L9.43 35.87L10.17 30.56L10.91 25.52L11.66 21.6L12.4 25.73L13.14 21.6L13.89 22.69L14.63 24.08L15.38 17.01L16.12 18.08L16.86 25.79L17.61 20.48L18.35 13.12L19.1 13.28L19.84 20.16L20.58 25.89L21.33 24.37L22.07 29.6L22.81 16.51L23.56 12.51L24.3 2.11L25.05 8.75L25.79 10.08L26.53 16.83L27.28 18.11L28.02 20.59L28.76 24.8L29.51 18.96L30.25 16.24L31 23.87L31.74 25.15L32.48 23.09L33.23 26.19L33.97 30.08L34.71 26.91L35.46 29.57L36.2 28.11L36.95 28.19L37.69 30.11L38.43 25.63L39.18 27.09L39.92 28.83L40.66 28.05L41.41 29.76L42.15 23.97L42.9 20.72L43.64 19.41L44.38 28.48L45.13 30.48L45.87 31.25L46.62 26.75L47.36 31.09L48.1 40.48L48.85 43.57L49.59 37.73L50.33 43.68L51.08 45.81L51.82 46.67L52.57 47.71L53.31 40.93L54.05 45.01L54.8 44.96L55.54 46.27L56.29 42.37" stroke="#287DFF" stroke-width="1"></path>
+                                <path d="M0.5 15.5L180.5 15.5" stroke="#c10" stroke-dasharray="1,3"></path>
+                            </svg>
+                        </div>
+
+                </div>
+            </div>
+
+            <!-- 科创50 -->
+            <div class="col-md-3">
+                <div class="index_index-chart_2Vn">
+                        <h2 class="index_index-quote-name_17h">科创50</h2>
+                        <p class="index_index-quote-digit_1mR index_red_3lM">
+                            <span class="index_quote-current_3wf">942.87</span>
+                            <span class="index_quote-chg_2C7">+4.16(+0.44%)</span>
+                        </p>
+                        <div style="margin-top: 5px;">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="220" height="85">
+                                <!-- SVG 路径数据 -->
+                                <path fill="none" d="M0.5 64.5L180.5 64.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 48.5L180.5 48.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 32.5L180.5 32.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <path fill="none" d="M0.5 16.5L180.5 16.5" stroke="#ccc" stroke-dasharray="1,3"></path>
+                                <text x="183.5" y="78" text-anchor="start" font-size="10px">936</text>
+                                <text x="183.5" y="62" text-anchor="start" font-size="10px">939</text>
+                                <text x="183.5" y="46" text-anchor="start" font-size="10px">942</text>
+                                <text x="183.5" y="30" text-anchor="start" font-size="10px">945</text>
+                                <text x="183.5" y="14" text-anchor="start" font-size="10px">948</text>
+                                <path fill="none" d="M0.5 67.04L1.24 60.11L1.99 56.91L2.73 43.04L3.48 42.08L4.22 45.44L4.96 38.88L5.71 37.87L6.45 31.95L7.19 28.16L7.94 35.84L8.68 40.11L9.43 37.44L10.17 27.63L10.91 20.32L11.66 20.69L12.4 30.51L13.14 29.55L13.89 19.25L14.63 33.65L15.38 25.39L16.12 27.95L16.86 34.61L17.61 22.99L18.35 16.32L19.1 15.68L19.84 21.49L20.58 28.85L21.33 28.75L22.07 37.28L22.81 25.01L23.56 28.11L24.3 17.12L25.05 16L25.79 20.43L26.53 23.36L27.28 27.31L28.02 26.83L28.76 31.04L29.51 25.71L30.25 22.45L31 27.84L31.74 24.8L32.48 23.25L33.23 20.37L33.97 26.51L34.71 22.56L35.46 22.67L36.2 25.6L36.95 27.52L37.69 28.11L38.43 25.49L39.18 22.08L39.92 17.97L40.66 26.93L41.41 30.56L42.15 23.25L42.9 20.75L43.64 15.79L44.38 24.8L45.13 22.61L45.87 24.64L46.62 20.85L47.36 30.08L48.1 36.16L48.85 40.05L49.59 38.83L50.33 40L51.08 41.65L51.82 45.17L52.57 47.04L53.31 42.29L54.05 43.09L54.8 43.63L55.54 47.84L56.29 43.36" stroke="#287DFF" stroke-width="1"></path>
+                                <path d="M0.5 77.5L180.5 77.5" stroke="#c10" stroke-dasharray="1,3"></path>
+                            </svg>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- 趋势图卡片 -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">看涨看跌综合分析</h5>
+        </div>
+        <div class="card-body">
+            <div id="trend-chart" style="height: 200px;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="container mt-4">
         <div class="row">
             <div class="col-12">
-                <div class="border p-3 rounded">
+                <form method="get" action="{{ url_for('home') }}" class="border p-3 rounded">
                     <!-- 筛选栏标题 -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0">筛选条件</h5>
-                        <span class="badge bg-primary">总采集数据量：45694条</span>
+                        <span class="badge bg-primary">总采集数据量：{{ total_news }}条</span>
                     </div>
 
                     <!-- 行业筛选 -->
                     <div class="mb-4">
-                        <h6>涉及行业</h6>
-                        <div class="collapse" id="industry-options">
-                            <div class="d-flex flex-wrap">
-                                {% for industry in industries %}
-                                <button type="button" class="btn btn-outline-primary me-2 mb-2">{{ industry['industryname'] }}</button>
-                                {% endfor %}
-                            </div>
+                        <h6>涉及行业 ({{ industries|length }})</h6>
+                        <div class="d-flex flex-wrap">
+                            {% for industry in industries %}
+                                {% if loop.index <= threshold %}
+                                    <div class="form-check me-2 mb-2">
+                                        <input type="checkbox" class="form-check-input" name="industry" value="{{ industry.industryname }}"
+                                               id="industry-{{ loop.index }}" {% if industry.industryname in selected_industries %}checked{% endif %}>
+                                        <label class="form-check-label" for="industry-{{ loop.index }}">{{ industry.industryname }} ({{ industry.count }})</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#industry-options" aria-expanded="false">
-                            展开更多
-                        </button>
+                        {% if industries|length > threshold %}
+                            <div class="collapse" id="industry-collapse">
+                                <div class="d-flex flex-wrap">
+                                    {% for industry in industries %}
+                                        {% if loop.index > threshold %}
+                                            <div class="form-check me-2 mb-2">
+                                                <input type="checkbox" class="form-check-input" name="industry" value="{{ industry.industryname }}" id="industry-{{ loop.index }}" {% if industry.industryname in selected_industries %}checked{% endif %}>
+                                                <label class="form-check-label" for="industry-{{ loop.index }}">{{ industry.industryname }} ({{ industry.count }})</label>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#industry-collapse" aria-expanded="false">
+                                展开更多
+                            </button>
+                        {% endif %}
                     </div>
 
                     <!-- 情感属性筛选 -->
                     <div class="mb-4">
-                        <h6>情感属性</h6>
-                        <div class="collapse" id="sentiment-options">
-                            <div class="d-flex flex-wrap">
-                                {% for sentiment in sentiments %}
-                                <button type="button" class="btn btn-outline-secondary me-2 mb-2">{{ sentiment.sentiment }}</button>
-                                {% endfor %}
-                            </div>
+                        <h6>情感属性 ({{ sentiments|length }})</h6>
+                        <div class="d-flex flex-wrap">
+                            {% for sentiment in sentiments %}
+                                {% if loop.index <= threshold %}
+                                    <div class="form-check me-2 mb-2">
+                                        <input type="checkbox" class="form-check-input" name="sentiment" value="{{ sentiment.sentiment }}" id="sentiment-{{ loop.index }}" {% if sentiment.sentiment in selected_sentiments %}checked{% endif %}>
+                                        <label class="form-check-label" for="sentiment-{{ loop.index }}">{{ sentiment.sentiment }} ({{ sentiment.count }})</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#sentiment-options" aria-expanded="false">
-                            展开更多
-                        </button>
+                        {% if sentiments|length > threshold %}
+                            <div class="collapse" id="sentiment-collapse">
+                                <div class="d-flex flex-wrap">
+                                    {% for sentiment in sentiments %}
+                                        {% if loop.index > threshold %}
+                                            <div class="form-check me-2 mb-2">
+                                                <input type="checkbox" class="form-check-input" name="sentiment" value="{{ sentiment.sentiment }}" id="sentiment-{{ loop.index }}" {% if sentiment.sentiment in selected_sentiments %}checked{% endif %}>
+                                                <label class="form-check-label" for="sentiment-{{ loop.index }}">{{ sentiment.sentiment }} ({{ sentiment.count }})</label>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#sentiment-collapse" aria-expanded="false">
+                                展开更多
+                            </button>
+                        {% endif %}
                     </div>
 
                     <!-- 数据来源筛选 -->
                     <div class="mb-4">
-                        <h6>数据来源</h6>
-                        <div class="collapse" id="source-options">
-                            <div class="d-flex flex-wrap">
-                                {% for source in sources %}
-                                <button type="button" class="btn btn-outline-success me-2 mb-2">{{ source.sourcename }}</button>
-                                {% endfor %}
-                            </div>
+                        <h6>数据来源 ({{ sources|length }})</h6>
+                        <div class="d-flex flex-wrap">
+                            {% for source in sources %}
+                                {% if loop.index <= threshold %}
+                                    <div class="form-check me-2 mb-2">
+                                        <input type="checkbox" class="form-check-input" name="source" value="{{ source.sourcename }}" id="source-{{ loop.index }}" {% if source.sourcename in selected_sources %}checked{% endif %}>
+                                        <label class="form-check-label" for="source-{{ loop.index }}">{{ source.sourcename }} ({{ source.count }})</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <button class="btn btn-link text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#source-options" aria-expanded="false">
-                            展开更多
-                        </button>
+                        {% if sources|length > threshold %}
+                            <div class="collapse" id="source-collapse">
+                                <div class="d-flex flex-wrap">
+                                    {% for source in sources %}
+                                        {% if loop.index > threshold %}
+                                            <div class="form-check me-2 mb-2">
+                                                <input type="checkbox" class="form-check-input" name="source" value="{{ source.sourcename }}" id="source-{{ loop.index }}" {% if source.sourcename in selected_sources %}checked{% endif %}>
+                                                <label class="form-check-label" for="source-{{ loop.index }}">{{ source.sourcename }} ({{ source.count }})</label>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#source-collapse" aria-expanded="false">
+                                展开更多
+                            </button>
+                        {% endif %}
                     </div>
-                </div>
+
+                    <!-- 提交按钮 -->
+                    <button type="submit" class="btn btn-primary">应用筛选</button>
+                </form>
             </div>
         </div>
     </div>
 
-
-          <!-- 舆情新闻 -->
-        <div class="container mt-4">
-                <div class="card shadow-sm">
-                    <div class="card-header ">
-                        <h5 class="mb-0">舆情新闻</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- 新闻列表 -->
-                        <div class="news-list">
-                            {% for news in stock_news %}
-                                <div class="news-item card mb-4 border-0">
-                                    <div class="card-body p-4">
-                                        <h5 class="card-title mb-3 font-weight-bold">
-                                            {{ news.title }}
-                                            <!-- 添加跳转箭头图标 -->
-                                            <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
-                                                <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
-                                            </a>
-                                        </h5>
-                                        <!-- 新闻来源和时间 -->
-                                        <p class="text-muted small mb-3">
-                                            来源：{{ news.source }} | {{ news.publishdate }}
-                                        </p>
-
-                                        <!-- 新闻标签 -->
-                                        <div class="mb-2">
-                                            {% for tag in news.tags %}
-                                                <span class="badge bg-primary">{{ tag }}</span>
-                                            {% endfor %}
-                                        </div>
-
-                                        <!-- 新闻摘要 -->
-                                        <p class="card-text text-muted mb-3">
-                                            {{ news.content | truncate(100, True) }}
-                                        </p>
-
-                                        <!-- 交互功能 -->
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="interaction-buttons">
-                                                <button class="btn btn-outline-primary btn-sm mr-2">
-                                                    <i class="bi bi-hand-thumbs-up"></i> 点赞
-                                                </button>
-                                                <button class="btn btn-outline-secondary btn-sm mr-2">
-                                                    <i class="bi bi-chat-left-text"></i> 评论
-                                                </button>
-                                                <button class="btn btn-outline-success btn-sm">
-                                                    <i class="bi bi-share"></i> 分享
-                                                </button>
-                                            </div>
-                                            <!-- 情感分析 -->
-                                            <span class="text-muted small">{{ news.sentiment }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                        <!-- 分页按钮 -->
-                        <div class="pagination">
-                            <ul class="pagination justify-content-center">
-                                <!-- 上一页 -->
-                                <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
-                                    <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-
-                                <!-- 页码 -->
-                                {% for page_num in page_range %}
-                                    {% if page_num == '...' %}
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                                    {% else %}
-                                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
-                                            <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
-                                        </li>
-                                    {% endif %}
+    <!-- 舆情新闻 -->
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">舆情新闻</h5>
+            </div>
+            <div class="card-body">
+                <div class="news-list">
+                    {% for news in stock_news %}
+                    <div class="news-item card mb-4 border-0">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3 font-weight-bold">
+                                {{ news.title }}
+                                <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
+                                    <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
+                                </a>
+                            </h5>
+                            <p class="text-muted small mb-3">
+                                行业：{{ news.industryname }} | {{ news.publishdate }}
+                            </p>
+                            <div class="mb-2">
+                                {% for tag in news.tags %}
+                                <span class="badge bg-primary">{{ tag }}</span>
                                 {% endfor %}
-
-                                <!-- 下一页 -->
-                                <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
-                                    <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
+                            </div>
+                            <p class="card-text text-muted mb-3">
+                                {{ news.content | truncate(100, True) }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="interaction-buttons">
+                                    <button class="btn btn-outline-primary btn-sm mr-2">
+                                        <i class="bi bi-hand-thumbs-up"></i> 点赞
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm mr-2">
+                                        <i class="bi bi-chat-left-text"></i> 评论
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-share"></i> 分享
+                                    </button>
+                                </div>
+                                <span class="sentiment-badge
+                                    {% if news.sentiment == '看涨' %}bg-danger{% elif news.sentiment == '看跌' %}bg-success{% else %}bg-secondary{% endif %}
+                                    text-white small p-1 rounded d-flex align-items-center">
+                                    {% if news.sentiment == '看涨' %}
+                                        <i class="bi bi-graph-up-arrow me-1"></i> 看涨
+                                    {% elif news.sentiment == '看跌' %}
+                                        <i class="bi bi-graph-down-arrow me-1"></i> 看跌
+                                    {% else %}
+                                        <i class="bi bi-dash-circle me-1"></i> 中性
+                                    {% endif %}
+                                </span>
+                            </div>
                         </div>
-
                     </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 分页按钮 -->
+                <div class="pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% for page_num in page_range %}
+                        {% if page_num == '...' %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% else %}
+                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-
+        </div>
     </div>
-
-
+</div>
 {% endblock %}
 
 {% block right_sidebar %}
-    <!-- Right Sidebar -->
-                <!-- 明细涨跌Top10 -->
-        <div class="card">
-            <div class="card-header">
-                <h5>明细涨跌Top10</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- 涨幅部分 -->
-                    <div class="col-6">
-                        <h6 class="text-danger text-center">涨幅 Top10</h6>
-                        <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
-                            {% for stock in top10_data if stock.change > 0 %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
-                                <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    {{ stock.name }}
-                                </span>
-                                <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">
-                                    +{{ stock.change }}%
-                                </span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                    <!-- 跌幅部分 -->
-                    <div class="col-6">
-                        <h6 class="text-success text-center">跌幅 Top10</h6>
-                        <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
-                            {% for stock in top10_data if stock.change <0 %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
-                                 <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    {{ stock.name }}
-                                </span>
-                                <span class="badge bg-success rounded-pill" style="font-size: 0.7rem;">
-                                    {{ stock.change }}%
-                                </span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- 自选股与自选股新闻切换 -->
-        <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="watchlist-tab" data-bs-toggle="pill" href="#watchlist" role="tab" aria-controls="watchlist" aria-selected="true">我的自选股</a>
+<!-- Right Sidebar -->
+<div class="card">
+    <div class="card-header">
+        <h5>明细涨跌Top10</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- 涨幅部分 -->
+            <div class="col-6">
+                <h6 class="text-danger text-center">涨幅 Top10</h6>
+                <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
+                    {% for stock in top10_data if stock.change > 0 %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
+                        <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stock.name }}</span>
+                        <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">+{{ stock.change }}%</span>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="news-tab" data-bs-toggle="pill" href="#news" role="tab" aria-controls="news" aria-selected="false">自选股新闻</a>
-                    </li>
+                    {% endfor %}
                 </ul>
             </div>
-            <div class="card-body">
-                <div class="tab-content" id="myTabContent">
-                    <!-- 我的自选股 -->
-                <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
-                    <ul class="list-group">
-                        {% if my_stocks %}
-                            {% for stock in my_stocks %}
-                                <li class="list-group-item">
-                                    <h5>{{ stock.name }}</h5>
-                                    <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
-                                    <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">
-                                        {{ stock.change }}
-                                    </span></p>
-                                </li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="list-group-item">暂无自选股</li>
-                        {% endif %}
-                    </ul>
-                </div>
-                    <!-- 自选股新闻 -->
-                    <div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <h6 class="mb-1">自选股新闻标题 1</h6>
-                                <p class="mb-1">这条新闻关于自选股的市场分析。</p>
-                            </a>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <h6 class="mb-1">自选股新闻标题 </h6>
-                                <p class="mb-1">自选股的最新动态。</p>
-                            </a>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <h6 class="mb-1">自选股新闻标题 3</h6>
-                                <p class="mb-1">市场反应影响自选股。</p>
-                            </a>
-                        </div>
-                    </div>
+            <!-- 跌幅部分 -->
+            <div class="col-6">
+                <h6 class="text-success text-center">跌幅 Top10</h6>
+                <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
+                    {% for stock in top10_data if stock.change < 0 %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
+                        <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stock.name }}</span>
+                        <span class="badge bg-success rounded-pill" style="font-size: 0.7rem;">{{ stock.change }}%</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 自选股与自选股新闻切换 -->
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="watchlist-tab" data-bs-toggle="pill" href="#watchlist" role="tab" aria-controls="watchlist" aria-selected="true">我的自选股</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="news-tab" data-bs-toggle="pill" href="#news" role="tab" aria-controls="news" aria-selected="false">自选股新闻</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content" id="myTabContent">
+            <!-- 我的自选股 -->
+            <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+                <ul class="list-group">
+                    {% if my_stocks %}
+                        {% for stock in my_stocks %}
+                        <li class="list-group-item">
+                            <h5>{{ stock.name }}</h5>
+                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
+                            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">{{ stock.change }}</span></p>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">暂无自选股</li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- 自选股新闻 -->
+            <div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 1</h6>
+                        <p class="mb-1">这条新闻关于自选股的市场分析。</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 2</h6>
+                        <p class="mb-1">自选股的最新动态。</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 3</h6>
+                        <p class="mb-1">市场反应影响自选股。</p>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 {% endblock %}
 
- {% block java_script %}
+{% block java_script %}
 <script>
-function toggleOptions(sectionId, toggleButton) {
-    const section = document.getElementById(sectionId);
-    const isCollapsed = section.classList.contains('collapsed');
+   fetch('/api/market-data')
+    .then(response => response.json())
+    .then(data => {
+        // 更新上证指数
+        document.querySelector('#shanghai .index_quote-current_3wf').textContent = data.shanghai.price;
+        document.querySelector('#shanghai .index_quote-chg_2C7').textContent = data.shanghai.change;
 
-    if (isCollapsed) {
-        section.classList.remove('collapsed');
-        toggleButton.textContent = '收起';
-    } else {
-        section.classList.add('collapsed');
-        toggleButton.textContent = '展开更多';
-    }
-}
+        // 更新深证成指
+        document.querySelector('#shenzhen .index_quote-current_3wf').textContent = data.shenzhen.price;
+        document.querySelector('#shenzhen .index_quote-chg_2C7').textContent = data.shenzhen.change;
 
+        // 更新创业板指
+        document.querySelector('#chuangye .index_quote-current_3wf').textContent = data.chuangye.price;
+        document.querySelector('#chuangye .index_quote-chg_2C7').textContent = data.chuangye.change;
 
+        // 更新科创50
+        document.querySelector('#kechuang .index_quote-current_3wf').textContent = data.kechuang.price;
+        document.querySelector('#kechuang .index_quote-chg_2C7').textContent = data.kechuang.change;
+    });
 </script>
 {% endblock %}

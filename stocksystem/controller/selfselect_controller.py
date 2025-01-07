@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from service.selfselect_service import SelfSelectService
 
+from stocksystem.service.stock_service import StockService
+
 selfselect_blueprint = Blueprint('selfselect', __name__)
 
 
@@ -11,11 +13,12 @@ def add_self_select():
     """
     data = request.json
     userid = data.get('userid')
-    stockid = data.get('stockid')
+    stockcode = data.get('stockid')
 
-    if not userid or not stockid:
-        return jsonify({"success": False, "message": "userid 和 stockid 必须提供"}), 400
+    if not userid or not stockcode:
+        return jsonify({"success": False, "message": "userid 和 stockcode 必须提供"}), 400
 
+    stockid=StockService.get_stockid_by_stockcode(stockcode)
     result = SelfSelectService.add_self_select(userid, stockid)
     # 返回结果
     if result['success']:

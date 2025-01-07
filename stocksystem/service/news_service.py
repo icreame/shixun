@@ -90,7 +90,7 @@ class NewsService:
                     "title": news.title,
                     "url": news.url,
                     "content": news.content if news.content else None,
-                    "publishdate": news.publishdate if news.publishdate else None,
+                    "publishdate": news.publishdate if news.publishdate else None
                 }
 
                 if news.sourceid:
@@ -103,7 +103,7 @@ class NewsService:
 
                 if news.sentimentid:
                     sentiment = Sentiment.query.get(news.sentimentid)
-                    news_item["sentimenttype"] = sentiment.sentimenttype if sentiment else None
+                    news_item["sentiment"] = sentiment.sentiment if sentiment else None
 
                 if news.stockid:
                     stock = Stock.query.get(news.stockid)

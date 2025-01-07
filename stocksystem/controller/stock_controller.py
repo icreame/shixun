@@ -153,3 +153,10 @@ def mystock():
 
     return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
                            userid=user_id, s=search_results,user_stocks=user_stocks, stock_news=news_list,my_stocks=my_stocks)
+
+
+@stock_blueprint.route('/get_index_data', methods=['GET'])
+def index_data():
+    result=StockService.get_index_data()
+    print(result)
+    return jsonify(result)

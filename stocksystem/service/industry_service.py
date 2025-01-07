@@ -32,7 +32,9 @@ class IndustryService:
     @staticmethod
     def get_all_industries():
         try:
+
             industries = Industry.query.all()
+
             industries_list = [
                 {"industryid": i.industryid, "industryname": i.industryname, "description": i.description} for i in
                 industries]

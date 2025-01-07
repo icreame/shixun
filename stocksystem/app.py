@@ -62,7 +62,13 @@ def create_app():
         sources=SourceService.get_all_sources()
         sentiments=SentimentService.get_all_sentiments()
 
-        userid=session['userid']
+        # 检查会话中是否存在userid
+        if 'userid' in session:  # 判断session中是否有userid
+            userid = session['userid']  # 从会话中获取userid
+        else:
+
+            userid = None
+
         my_stocks = [
             {"code": "301252", "name": "阿里云科技", "latest": "37.08", "change": "5.2%"},
             {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
@@ -95,6 +101,8 @@ def create_app():
                                industries=industries,
                                sources=sources,
                                sentiments=sentiments,
+                               threshold=7,
+                               total_news=total_news
                                )
 
     return app

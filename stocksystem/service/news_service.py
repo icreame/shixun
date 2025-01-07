@@ -8,6 +8,8 @@ import json
 from openai import OpenAI
 import asyncio
 from gdeltdoc import GdeltDoc
+from sqlalchemy.orm import joinedload
+
 from model.analysis_result import AnalysisResult
 from model.news import News,db
 from model.sentiment import Sentiment
@@ -77,43 +79,51 @@ class NewsService:
     @staticmethod
     def get_all_news(page, per_page):
         """
-        获取所有新闻
+        获取所有新闻及其分析结果
+        :param page: 当前页码
+        :param per_page: 每页显示的记录数
+        :return: 包含新闻及其分析结果的 JSON 数据
         """
         try:
-            new_news = News.query.paginate(page=page, per_page=per_page, error_out=False).items
+            # 分页查询新闻及其关联的新闻分析结果
+            paginated_news = (
+                News.query
+                .options(joinedload(News.analysis_results))  # 使用 joinedload 预加载分析结果
+                .paginate(page=page, per_page=per_page, error_out=False)
+            )
             total_news = News.query.count()
 
             news_list = []
-            for news in new_news:
+            for news in paginated_news.items:
                 news_item = {
                     "newsid": news.newsid,
                     "title": news.title,
                     "url": news.url,
-                    "content": news.content if news.content else None,
-                    "publishdate": news.publishdate if news.publishdate else None
+                    "content": news.content,
+                    "publishdate": news.publishdate.isoformat() if news.publishdate else None,
                 }
 
-                if news.sourceid:
-                    source = Source.query.get(news.sourceid)
-                    news_item["sourcename"] = source.sourcename if source else None
-
-                if news.industryid:
-                    industry = Industry.query.get(news.industryid)
-                    news_item["industryname"] = industry.industryname if industry else None
-
-                if news.sentimentid:
-                    sentiment = Sentiment.query.get(news.sentimentid)
-                    news_item["sentiment"] = sentiment.sentiment if sentiment else None
-
-                if news.stockid:
-                    stock = Stock.query.get(news.stockid)
-                    news_item["stockname"] = stock.stockname if stock else None
+                # 添加新闻分析结果
+                if news.analysis_results:
+                    for analysis in news.analysis_results:
+                        news_item.update({
+                            "sector": analysis.sector,
+                            "trend": analysis.trend,
+                            "reason": analysis.reason,
+                            "sentiment": analysis.sentiment,
+                        })
 
                 news_list.append(news_item)
 
-            return {"total":total_news,"data":news_list}
+            return {
+                "total": total_news,
+                "page": page,
+                "per_page": per_page,
+                "data": news_list,
+            }
         except Exception as e:
-            return {"success": False, "message": f"获取新闻信息失败: {str(e)}"}
+            return {"success": False, "message": f"获取新闻及其分析结果失败: {str(e)}"}
+
     @staticmethod
     def delete_news(newsid):
         """
@@ -389,6 +399,7 @@ class NewsService:
             response_data = response.json()
             content = response_data["choices"][0]["message"]["content"]
             return json.loads(content)
+
 
 
 

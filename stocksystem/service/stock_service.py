@@ -289,7 +289,7 @@ class StockService:
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
-        df = pro.daily(trade_date='20250103')  # 获取指定日期的股票数据
+        df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
         # 排序：按照涨跌幅 (pct_chg) 排序，降序
         top10_up = df.sort_values(by='pct_chg', ascending=False).head(10)
         top10_down = df.sort_values(by='pct_chg', ascending=True).head(10)
@@ -476,3 +476,36 @@ class StockService:
             'kc50_index': kc50_index.to_dict(orient='records')
         }
 
+    @staticmethod
+    def get_limit_stocks():
+        """
+        获取昨日A股的涨跌数据
+        :return: 返回涨停和跌停股票的DataFrame
+        """
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
+        trade_time = yesterday.strftime('%Y%m%d')
+
+        df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
+        pct_chg = df['pct_chg']
+
+        # 定义区间边界
+        bins = [-float('inf'), -8, -6, -4, -2, 0, 2, 4, 6, 8, float('inf')]
+        labels = ['<-8%', '<-6%', '<-4%', '<-2%', '<0%', '<2%', '<4%', '<6%', '<8%', '>8%']
+
+        # 使用pd.cut将涨跌幅划分到指定的区间
+        pct_chg_bins = pd.cut(pct_chg, bins=bins, labels=labels)
+
+        # 统计每个区间的股票数量
+        counts = pct_chg_bins.value_counts().sort_index()
+        # 上涨股票数量
+        up_count = len(df[df['pct_chg'] > 0])
+        # 下跌股票数量
+        down_count = len(df[df['pct_chg'] < 0])
+
+        # 将统计结果按顺序排列并返回为列表
+        result = [counts.get(label, 0) for label in labels]
+        results={
+            "up_total":up_count, "down_total": down_count,"data":result
+        }
+
+        return results

@@ -337,7 +337,7 @@ class NewsService:
                     news_id,
                     keyword,  # 将 keyword 插入到 sector 字段
                     analysis["analysis_result"].get("走势"),
-                    analysis["analysis_result"].get("理由"),
+                    analysis["analysis_result"].get("分析的理由"),      # 【0107】这里标签的名字出错了，所以之前的理由无法存入数据库
                     analysis["analysis_result"].get("情感标签")
                 ))
                 print(f"插入分析结果成功，news_id: {news_id}")  # 打印日志

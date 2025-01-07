@@ -1,3 +1,5 @@
+import random
+
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
 from flask_cors import CORS
 from service.stock_service import StockService
@@ -153,3 +155,18 @@ def index_data():
 def limit_stocks():
     result = StockService.get_limit_stocks()
     return jsonify(result)
+
+@stock_blueprint.route('/stock-limit-data')
+def stock_limit_data():
+    # 生成模拟数据
+    time_range = [f"{hour:02d}:{minute:02d}" for hour in range(9, 16) for minute in range(60)]
+    up_limit = [random.randint(0, 20) for _ in range(len(time_range))]  # 涨停数据
+    down_limit = [random.randint(0, 10) for _ in range(len(time_range))]  # 跌停数据
+
+    data = {
+        "time_range": time_range,
+        "up_limit": up_limit,
+        "down_limit": down_limit
+    }
+    print(data)
+    return jsonify(data)

@@ -2,6 +2,72 @@
 
 {% block title %}Stock Analysis System{% endblock %}
 
+
+{% block market_summary %}
+           <div class="card market-summary-card">
+        <div class="card-body">
+            <div class="row">
+                <!-- 左侧切换按钮和数据 -->
+                <div class="col-md-3">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <!-- 涨跌分布 -->
+                        <a class="nav-link active" id="v-pills-distribution-tab" data-toggle="pill" href="#v-pills-distribution" role="tab" aria-controls="v-pills-distribution" aria-selected="true">
+                            <div class="option-content">
+                                <div class="icon-title">
+                                    <i class="bi bi-bar-chart-fill"></i>
+                                    <h4>涨跌分布</h4>
+                                </div>
+                                <div class="data">
+                                    <div class="up">
+                                        <span class="count">4393只</span>
+                                        <span class="label">上涨</span>
+                                    </div>
+                                    <div class="down">
+                                        <span class="count">902只</span>
+                                        <span class="label">下跌</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- 涨跌停 -->
+                        <a class="nav-link" id="v-pills-limit-tab" data-toggle="pill" href="#v-pills-limit" role="tab" aria-controls="v-pills-limit" aria-selected="false">
+                            <div class="option-content">
+                                <div class="icon-title">
+                                    <i class="bi bi-graph-up"></i>
+                                    <h4>涨跌停</h4>
+                                </div>
+                                <div class="data">
+                                    <div class="up-limit">
+                                        <span class="count">104只</span>
+                                        <span class="label">涨停</span>
+                                    </div>
+                                    <div class="down-limit">
+                                        <span class="count">18只</span>
+                                        <span class="label">跌停</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- 右侧图表 -->
+                <div class="col-md-9">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <!-- 涨跌分布图表 -->
+                        <div class="tab-pane fade show active" id="v-pills-distribution" role="tabpanel" aria-labelledby="v-pills-distribution-tab">
+                            <div id="distributionChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <!-- 涨跌停图表 -->
+                        <div class="tab-pane fade " id="v-pills-limit" role="tabpanel" aria-labelledby="v-pills-limit-tab">
+                            <div id="limitChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="style_module-wrapper_sA7">
@@ -121,19 +187,6 @@
         </div>
     </div>
 </div>
-
-
-    <!-- 趋势图卡片 -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5 class="mb-0">看涨看跌综合分析</h5>
-        </div>
-        <div class="card-body">
-            <div id="trend-chart" style="height: 200px;">
-                <canvas id="trendChart"></canvas>
-            </div>
-        </div>
-    </div>
 
     <!-- 添加 ECharts 图表容器 -->
     <div class="card mt-4">
@@ -262,15 +315,16 @@
 
     <!-- 舆情新闻 -->
     <div class="container mt-4">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0">舆情新闻</h5>
-            </div>
-            <div class="card-body">
-                <div class="news-list">
-                    {% for news in stock_news %}
-                    <div class="news-item card mb-4 border-0">
-                        <div class="card-body p-4">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">舆情新闻</h5>
+        </div>
+        <div class="card-body">
+            <div class="news-list">
+                {% for news in stock_news %}
+                <div class="news-item card mb-4 border-0">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start">
                             <h5 class="card-title mb-3 font-weight-bold">
                                 {{ news.title }}
                                 <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
@@ -377,6 +431,19 @@
 
 {% block right_sidebar %}
 <!-- Right Sidebar -->
+<!--大盘饼图-->
+<div class="card">
+    <div class="card-header">
+        <h5>大盘评级</h5>
+    </div>
+    <div class="hcharts-right">
+        <div class="pie" id="dppj" style="width: 200px; height: 200px;"></div>
+        <p><label>投资建议</label></p>
+        <p id="tzjy">大盘走势良好，积极参与</p>
+    </div>
+</div>
+
+<!--top10-->
 <div class="card">
     <div class="card-header">
         <h5>明细涨跌Top10</h5>
@@ -466,6 +533,46 @@
 {% endblock %}
 
 {% block java_script %}
+    <!-- 引入 ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!--左侧饼图-->
+<script>
+    // 初始化 ECharts
+    const pieChart = echarts.init(document.getElementById('dppj'));
+
+    // 饼图配置
+    const pieOption = {
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [{
+            type: 'pie',
+            radius: ['60%', '90%'], // 内半径和外半径
+            avoidLabelOverlap: false,
+            label: {
+                show: true, // 显示标签
+                position: 'center', // 标签位置在中心
+                formatter: '{c}分', // 只显示分数
+                fontSize: 24,
+                fontWeight: 'bold',
+                color: '#d75442'
+            },
+            data: [
+                { value: 6.1, name: '大盘评级', itemStyle: { color: '#d75442' } }, // 红色部分
+                { value: 3.9, name: '剩余', itemStyle: { color: '#f5f5f5' } } // 灰色部分
+            ]
+        }]
+    };
+
+    // 设置配置项
+    pieChart.setOption(pieOption);
+</script>
+
+<!--四个折线图-->
 <script>
    fetch('/api/market-data')
     .then(response => response.json())
@@ -488,10 +595,7 @@
     });
 </script>
 
-        {#    插入情感分析表#}
-    <!-- 引入 ECharts -->
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
-
+<!--情感分析-->
 <script>
     // 获取 CSS 变量
     const positiveColor = getComputedStyle(document.documentElement).getPropertyValue('--positive-color').trim();
@@ -564,27 +668,19 @@
     // 页面加载完成后渲染图表
     document.addEventListener('DOMContentLoaded', renderSentimentChart);
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- 引入 ECharts -->
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
-
-
-
+<!--涨跌柱状图-->
 <script>
-    // 假设后端传递的数据是 updowns
-    const updowns = {{ updowns | tojson}};
+ const updowns = {{ updowns | tojson }};
 
     // 渲染左侧数据
     document.querySelector('.up .count').textContent = `${updowns.up_total}只`;
     document.querySelector('.down .count').textContent = `${updowns.down_total}只`;
+       // 渲染涨跌停数据
+    document.querySelector('.up-limit .count').textContent = `${updowns.data[9]}只`; // 大于0.8的数据
+    document.querySelector('.down-limit .count').textContent = `${updowns.data[0]}只`; // 小于-0.8的数据
 
-    // 渲染涨跌停数据
-    document.querySelector('.up-limit .count').textContent = `${updowns.data[10]}只`;
-    document.querySelector('.down-limit .count').textContent = `${updowns.data[0]}只`;
-   // 涨跌分布柱状图
+    // 涨跌分布柱状图
     const distributionChart = echarts.init(document.getElementById('distributionChart'));
     const distributionOption = {
         tooltip: {
@@ -595,23 +691,23 @@
         },
         xAxis: {
             type: 'category',
-            data: ['跌停', '-8%', '-6%', '-4%', '-2%', '0%', '2%', '4%', '6%', '8%', '涨停'],
+            data: ['跌停', '-0.6', '-0.4', '-0.2', '0', '0.2', '0.4', '0.6', '0.8', '涨停'],
             name: '涨跌指数',
             nameLocation: 'center',
             nameGap: 25
         },
         yAxis: {
             type: 'value',
-<!--            name: '股票数量',-->
             nameLocation: 'center',
             nameGap: 25
         },
         series: [{
-            data: {{updowns['data']}},
+            data: updowns.data, // 使用后端传递的数据
             type: 'bar',
             itemStyle: {
                 color: function (params) {
-                    const colors = ['#dc3545', '#dc3545', '#dc3545', '#dc3545', '#dc3545', '#6c757d', '#28a745', '#28a745', '#28a745', '#28a745', '#28a745'];
+                    // 定义颜色数组，负数为红色，正数为绿色
+                    const colors = ['#dc3545', '#dc3545', '#dc3545', '#dc3545', '#dc3545', '#6c757d', '#28a745', '#28a745', '#28a745', '#28a745'];
                     return colors[params.dataIndex];
                 }
             },
@@ -623,42 +719,83 @@
         }]
     };
     distributionChart.setOption(distributionOption);
-    // 涨跌停折线图
-    const limitChart = echarts.init(document.getElementById('limitChart'));
-    const limitOption = {
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'line'
-            }
-        },
-        xAxis: {
-            type: 'category',
-            data: ['涨停', '跌停']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [{
-            data: [104, 18],
-            type: 'line',
-            smooth: true,
-            lineStyle: {
-                color: '#287DFF'
-            },
-            itemStyle: {
-                color: '#287DFF'
-            }
-        }]
-    };
-    limitChart.setOption(limitOption);
 
-    // 监听窗口大小变化，调整图表大小
-    window.addEventListener('resize', () => {
-        distributionChart.resize();
-        limitChart.resize();
-    });
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+            console.log('正在请求数据...'); // 调试信息
+            fetch('/stock/stock-limit-data') // 替换为你的后端接口地址
+                .then(response => response.json())
+                .then(data => {
+                    console.log('获取到的数据:', data); // 打印数据
+                    renderChart(data);
+                })
+                .catch(error => {
+                    console.error('获取数据失败:', error);
+                });
+
+            function renderChart(data) {
+                const option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'line'
+                        }
+                    },
+                    legend: {
+                        data: ['涨停', '跌停']
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: data.time_range,
+                        name: '时间',
+                        nameLocation: 'center',
+                        nameGap: 30,
+                        axisLabel: {
+                            rotate: 45
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '股票数量',
+                        nameLocation: 'center',
+                        nameGap: 30
+                    },
+                    series: [
+                        {
+                            name: '涨停',
+                            type: 'line',
+                            data: data.up_limit,
+                            itemStyle: {
+                                color: '#28a745'
+                            },
+                            areaStyle: {
+                                color: 'rgba(40, 167, 69, 0.2)'
+                            }
+                        },
+                        {
+                            name: '跌停',
+                            type: 'line',
+                            data: data.down_limit,
+                            itemStyle: {
+                                color: '#dc3545'
+                            },
+                            areaStyle: {
+                                color: 'rgba(220, 53, 69, 0.2)'
+                            }
+                        }
+                    ]
+                };
+                console.log('ECharts 配置:', option); // 打印配置
+                const chart = echarts.init(document.getElementById('limitChart'));
+                chart.setOption(option);
+
+                window.addEventListener('resize', () => {
+                    chart.resize();
+                });
+            }
+        });
+    </script>
 
 {% endblock %}

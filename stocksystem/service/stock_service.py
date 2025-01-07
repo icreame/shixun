@@ -268,6 +268,7 @@ class StockService:
 
         return False
 
+    @staticmethod
     def load_data_from_cache():
         """从 session 加载数据"""
         return session.get(STOCK_DATA_KEY, None)

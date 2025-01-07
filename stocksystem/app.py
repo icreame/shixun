@@ -101,6 +101,7 @@ def create_app():
             'down_total': 902,  # 下跌股票总数
             'data': [18, 2000, 1731, 1674, 1500, 1000, 689, 677, 500, 201, 104]  # 涨跌分布数据
         }
+        updowns=StockService.get_limit_stocks()
         print(updowns['data'])
 
         """
@@ -117,10 +118,8 @@ def create_app():
                                sentiments=sentiments,
                                threshold=7,
                                total_news=total_news,
-                               sentiment_data=sentiment_by_indutry["data"]
-                               total_news=total_news,
+                               sentiment_data=sentiment_by_indutry["data"],
                                updowns=updowns
-
                                )
 
     return app

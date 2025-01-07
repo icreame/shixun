@@ -148,3 +148,8 @@ def index_data():
     result=StockService.get_index_data()
     print(result)
     return jsonify(result)
+
+@stock_blueprint.route('/get_limit_stocks',methods=['GET'])
+def limit_stocks():
+    result=StockService.get_limit_stocks()
+    return jsonify(result)

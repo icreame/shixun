@@ -9,7 +9,7 @@ from openai import OpenAI
 import asyncio
 from gdeltdoc import GdeltDoc
 from sqlalchemy.orm import joinedload
-
+from sqlalchemy import func
 from model.analysis_result import AnalysisResult
 from model.news import News,db
 from model.sentiment import Sentiment
@@ -174,6 +174,40 @@ class NewsService:
         except Exception as e:
             db.session.rollback()
             return {"success": False, "message": str(e)}
+
+    @staticmethod
+    def get_sentiment_by_industry():
+        """
+        获取每个行业的正面和负面新闻数量
+        """
+        try:
+            # 查询每个行业的正面和负面新闻数量
+            result = (
+                db.session.query(
+                    Industry.industryname,
+                    func.sum(func.if_(AnalysisResult.sentiment == '正面', 1, 0)).label('positive_count'),
+                    func.sum(func.if_(AnalysisResult.sentiment == '负面', 1, 0)).label('negative_count')
+                )
+                .join(News, News.industryid == Industry.industryid)
+                .join(AnalysisResult, AnalysisResult.news_id == News.newsid)
+                .group_by(Industry.industryname)
+                .all()
+            )
+
+            # 将结果转换为字典格式
+            sentiment_data = [
+                {
+                    "industry": row.industryname,
+                    "positive": row.positive_count,
+                    "negative": row.negative_count
+                }
+                for row in result
+            ]
+
+            return {"success": True, "data": sentiment_data}
+        except Exception as e:
+            return {"success": False, "message": f"获取情感分析数据失败: {str(e)}"}
+
 
     @staticmethod
     def search_news_by_industry_and_sentiment(industryid=None, sentiment=None, page=1, per_page=10,

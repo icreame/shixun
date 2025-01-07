@@ -49,7 +49,7 @@ CREATE TABLE selfselect (
 CREATE TABLE news (
     newsid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,      -- 舆情新闻唯一标识，主键
     title VARCHAR(200) NOT NULL,                          -- 新闻标题
-    url VARCHAR(200) NOT NULL ,                   -- 新闻url
+    url VARCHAR(200)  ,                   -- 新闻url
     content TEXT ,                                -- 新闻内容
     publishdate DATE ,                            -- 新闻发布时间
     sourceid INT ,                                -- 外键，关联数据来源

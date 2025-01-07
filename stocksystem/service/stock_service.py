@@ -12,6 +12,7 @@ import pandas as pd
 import time
 from flask import g
 from flask import session
+from collections import OrderedDict
 
 # 设置你的 Tushare Token
 ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
@@ -497,15 +498,23 @@ class StockService:
 
         # 统计每个区间的股票数量
         counts = pct_chg_bins.value_counts().sort_index()
+
+        # 将 int64 转换为 Python 原生 int
+        counts = counts.astype(int)
+
         # 上涨股票数量
         up_count = len(df[df['pct_chg'] > 0])
         # 下跌股票数量
         down_count = len(df[df['pct_chg'] < 0])
 
         # 将统计结果按顺序排列并返回为列表
-        result = [counts.get(label, 0) for label in labels]
-        results={
-            "up_total":up_count, "down_total": down_count,"data":result
-        }
+        result = [int(counts.get(label, 0)) for label in labels]  # 确保每个值都是 Python 原生 int
+
+        # 使用 OrderedDict 保持顺序（【0107】不然因为json是无序的，所以输出也是无序的，好像没用？）
+        results = OrderedDict([
+            ("up_total", int(up_count)),
+            ("down_total", int(down_count)),
+            ("data", result)
+        ])
 
         return results

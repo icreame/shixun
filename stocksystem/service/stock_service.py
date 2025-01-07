@@ -141,30 +141,33 @@ class StockService:
                     )
                 )
 
-            # 分页
-            paginated_result = query_result.paginate(page=page, per_page=per_page)
-            stock_list=[]
-            for stock in paginated_result:
-                stock_item = {
-                    "stockid": stock.stockcode,
-                    "stockname": stock.stockname,
+                # 分页操作，注意 .items 获取当前页的数据
+                paginated_result = query_result.paginate(page=page, per_page=per_page, error_out=False)
+
+                # 构造股票列表
+                stock_list = []
+                for stock in paginated_result.items:  # 使用 paginated_result.items 获取当前页的数据
+                    stock_item = {
+                        "stock_id": stock.stockcode,
+                        "stockname": stock.stockname,
+                    }
+
+                    # 关联行业信息
+                    if stock.industryid:
+                        industry = Industry.query.get(stock.industryid)
+                        stock_item["industry"] = industry.industryname if industry else None
+
+                    stock_list.append(stock_item)
+
+                # 返回分页结果
+                return {
+                    'data': stock_list,
+                    'total': paginated_result.total,
+                    'page': paginated_result.page,
+                    'per_page': paginated_result.per_page,
+                    'total_pages': paginated_result.pages
                 }
 
-                if stock.industryid:
-                    industry=Industry.query.get(stock.industryid)
-
-                    stock_item["industry"] = industry.industryname if industry else None
-
-                stock_list.append(stock_item)
-
-            # 返回结果
-            return {
-                'data': stock_list,
-                'total': paginated_result.total,
-                'page': paginated_result.page,
-                'per_page': paginated_result.per_page,
-                'total_pages': paginated_result.pages
-            }
         except Exception as e:
             return {"success": False, "message": str(e)}
 
@@ -289,7 +292,7 @@ class StockService:
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
-        df = pro.daily(trade_date='20250103')  # 获取指定日期的股票数据
+        df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
         # 排序：按照涨跌幅 (pct_chg) 排序，降序
         top10_up = df.sort_values(by='pct_chg', ascending=False).head(10)
         top10_down = df.sort_values(by='pct_chg', ascending=True).head(10)

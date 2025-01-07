@@ -128,16 +128,15 @@ def mystock():
     page = int(request.args.get('page', 1))
 
     search_results = None  # 初始化为空
-    stocks_per_page = 10  # 每页显示 10 条
+
 
     if search_query:  # 如果存在搜索条件
         # 分页查询与搜索逻辑
-        search_results = StockService.search_stocks(search_query, page=stocks_per_page)
+        search_results = StockService.search_stocks(search_query, page=page)
 
     # 调用 Service 层获取搜索结果
 
-    print("Search Query:", search_query)
-    print("Search Results:", search_results)
+
 
     return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
                            userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks)

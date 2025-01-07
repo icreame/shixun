@@ -2,6 +2,72 @@
 
 {% block title %}Stock Analysis System{% endblock %}
 
+
+{% block market_summary %}
+           <div class="card market-summary-card">
+        <div class="card-body">
+            <div class="row">
+                <!-- 左侧切换按钮和数据 -->
+                <div class="col-md-3">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <!-- 涨跌分布 -->
+                        <a class="nav-link active" id="v-pills-distribution-tab" data-toggle="pill" href="#v-pills-distribution" role="tab" aria-controls="v-pills-distribution" aria-selected="true">
+                            <div class="option-content">
+                                <div class="icon-title">
+                                    <i class="bi bi-bar-chart-fill"></i>
+                                    <h4>涨跌分布</h4>
+                                </div>
+                                <div class="data">
+                                    <div class="up">
+                                        <span class="count">4393只</span>
+                                        <span class="label">上涨</span>
+                                    </div>
+                                    <div class="down">
+                                        <span class="count">902只</span>
+                                        <span class="label">下跌</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- 涨跌停 -->
+                        <a class="nav-link" id="v-pills-limit-tab" data-toggle="pill" href="#v-pills-limit" role="tab" aria-controls="v-pills-limit" aria-selected="false">
+                            <div class="option-content">
+                                <div class="icon-title">
+                                    <i class="bi bi-graph-up"></i>
+                                    <h4>涨跌停</h4>
+                                </div>
+                                <div class="data">
+                                    <div class="up-limit">
+                                        <span class="count">104只</span>
+                                        <span class="label">涨停</span>
+                                    </div>
+                                    <div class="down-limit">
+                                        <span class="count">18只</span>
+                                        <span class="label">跌停</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- 右侧图表 -->
+                <div class="col-md-9">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <!-- 涨跌分布图表 -->
+                        <div class="tab-pane fade show active" id="v-pills-distribution" role="tabpanel" aria-labelledby="v-pills-distribution-tab">
+                            <div id="distributionChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <!-- 涨跌停图表 -->
+                        <div class="tab-pane fade" id="v-pills-limit" role="tabpanel" aria-labelledby="v-pills-limit-tab">
+                            <div id="limitChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="style_module-wrapper_sA7">
@@ -252,88 +318,117 @@
 
     <!-- 舆情新闻 -->
     <div class="container mt-4">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0">舆情新闻</h5>
-            </div>
-            <div class="card-body">
-                <div class="news-list">
-                    {% for news in stock_news %}
-                    <div class="news-item card mb-4 border-0">
-                        <div class="card-body p-4">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">舆情新闻</h5>
+        </div>
+        <div class="card-body">
+            <div class="news-list">
+                {% for news in stock_news %}
+                <div class="news-item card mb-4 border-0">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start">
                             <h5 class="card-title mb-3 font-weight-bold">
                                 {{ news.title }}
                                 <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
                                     <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
                                 </a>
                             </h5>
-                            <p class="text-muted small mb-3">
-                                行业：{{ news.industryname }} | {{ news.publishdate }}
-                            </p>
-                            <div class="mb-2">
-                                {% for tag in news.tags %}
-                                <span class="badge bg-primary">{{ tag }}</span>
-                                {% endfor %}
+                            <!-- 情感图标 -->
+                            <span class="sentiment-badge
+                                {% if news.sentiment == '看涨' %}bg-danger{% elif news.sentiment == '看跌' %}bg-success{% else %}bg-secondary{% endif %}
+                                text-white small p-1 rounded d-flex align-items-center">
+                                {% if news.sentiment == '看涨' %}
+                                    <i class="bi bi-graph-up-arrow me-1"></i> 看涨
+                                {% elif news.sentiment == '看跌' %}
+                                    <i class="bi bi-graph-down-arrow me-1"></i> 看跌
+                                {% else %}
+                                    <i class="bi bi-dash-circle me-1"></i> 中性
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            行业：{{ news.industryname }} | {{ news.publishdate }}
+                        </p>
+                        <div class="mb-2">
+                            {% for tag in news.tags %}
+                            <span class="badge bg-primary">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        <p class="card-text text-muted mb-3">
+                            {{ news.content | truncate(100, True) }}
+                        </p>
+                        <div class="mt-auto">
+                            <!-- 点赞按钮 -->
+                            <div class="interaction-buttons">
+                                <button class="btn btn-outline-primary btn-sm mr-2">
+                                    <i class="bi bi-hand-thumbs-up"></i> 点赞
+                                </button>
                             </div>
-                            <p class="card-text text-muted mb-3">
-                                {{ news.content | truncate(100, True) }}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="interaction-buttons">
-                                    <button class="btn btn-outline-primary btn-sm mr-2">
-                                        <i class="bi bi-hand-thumbs-up"></i> 点赞
-                                    </button>
-                                    <button class="btn btn-outline-secondary btn-sm mr-2">
-                                        <i class="bi bi-chat-left-text"></i> 评论
-                                    </button>
-                                    <button class="btn btn-outline-success btn-sm">
-                                        <i class="bi bi-share"></i> 分享
-                                    </button>
-                                </div>
-                                <span class="sentiment-badge
-                                    {% if news.sentiment == '看涨' %}bg-danger{% elif news.sentiment == '看跌' %}bg-success{% else %}bg-secondary{% endif %}
-                                    text-white small p-1 rounded d-flex align-items-center">
-                                    {% if news.sentiment == '看涨' %}
-                                        <i class="bi bi-graph-up-arrow me-1"></i> 看涨
-                                    {% elif news.sentiment == '看跌' %}
-                                        <i class="bi bi-graph-down-arrow me-1"></i> 看跌
-                                    {% else %}
-                                        <i class="bi bi-dash-circle me-1"></i> 中性
-                                    {% endif %}
-                                </span>
+                            <!-- 查看详情按钮 -->
+                           <button class="btn btn-outline-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#newsDetailModal{{ loop.index }}">
+                                <i class="bi bi-info-circle"></i> 查看详情
+                           </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模态框 -->
+                <div class="modal fade" id="newsDetailModal{{ loop.index }}" tabindex="-1" aria-labelledby="newsDetailModalLabel{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="newsDetailModalLabel{{ loop.index }}">舆情详情</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6 class="mb-3">{{news.sentiment}}原因：</h6>
+                                <p>{{ news.reason }}</p>  <!-- 假设 news.reason 是看涨或看跌的原因 -->
+                                <hr>
+                                <h6 class="mb-3">其他信息：</h6>
+                                <ul>
+                                    <li>行业：{{ news.industryname }}</li>
+                                    <li>发布日期：{{ news.publishdate }}</li>
+                                    <li>url：{{ news.url }}</li>
+                                    <li>标签：{{ news.tags | join(', ') }}</li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
+            </div>
 
-                <!-- 分页按钮 -->
-                <div class="pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        {% for page_num in page_range %}
-                        {% if page_num == '...' %}
-                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                        {% else %}
-                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                        <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            <!-- 分页按钮 -->
+            <div class="pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% for page_num in page_range %}
+                    {% if page_num == '...' %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% else %}
+                    <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 
@@ -449,4 +544,101 @@
         document.querySelector('#kechuang .index_quote-chg_2C7').textContent = data.kechuang.change;
     });
 </script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- 引入 ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+
+
+
+<script>
+    // 假设后端传递的数据是 updowns
+    const updowns = {{ updowns | tojson}};
+
+    // 渲染左侧数据
+    document.querySelector('.up .count').textContent = `${updowns.up_total}只`;
+    document.querySelector('.down .count').textContent = `${updowns.down_total}只`;
+
+    // 渲染涨跌停数据
+    document.querySelector('.up-limit .count').textContent = `${updowns.data[10]}只`;
+    document.querySelector('.down-limit .count').textContent = `${updowns.data[0]}只`;
+   // 涨跌分布柱状图
+    const distributionChart = echarts.init(document.getElementById('distributionChart'));
+    const distributionOption = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: ['跌停', '-8%', '-6%', '-4%', '-2%', '0%', '2%', '4%', '6%', '8%', '涨停'],
+            name: '涨跌指数',
+            nameLocation: 'center',
+            nameGap: 25
+        },
+        yAxis: {
+            type: 'value',
+<!--            name: '股票数量',-->
+            nameLocation: 'center',
+            nameGap: 25
+        },
+        series: [{
+            data: {{updowns['data']}},
+            type: 'bar',
+            itemStyle: {
+                color: function (params) {
+                    const colors = ['#dc3545', '#dc3545', '#dc3545', '#dc3545', '#dc3545', '#6c757d', '#28a745', '#28a745', '#28a745', '#28a745', '#28a745'];
+                    return colors[params.dataIndex];
+                }
+            },
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c}'
+            }
+        }]
+    };
+    distributionChart.setOption(distributionOption);
+    // 涨跌停折线图
+    const limitChart = echarts.init(document.getElementById('limitChart'));
+    const limitOption = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'line'
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: ['涨停', '跌停']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: [104, 18],
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+                color: '#287DFF'
+            },
+            itemStyle: {
+                color: '#287DFF'
+            }
+        }]
+    };
+    limitChart.setOption(limitOption);
+
+    // 监听窗口大小变化，调整图表大小
+    window.addEventListener('resize', () => {
+        distributionChart.resize();
+        limitChart.resize();
+    });
+</script>
+
+
 {% endblock %}

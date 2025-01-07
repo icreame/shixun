@@ -7,7 +7,7 @@ class Config:
     # 数据库配置
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        'mysql+mysqlconnector://root:947400@localhost/stocksystem' # 配置本地的数据库路径
+        'mysql+mysqlconnector://shixun:123456@10.130.216.114/stocksystem' # 配置本地的数据库路径
     )
 
 

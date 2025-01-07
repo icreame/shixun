@@ -203,10 +203,107 @@
     .index_quote-chg_2C7 {
         margin-left: 40px; /* 右侧数据与左侧数据保持一定间距 */
     }
+        /* 自定义样式 */
+.card-body {
+    position: relative;
+}
 
+.sentiment-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.interaction-buttons {
+    margin-bottom: 10px;
+}
+
+.float-end {
+    float: right;
+}
+        .float-end .bi-info-circle:hover {
+    color: #007bff; /* 可以替换为你喜欢的颜色 */
+}
+  .market-summary-card {
+        margin: 20px 0;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-pills .nav-link {
+        margin-bottom: 10px;
+        border-radius: 10px;
+        color: #333;
+        background-color: transparent;
+        padding: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+
+    .nav-pills .nav-link.active {
+        border-color: #287DFF;
+        color: #287DFF;
+        background-color: transparent;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: #f8f9fa;
+    }
+
+    .option-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .icon-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .icon-title i {
+        font-size: 24px;
+    }
+
+    .icon-title h4 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .data {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .up, .down, .up-limit, .down-limit {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .count {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .up .count, .up-limit .count {
+        color: green;
+    }
+
+    .down .count, .down-limit .count {
+        color: red;
+    }
     </style>
 </head>
 <body>
+
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -238,9 +335,12 @@
         </div>
     </div>
 
+
     <!-- Main Content -->
     <div class="content">
         <div class="container-fluid">
+            {%block yuqing %}{% endblock %}
+            {% block market_summary %}{% endblock %}
             {% block content %}{% endblock %}
         </div>
     </div>

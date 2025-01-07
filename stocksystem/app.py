@@ -96,7 +96,12 @@ def create_app():
             {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "change": "5.2%"},
             {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
         ]
-
+        updowns = {
+            'up_total': 4393,  # 上涨股票总数
+            'down_total': 902,  # 下跌股票总数
+            'data': [18, 2000, 1731, 1674, 1500, 1000, 689, 677, 500, 201, 104]  # 涨跌分布数据
+        }
+        print(updowns['data'])
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,
                                current_page=page,page_range=page_range,
@@ -104,7 +109,9 @@ def create_app():
                                sources=sources,
                                sentiments=sentiments,
                                threshold=7,
-                               total_news=total_news
+                               total_news=total_news,
+                               updowns=updowns
+
                                )
 
     return app

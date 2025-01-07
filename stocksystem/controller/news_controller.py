@@ -181,7 +181,7 @@ def search_news():
         return jsonify(result), 400
 
 
-@news_blueprint.route('/analyze-all', methods=['POST'])
+@news_blueprint.route('/analyze-all', methods=['GET','POST'])
 async def analyze_all_news():
     """
     批量处理所有预定义的行业标签

@@ -159,40 +159,6 @@
 {% block java_script %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    document.getElementById('search_query').addEventListener('input', function() {
-        const query = this.value;
-        if (query.length > 1) {
-            axios.get('/api/search_suggestions', {
-                params: {
-                    query: query
-                }
-            }).then(response => {
-                const suggestions = response.data;
-                const suggestionsContainer = document.getElementById('search_suggestions');
-                suggestionsContainer.innerHTML = '';
-                if (suggestions.length > 0) {
-                    suggestions.forEach(suggestion => {
-                        const item = document.createElement('a');
-                        item.href = '#';
-                        item.className = 'list-group-item list-group-item-action';
-                        item.textContent = suggestion;
-                        item.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            document.getElementById('search_query').value = suggestion;
-                            suggestionsContainer.style.display = 'none';
-                        });
-                        suggestionsContainer.appendChild(item);
-                    });
-                    suggestionsContainer.style.display = 'block';
-                } else {
-                    suggestionsContainer.style.display = 'none';
-                }
-            });
-        } else {
-            document.getElementById('search_suggestions').style.display = 'none';
-        }
-    });
-
     function addStock(stockId) {
     const userid = 1; // 假设当前用户的 userid 是 1，实际项目中可以从 session 或 cookie 中获取
     axios.post('/selfselect/add', {

@@ -2,6 +2,7 @@ from model.__init__ import db
 
 class Industry(db.Model):
     __tablename__ = 'industry'
+    extend_existing = True
 
     # 数据库字段定义
     industryid = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 行业唯一标识

@@ -1,7 +1,10 @@
 # services/stock_service.py
+import logging
+
 from model.stock import Stock,db
 from model.industry import Industry
 from sqlalchemy.sql import text
+from sqlalchemy import or_
 import tushare as ts
 import datetime
 import akshare as ak
@@ -91,6 +94,30 @@ class StockService:
         except Exception as e:
             return {"success": False, "message": str(e)}
 
+    def get_stockid_by_stockcode(stockcode):
+        """
+        根据 stockcode 查询 stockid
+
+        参数:
+        stockcode: 股票代码（字符串），用于查询
+
+        返回:
+        stockid: 股票ID（字符串），如果未找到则返回 None
+        """
+
+        # 假设这里是从数据库中查询的逻辑
+        try:
+            # 从数据库中查询 stockid
+            stock = Stock.query.filter_by(stockcode=stockcode).first()  # 查询与给定stockcode匹配的第一个记录
+            if stock is None:  # 检查是否找到股票
+                return None  # 如果没有找到，返回 None
+
+            stockid = stock.stockid  # 获取股票ID
+            return stockid  # 返回股票ID
+        except Exception as e:
+            logging.error(f"根据股票代码查询失败, 股票代码: {stockcode}, 错误信息: {str(e)}")  # 记录错误信息
+            return None  # 出现错误时返回 None
+
 
     @staticmethod
     def search_stocks(query: str, page: int = 1, per_page: int = 10):
@@ -101,29 +128,45 @@ class StockService:
         :param per_page: 每页显示数量
         :return: 分页后的股票数据
         """
-        all_stocks = StockService.get_all_stocks()['data']
+        try:
+            # 基础查询
+            query_result = Stock.query
 
-        # 过滤股票数据
-        if query:
-            filtered_stocks = [
-                stock for stock in all_stocks
-                if query.lower() in stock['stockname'].lower() or query.lower() in stock['stock_id'].lower()
-            ]
-        else:
-            filtered_stocks = all_stocks
+            # 如果有查询关键词，使用数据库的模糊搜索
+            if query:
+                query_result = query_result.filter(
+                    or_(
+                        Stock.stockname.ilike(f"%{query}%"),
+                        Stock.stockcode.ilike(f"%{query}%")
+                    )
+                )
 
-        # 分页逻辑
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_stocks = filtered_stocks[start:end]
+            # 分页
+            paginated_result = query_result.paginate(page=page, per_page=per_page)
+            stock_list=[]
+            for stock in paginated_result:
+                stock_item = {
+                    "stockid": stock.stockcode,
+                    "stockname": stock.stockname,
+                }
 
-        return {
-            'data': paginated_stocks,
-            'total': len(filtered_stocks),
-            'page': page,
-            'per_page': per_page,
-            'total_pages': (len(filtered_stocks) + per_page - 1) // per_page
-        }
+                if stock.industryid:
+                    industry=Industry.query.get(stock.industryid)
+
+                    stock_item["industry"] = industry.industryname if industry else None
+
+                stock_list.append(stock_item)
+
+            # 返回结果
+            return {
+                'data': stock_list,
+                'total': paginated_result.total,
+                'page': paginated_result.page,
+                'per_page': paginated_result.per_page,
+                'total_pages': paginated_result.pages
+            }
+        except Exception as e:
+            return {"success": False, "message": str(e)}
 
     @staticmethod
     def get_stock_by_id(stock_id):
@@ -413,4 +456,23 @@ class StockService:
         except Exception as e:
             print(f"获取上证指数数据时出错：{e}")
             return None  # 返回None以表示出错
+
+    @staticmethod
+    def get_index_data():
+        # 获取上证指数数据
+        sh_index = pro.index_daily(ts_code='000001.SH')
+        # 获取深证成指数据
+        sz_index = pro.index_daily(ts_code='399001.SZ')
+        # 获取创业板指数据
+        cyb_index = pro.index_daily(ts_code='399006.SZ')
+        # 获取科创50数据
+        kc50_index = pro.index_daily(ts_code='000688.SH')
+
+        # 返回 JSON 数据
+        return {
+            'sh_index': sh_index.to_dict(orient='records'),
+            'sz_index': sz_index.to_dict(orient='records'),
+            'cyb_index': cyb_index.to_dict(orient='records'),
+            'kc50_index': kc50_index.to_dict(orient='records')
+        }
 

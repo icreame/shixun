@@ -99,24 +99,6 @@ def mystock():
     if not user_id:
         return redirect(url_for('user.login'))
 
-    user_stocks= [
-    {
-        "stock_name": "平安银行",
-        "price": "12.34",
-        "change_rate": "+1.23%",
-        "industry": "银行",
-        "news_count": 5,  # 舆情新闻数量
-        "stock_id": 1,    # 股票ID，用于取消关注等操作
-    },
-    {
-        "stock_name": "贵州茅台",
-        "price": "1892.56",
-        "change_rate": "-0.56%",
-        "industry": "白酒",
-        "news_count": 8,
-        "stock_id": 2,
-    },
-]
 
     news_list = [
         {
@@ -141,15 +123,28 @@ def mystock():
         {"code": "603686", "name": "海尔之家", "latest": "13.17", "change": "10.03%"},
     ]
 
-    search_query = request.args.get('search_query', '')
-    page = request.args.get('page', 1, type=int)  # 从 URL 参数获取当前页码
-    # 打印调试信息
+    # 搜索条件
+    search_query = request.args.get('search_query', '').strip()
+    page = int(request.args.get('page', 1))
 
+    search_results = None  # 初始化为空
+    stocks_per_page = 10  # 每页显示 10 条
+
+    if search_query:  # 如果存在搜索条件
+        # 分页查询与搜索逻辑
+        search_results = StockService.search_stocks(search_query, page=stocks_per_page)
 
     # 调用 Service 层获取搜索结果
-    search_results = StockService.search_stocks(search_query, page=page)
+
     print("Search Query:", search_query)
     print("Search Results:", search_results)
 
     return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
-                           userid=user_id, s=search_results,user_stocks=user_stocks, stock_news=news_list,my_stocks=my_stocks)
+                           userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks)
+
+
+@stock_blueprint.route('/get_index_data', methods=['GET'])
+def index_data():
+    result=StockService.get_index_data()
+    print(result)
+    return jsonify(result)

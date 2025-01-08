@@ -154,32 +154,106 @@ p {
     opacity: 1;
 }
 
-/*0108 其他样式*/
+/* 全局样式 */
+/*body {*/
+/*    font-family: 'Arial', sans-serif;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    background-color: #f8f9fa; !* 浅灰色背景 *!*/
+/*    color: #333; !* 深灰色字体 *!*/
+/*    line-height: 1.6;*/
+/*}*/
+
+/* 顶部导航条 */
+nav {
+    background-color: #007bff; /* 蓝色背景 */
+    color: #fff; /* 白色字体 */
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 分析容器 */
+#analysis-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+    gap: 20px;
+}
+
+/* 卡片样式 */
+.card {
+    background-color: #fff; /* 白色背景 */
+    border: 1px solid #ddd; /* 浅灰色边框 */
+    border-radius: 8px; /* 圆角 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影 */
+    width: 300px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05); /* 鼠标悬停时缩放效果 */
+}
+
+.card-body {
+    padding: 20px;
+    display: none; /* 默认隐藏，动态控制显示 */
+}
+
+/* 卡片标题 */
+.card h4 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #007bff; /* 蓝色标题 */
+    text-align: center;
+}
+
+/* 段落样式 */
+.card p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* 强调样式 */
+.card p strong {
+    color: #555; /* 深灰色字体 */
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.button-group button {
+    background-color: #007bff; /* 蓝色按钮 */
+    color: #fff; /* 白色字体 */
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.button-group button:hover {
+    background-color: #0056b3; /* 深蓝色悬停效果 */
+}
+
+.button-group button.active {
+    background-color: #0056b3; /* 激活状态颜色 */
+    pointer-events: none; /* 禁用点击 */
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .index-analysis {
-        padding: 8px;
+    .card {
+        width: 100%; /* 小屏幕时卡片宽度自适应 */
+        max-width: 95%;
     }
-
-    .index-analysis h6 {
-        font-size: 1rem;
-    }
-
-    .index-analysis p {
-        font-size: 0.8rem;
-    }
-}
-
-/* 简单的动画效果 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.index-analysis {
-    animation: fadeIn 0.5s ease-in-out;
 }

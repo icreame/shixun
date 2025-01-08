@@ -20,6 +20,8 @@ pro = ts.pro_api()
 
 STOCK_DATA_KEY = "stock_data"
 TOP10_DATA="top10_data"
+
+
 class StockService:
     @staticmethod
     def create_stock(stockname, stockprice, industryid):
@@ -119,7 +121,6 @@ class StockService:
             logging.error(f"根据股票代码查询失败, 股票代码: {stockcode}, 错误信息: {str(e)}")  # 记录错误信息
             return None  # 出现错误时返回 None
 
-
     @staticmethod
     def search_stocks(query: str, page: int = 1, per_page: int = 10):
         """
@@ -215,7 +216,6 @@ class StockService:
         else:
             return None
 
-
     @staticmethod
     def update_data():
         global stock_data
@@ -249,7 +249,6 @@ class StockService:
         session[STOCK_DATA_KEY] = stock_data
         session[TOP10_DATA]=top10_data
 
-
     @staticmethod
     def is_data_expired():
         """检查数据是否过期"""
@@ -278,7 +277,7 @@ class StockService:
         """从 session 加载数据"""
         return session.get(TOP10_DATA, None)
 
-    def set_data_in_cache(stock_data,top10_data):
+    def set_data_in_cache(stock_data, top10_data):
         """将数据存储到 session"""
         session[STOCK_DATA_KEY] = stock_data
         session[STOCK_DATA_KEY] = top10_data
@@ -522,3 +521,7 @@ class StockService:
         ])
 
         return results
+
+    #
+    # @staticmethod
+    # def composite_index_analysis():

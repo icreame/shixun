@@ -138,13 +138,15 @@ def search_news():
         - newsid: 新闻ID。
         - title: 新闻标题。
         - url: 新闻链接。
-        - content: 新闻内容。
         - publishdate: 新闻发布时间，格式为 "YYYY-MM-DD"。
         - sourceid: 新闻来源ID。
         - industryid: 行业ID。
         - sentimentid: 情感ID。
         - stockid: 股票ID。
         - sentiment: 情感标签（如 "正面", "负面", "中性"）。
+        - reason: 理由
+        - trend: 趋势
+        - sector: 行业
     - total: 符合条件的新闻总数。
     - page: 当前页码。
     - per_page: 每页显示的新闻数量。

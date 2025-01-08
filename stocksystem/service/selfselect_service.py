@@ -1,7 +1,13 @@
 from flask import logging
 from model.selfselect import SelfSelect,db
 from model.stock import  Stock
+from datetime import datetime,timedelta
 from model.industry import Industry
+import tushare as ts
+import pandas as pd
+
+ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
+pro = ts.pro_api()
 
 class SelfSelectService:
 
@@ -21,8 +27,6 @@ class SelfSelectService:
     def get_user_self_selects(userid):
         try:
             # 查询用户自选股
-            # 显式使用 join 来连接 SelfSelect 和 Stock 表
-            selfselects = db.session.query(SelfSelect, Stock).join(Stock, SelfSelect.stockid == Stock.stockid).filter(SelfSelect.userid == userid).all()
             selfselects = SelfSelect.query.filter_by(userid=userid).all()
             stock_list = []
             for select in selfselects:
@@ -34,11 +38,25 @@ class SelfSelectService:
                     stock = Stock.query.get(select.stockid)
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
+                    df1 = pro.daily_basic(ts_code=stock.stockcode, trade_date=datetime.now().strftime('%Y%m%d'))
+                    df = ts.realtime_list(src='dc')
+                    pd.set_option('display.max_columns', 1000)
+                    pd.set_option('display.width', 1000)
+                    pd.set_option('display.max_colwidth', 1000)
+
+                    stocks_item["volume"] = df['VOLUME'].iloc[0]    # 成交量(单位：手)
+                    stocks_item["close"] = df['CLOSE'].iloc[0]
+                    stocks_item["pct_change"]=df['PCT_CHANGE'].iloc[0]  # 涨跌幅
+                    stocks_item['5min']=df['5MIN'].iloc[0]  # 5分钟涨幅
+                    stocks_item["totoal_mv"] = df1['total_mv'].iloc[0]
+
                 stock_list.append(stocks_item)
             return stock_list  # 返回股票id的列表
         except Exception as e:
             # 记录异常信息
             return {"success": False, "message": str(e)}
+
+
     @staticmethod
     def remove_self_select(userid, stockid):
         selfselect = SelfSelect.query.filter_by(userid=userid, stockid=stockid).first()

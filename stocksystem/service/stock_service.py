@@ -11,17 +11,14 @@ import tushare as ts
 import akshare as ak
 import pandas as pd
 import time
-<<<<<<< HEAD
 
 from model.index_analysis import IndexAnalysis
 from model.index_analysis_result import IndexAnalysisResult
 from model.stock import Stock, db
 from model.industry import Industry
-=======
 from flask import g
 from flask import session
 from collections import OrderedDict
->>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
 
 
 # 设置你的 Tushare Token
@@ -609,9 +606,6 @@ class StockService:
         return results
 
     @staticmethod
-<<<<<<< HEAD
-    def fetch_and_store_index_data():
-=======
     def get_stock_limit_data():
         df = ts.realtime_list(src='dc')
         changes=df['PCT_CHANGE'].tolist()
@@ -629,8 +623,7 @@ class StockService:
         return result
 
     @staticmethod
-    def composite_index_analysis():
->>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
+    def fetch_and_store_index_data():
         """
         获取当前一周的指数详情并存入数据库。
         """

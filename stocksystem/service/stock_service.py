@@ -1,5 +1,7 @@
 # services/stock_service.py
 import logging
+import json
+from openai import OpenAI
 
 from model.stock import Stock,db
 from model.industry import Industry
@@ -10,6 +12,7 @@ import datetime
 import akshare as ak
 import pandas as pd
 import time
+from datetime import datetime, timedelta  # 确保导入 timedelta
 from flask import g
 from flask import session
 from collections import OrderedDict
@@ -21,6 +24,74 @@ pro = ts.pro_api()
 STOCK_DATA_KEY = "stock_data"
 TOP10_DATA="top10_data"
 
+# 初始化 OpenAI 客户端
+client = OpenAI(
+    api_key="sk-10465596f9e847e389a5e22f10c8e58d",  # 替换为你的 API Key
+    base_url="https://api.deepseek.com",
+)
+
+# 定义系统提示词
+system_prompt = """
+用户将提供每日的上证指数，深证成指，创业板指数据，科创50数据，请分析各指数的走势，并给出预测、理由以及投资建议。请以json格式输出预测结果。
+输入示例：
+{
+    "参数说明": {
+        "ts_code": {
+            "类型": "str",
+            "描述": "TS指数代码"
+        },
+        "trade_date": {
+            "类型": "str",
+            "描述": "交易日"
+        },
+        "close": {
+            "类型": "float",
+            "描述": "收盘点位"
+        },
+        "open": {
+            "类型": "float",
+            "描述": "开盘点位"
+        },
+        "high": {
+            "类型": "float",
+            "描述": "最高点位"
+        },
+        "low": {
+            "类型": "float",
+            "描述": "最低点位"
+        },
+        "pre_close": {
+            "类型": "float",
+            "描述": "昨日收盘点"
+        },
+        "change": {
+            "类型": "float",
+            "描述": "涨跌点"
+        },
+        "pct_chg": {
+            "类型": "float",
+            "描述": "涨跌幅（%）"
+        },
+        "vol": {
+            "类型": "float",
+            "描述": "成交量（手）"
+        },
+        "amount": {
+            "类型": "float",
+            "描述": "成交额（千元）"
+        }
+    }
+}
+[{"ts_code":"000001.SH","trade_date":"20250107","close":3229.6439,"open":3203.3068,"high":3230.8529,"low":3190.4612,"pre_close":3206.9228,"change":22.7211,"pct_chg":0.7085,"vol":409660529.0,"amount":436388386.6000000238},{"ts_code":"000001.SH","trade_date":"20250106","close":3206.9228,"open":3209.7832,"high":3219.4877,"low":3185.4631,"pre_close":3211.4299,"change":-4.5071,"pct_chg":-0.1403,"vol":430978403.0,"amount":444188212.8000000119},{"ts_code":"000001.SH","trade_date":"20250103","close":3211.4299,"open":3267.0766,"high":3273.5656,"low":3205.7755,"pre_close":3262.5607,"change":-51.1308,"pct_chg":-1.5672,"vol":517592014.0,"amount":523159754.6999999881},{"ts_code":"000001.SH","trade_date":"20250102","close":3262.5607,"open":3347.9392,"high":3351.722,"low":3242.0865,"pre_close":3351.763,"change":-89.2023,"pct_chg":-2.6614,"vol":561375199.0,"amount":603340526.7000000477}]
+
+输出示例：
+{
+    "预测": "短期震荡，中性偏乐观",
+    "理由": "从提供的数据来看，大盘在20250102日至20250103日经历了较大幅度的下跌，跌幅分别为2.6614%和1.5672%，成交量较高，显示出市场情绪较为悲观。然而，在20250106日，跌幅收窄至0.1403%，且20250107日出现了反弹，涨幅为0.7085%，成交量保持在较高水平，表明市场情绪有所回暖。尽管短期内市场可能仍存在波动，但反弹迹象和成交量的稳定显示出市场可能逐步企稳。因此，预计大盘短期内将呈现震荡走势，但整体情绪偏向中性偏乐观。",
+    "情感标签": "中性偏乐观"
+    "投资建议": "你的建议"
+}
+"""
 
 class StockService:
     @staticmethod
@@ -522,6 +593,54 @@ class StockService:
 
         return results
 
-    #
-    # @staticmethod
-    # def composite_index_analysis():
+    @staticmethod
+    def composite_index_analysis():
+        """
+        获取最近一周的大盘数据，并将其整理为 JSON 格式，传递给大模型进行分析。
+
+        :return: JSON 对象，包含四个指数的最近一周数据
+        """
+        # 获取当前日期
+        end_date = datetime.now().strftime('%Y%m%d')
+        # 计算一周前的日期
+        start_date = (datetime.now() - timedelta(days=7)).strftime('%Y%m%d')
+
+        # 获取上证指数数据
+        sh_index = pro.index_daily(ts_code='000001.SH', start_date=start_date, end_date=end_date)
+        # 获取深证成指数据
+        sz_index = pro.index_daily(ts_code='399001.SZ', start_date=start_date, end_date=end_date)
+        # 获取创业板指数据
+        cyb_index = pro.index_daily(ts_code='399006.SZ', start_date=start_date, end_date=end_date)
+        # 获取科创50数据
+        kc50_index = pro.index_daily(ts_code='000688.SH', start_date=start_date, end_date=end_date)
+
+        # 按日期排序（最新的日期在前）
+        sh_index = sh_index.sort_values(by='trade_date', ascending=False)
+        sz_index = sz_index.sort_values(by='trade_date', ascending=False)
+        cyb_index = cyb_index.sort_values(by='trade_date', ascending=False)
+        kc50_index = kc50_index.sort_values(by='trade_date', ascending=False)
+
+        # 将数据转换为 JSON 格式
+        json_data = {
+            'sh_index': sh_index.to_dict(orient='records'),
+            'sz_index': sz_index.to_dict(orient='records'),
+            'cyb_index': cyb_index.to_dict(orient='records'),
+            'kc50_index': kc50_index.to_dict(orient='records')
+        }
+        # 用户提示词，传入大盘数据
+        user_prompt = f"请分析我给你的大盘数据，用json格式给出输出，大盘数据如下：{json_data}"
+        # 构建消息列表
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+
+        # 调用大模型
+        response = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=messages,
+            response_format={'type': 'json_object'}  # 指定返回 JSON 格式
+        )
+
+        # 解析并返回结果
+        return json.loads(response.choices[0].message.content)

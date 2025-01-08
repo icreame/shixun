@@ -649,80 +649,92 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-            console.log('正在请求数据...'); // 调试信息
-            fetch('/stock/stock-limit-data') // 替换为你的后端接口地址
-                .then(response => response.json())
-                .then(data => {
-                    console.log('获取到的数据:', data); // 打印数据
-                    renderChart(data);
-                })
-                .catch(error => {
-                    console.error('获取数据失败:', error);
-                });
+    console.log('正在请求数据...'); // 调试信息
+    fetch('/stock/stock-limit-data') // 替换为你的后端接口地址
+      .then(response => response.json())
+      .then(data => {
+        console.log('获取到的数据:', data); // 打印数据
+        renderChart(data);
+      })
+      .catch(error => {
+        console.error('获取数据失败:', error);
+      });
 
-            function renderChart(data) {
-                const option = {
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'line'
-                        }
-                    },
-                    legend: {
-                        data: ['涨停', '跌停']
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: data.time_range,
-                        name: '时间',
-                        nameLocation: 'center',
-                        nameGap: 30,
-                        axisLabel: {
-                            rotate: 45
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '股票数量',
-                        nameLocation: 'center',
-                        nameGap: 30
-                    },
-                    series: [
-                        {
-                            name: '涨停',
-                            type: 'line',
-                            data: data.up_limit,
-                            itemStyle: {
-                                color: '#28a745'
-                            },
-                            areaStyle: {
-                                color: 'rgba(40, 167, 69, 0.2)'
-                            }
-                        },
-                        {
-                            name: '跌停',
-                            type: 'line',
-                            data: data.down_limit,
-                            itemStyle: {
-                                color: '#dc3545'
-                            },
-                            areaStyle: {
-                                color: 'rgba(220, 53, 69, 0.2)'
-                            }
-                        }
-                    ]
-                };
-                console.log('ECharts 配置:', option); // 打印配置
-                const chart = echarts.init(document.getElementById('limitChart'));
-                chart.setOption(option);
-
-                window.addEventListener('resize', () => {
-                    chart.resize();
-                });
+    function renderChart(data) {
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'line'
+          }
+        },
+        legend: {
+          data: ['涨停', '跌停']
+        },
+        xAxis: {
+          type: 'category',
+          data: data.time_range,
+          name: '时间',
+          nameLocation: 'center',
+          nameGap: 30,
+          axisLabel: {
+            rotate: 45
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '股票数量',
+          nameLocation: 'center',
+          nameGap: 30
+        },
+        series: [
+          {
+            name: '涨停',
+            type: 'line',
+            data: data.up_limit,
+            itemStyle: {
+              color: '#28a745'
+            },
+            areaStyle: {
+              color: 'rgba(40, 167, 69, 0.2)'
             }
-        });
-    </script>
+          },
+          {
+            name: '跌停',
+            type: 'line',
+            data: data.down_limit,
+            itemStyle: {
+              color: '#dc3545'
+            },
+            areaStyle: {
+              color: 'rgba(220, 53, 69, 0.2)'
+            }
+          }
+        ]
+      };
+      console.log('ECharts 配置:', option); // 打印配置
 
+      // 初始化图表
+      const chart = echarts.init(document.getElementById('limitChart'));
+      chart.setOption(option);
+
+      // 监听窗口大小变化，调整图表尺寸
+      window.addEventListener('resize', () => {
+        chart.resize();
+      });
+
+      // 监听 tab 切换事件
+      $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href");
+        if (target === "#v-pills-limit") {
+          // 重新调整图表尺寸
+          chart.resize();
+        }
+      });
+    }
+  });
+</script>
+<!--筛选框-->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const industryContainer = document.querySelector('.industry-container');

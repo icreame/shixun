@@ -57,30 +57,15 @@ def create_app():
 
         # 将 stock_data 存储在 g 对象中，以便在视图中使用
         g.top10_data = StockService.loadtop10_data_from_cache()
-
     @app.route('/')
     def home():
         industries=IndustryService.get_all_industries()
         sources=SourceService.get_all_sources()
         sentiments=SentimentService.get_all_sentiments()
-        print(sentiments)
-
-        # 获取筛选条件
-        industryid = request.args.get('industryid', type=int)  # 行业ID
-        sentiment = request.args.get('sentiment')  # 情感标签
-        sentiment = request.args.get('sentiment')  # 直接获取字符串值
-        if sentiment and isinstance(sentiment, dict):  # 如果错误地传递了字典
-            sentiment = sentiment.get('sentiment')  # 从字典中提取值
-        sort_by = request.args.get('sort_by', 'publishdate')  # 排序字段
-        order = request.args.get('order', 'desc')  # 排序顺序
-        print(sentiment)
-
-        # 分页参数
-        per_page = 10
+        per_page = 5
         page = request.args.get('page', 1, type=int)  # 获取当前页，默认为1
 
         # 获取新闻数据，限制每页的条数
-<<<<<<< HEAD
         news_data = NewsService.get_all_news(page, per_page)
         # 检查 news_data 是否包含 "data" 键
         if isinstance(news_data, dict) and "data" in news_data:
@@ -91,25 +76,10 @@ def create_app():
 
         # 获取总新闻数，用于计算总页数
         total_news = news_data['total']
-=======
-        news_data = NewsService.search_news_by_industry_and_sentiment(
-        industryid=industryid,
-        sentiment=sentiment,
-        page=page,
-        per_page=per_page,
-        sort_by=sort_by,
-        order=order
-    )
-
-        # 检查是否成功获取数据
-        if not news_data["success"]:
-            return render_template('index.html', message=news_data["message"])
-
-            # 获取新闻列表和分页信息
-        news_list = news_data["data"]
-        total_news = news_data["total"]
->>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
         total_pages = ceil(total_news / per_page)
+
+        # top10_data = StockService.get_top10_stocks()
+
         # 分页显示范围：当前页前后各两页
         page_range = list(range(max(1, page - 2), min(total_pages + 1, page + 3)))
 
@@ -126,31 +96,35 @@ def create_app():
         else:
 
             userid = None
+
         my_stocks = [
             {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "change": "5.2%"},
-            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"}
-            ]
-       # 首页涨跌柱状图
+            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
+        ]
+        updowns = {
+            'up_total': 4393,  # 上涨股票总数
+            'down_total': 902,  # 下跌股票总数
+            'data': [18, 2000, 1731, 1674, 1500, 1000, 689, 677, 500, 201, 104]  # 涨跌分布数据
+        }
         updowns=StockService.get_limit_stocks()
-       #首页情感分析图
-        sentiment_by_indutry = NewsService.get_sentiment_by_industry()
+        print(updowns['data'])
 
+        """
+            主页路由，直接返回行业情感分析数据
+            """
+        # 调用服务层方法获取行业情感分析数据【0107新增index渲染的行业情感分析】
+        sentiment_by_indutry = NewsService.get_sentiment_by_industry()
 
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,
-                               page=page,page_range=page_range,
+                               current_page=page,page_range=page_range,
                                industries=industries,
                                sources=sources,
                                sentiments=sentiments,
                                threshold=7,
                                total_news=total_news,
                                sentiment_data=sentiment_by_indutry["data"],
-                               updowns=updowns,
-                               news_list=news_list,
-                               selected_industry=industryid,  # 当前选中的行业
-                               selected_sentiment=sentiment,  # 当前选中的情感标签
-                               sort_by=sort_by,  # 当前排序字段
-                               order=order  # 当前排序顺序
+                               updowns=updowns
                                )
 
     return app

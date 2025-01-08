@@ -251,18 +251,23 @@ class NewsService:
                 sentiment_tag = None
                 if news.analysis_results:  # 检查是否有分析结果
                     sentiment_tag = news.analysis_results[0].sentiment
+                    reason = news.analysis_results[0].reason
+                    trend = news.analysis_results[0].trend
+                    sector = news.analysis_results[0].sector
 
-                result.append({
+                result.append({         # 【0108】新增reason删除content
                     "newsid": news.newsid,
                     "title": news.title,
                     "url": news.url,
-                    "content": news.content,
                     "publishdate": news.publishdate.strftime("%Y-%m-%d") if news.publishdate else None,
                     "sourceid": news.sourceid if news.sourceid else None,
                     "industryid": news.industryid if news.industryid else None,
                     "sentimentid": news.sentimentid if news.sentimentid else None,
                     "stockid": news.stockid if news.stockid else None,
-                    "sentiment": sentiment_tag  # 添加情感标签
+                    "sentiment": sentiment_tag,  # 添加情感标签
+                    "reason": reason,
+                    "trend": trend,
+                    "industryname": sector
                 })
 
             return {

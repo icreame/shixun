@@ -80,6 +80,7 @@ def get_stocks_by_industry(industry_id):
     result = StockService.get_stocks_by_industry(industry_id)
     return jsonify(result)
 
+
 @stock_blueprint.before_request
 def before_request():
     cached_data = StockService.load_data_from_cache()
@@ -91,16 +92,17 @@ def before_request():
     # 将 stock_data 存储在 g 对象中，以便在视图中使用
     g.stock_data = StockService.load_data_from_cache()
 
+
 @stock_blueprint.route('/', methods=['GET'])
 def stocks_view():
     return render_template('stocks_view.html', data=g.stock_data)
+
 
 @stock_blueprint.route('/mystock', methods=['GET'])
 def mystock():
     user_id = session.get('userid')
     if not user_id:
         return redirect(url_for('user.login'))
-
 
     news_list = [
         {
@@ -131,14 +133,11 @@ def mystock():
 
     search_results = None  # 初始化为空
 
-
     if search_query:  # 如果存在搜索条件
         # 分页查询与搜索逻辑
         search_results = StockService.search_stocks(search_query, page=page)
 
     # 调用 Service 层获取搜索结果
-
-
 
     return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
                            userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks)
@@ -155,6 +154,7 @@ def index_data():
 def limit_stocks():
     result = StockService.get_limit_stocks()
     return jsonify(result)
+
 
 @stock_blueprint.route('/stock-limit-data')
 def stock_limit_data():

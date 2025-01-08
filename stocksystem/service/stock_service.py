@@ -12,7 +12,6 @@ import datetime
 import akshare as ak
 import pandas as pd
 import time
-from datetime import datetime, timedelta  # 确保导入 timedelta
 from flask import g
 from flask import session
 from collections import OrderedDict
@@ -563,6 +562,14 @@ class StockService:
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
         pct_chg = df['pct_chg']
 
+        # 存储昨日收盘价
+        close = df['close']
+        for idx, price in close.items():
+            stock = Stock.query.get(idx + 1)  # 获取id为idx+1的股票
+            if stock:  # 确保找到了对应的股票
+                stock.stockprice = price
+                db.session.commit()
+
         # 定义区间边界
         bins = [-float('inf'), -8, -6, -4, -2, 0, 2, 4, 6, 8, float('inf')]
         labels = ['<-8%', '<-6%', '<-4%', '<-2%', '<0%', '<2%', '<4%', '<6%', '<8%', '>8%']
@@ -591,6 +598,46 @@ class StockService:
             ("data", result)
         ])
 
+        return results
+
+    @staticmethod
+    def get_stock_limit_data():
+        stocks = Stock.query.all()
+
+        source = []  # 临时存储待查询的股票代码
+        limit_up_count = 0  # 涨停股票数量
+        limit_down_count = 0  # 跌停股票数量
+        for stock in stocks:
+
+            stockid=stock.stockid
+            stockcode=stock.stockcode
+            stockprice=stock.stockprice
+            source.append(stockcode)  # 添加当前股票代码到待查询列表
+            # 当达到每批查询的最大数量时，进行查询并重置source
+            if stockid % 50 == 0:  # 最后一批可能不足50个
+                source_str = ",".join(source)
+                df = ts.realtime_quote(source_str)  # 调用API获取实时行情，这里使用模拟函数
+                print(df)
+                prices = df['PRICE'].tolist()
+
+                # 计算每只股票的涨跌率
+                for price in enumerate(prices):
+                    if stockprice == 0:  # 防止除以0
+                        continue
+                    change_rate = (price[stockid % 50] - stockprice) / stockprice * 100  # 涨跌率
+
+                    # 统计涨停和跌停股票的数量
+                    if change_rate >= 10:
+                        limit_up_count += 1
+                    elif change_rate <= -10:
+                        limit_down_count += 1
+
+                source.clear()  # 清空临时列表准备下一批查询
+
+        results=([
+            ("up_total", int(limit_up_count)),
+            ("down_total", int(limit_down_count))
+        ])
         return results
 
     @staticmethod

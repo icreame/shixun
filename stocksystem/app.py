@@ -67,7 +67,12 @@ def create_app():
 
         # 获取新闻数据，限制每页的条数
         news_data = NewsService.get_all_news(page, per_page)
-        news_list = news_data["data"]
+        # 检查 news_data 是否包含 "data" 键
+        if isinstance(news_data, dict) and "data" in news_data:
+            news_list = news_data["data"]
+        else:
+            # 如果 "data" 键不存在，设置默认值为空列表
+            news_list = []
 
         # 获取总新闻数，用于计算总页数
         total_news = news_data['total']

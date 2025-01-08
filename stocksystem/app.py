@@ -1,5 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, session, g, jsonify,request
+from sqlalchemy import null
+
 from controller.user_controller import user_blueprint, test_db_connection
 from controller.industry_controller import industry_blueprint
 from controller.news_controller import news_blueprint
@@ -87,6 +89,7 @@ def create_app():
         order=order
     )
 
+
         # 检查是否成功获取数据
         if not news_data["success"]:
             return render_template('index.html', message=news_data["message"])
@@ -116,10 +119,15 @@ def create_app():
             {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"}
             ]
        # 首页涨跌柱状图
-        updowns=StockService.get_limit_stocks()
+       #  updowns=StockService.get_limit_stocks()
+        updowns = {
+            'up_total': 4393,  # 上涨股票总数
+            'down_total': 902,  # 下跌股票总数
+            'data': [18, 2000, 1731, 1674, 1500, 1000, 689, 677, 500, 201, 104]  # 涨跌分布数据
+        }
+
        #首页情感分析图
         sentiment_by_indutry = NewsService.get_sentiment_by_industry()
-
 
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,

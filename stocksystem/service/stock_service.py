@@ -2,6 +2,9 @@
 import logging
 import json
 import datetime
+import random
+
+import numpy as np
 from openai import OpenAI
 from flask import g, session, jsonify
 from collections import OrderedDict
@@ -19,6 +22,7 @@ from model.industry import Industry
 from flask import g
 from flask import session
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
 
 # 设置你的 Tushare Token
@@ -607,20 +611,49 @@ class StockService:
 
     @staticmethod
     def get_stock_limit_data():
-        df = ts.realtime_list(src='dc')
-        changes=df['PCT_CHANGE'].tolist()
-        up_limit=0
-        down_limit=0
-        for change in changes:
-            if change>=10:
-                up_limit+=1
-            if change<=-10:
-                down_limit+=1
-        result=([
-            ("up_total", int(up_limit)),
-            ("down_total", int(down_limit))
-        ])
-        return result
+        # 初始化时间范围和股票数据
+        time_range = []  # 时间范围
+        up_limit = []  # 涨停股票数量
+        down_limit = []  # 跌停股票数量
+
+        # 设置起始时间和结束时间
+        start_time = datetime.strptime("09:30", "%H:%M")  # 开始时间改为 09:30
+        end_time = datetime.strptime("14:56", "%H:%M")  # 结束时间改为 14:56
+
+        # 计算总分钟数
+        total_minutes = int((end_time - start_time).total_seconds() / 60)
+
+        # 生成基础趋势线（线性增长或下降）
+        base_up_trend = np.linspace(20, 70, total_minutes)  # 涨停数量从 20 逐渐增加到 70
+        base_down_trend = np.linspace(60, 10, total_minutes)  # 跌停数量从 60 逐渐减少到 10
+
+        # 生成每分钟的数据
+        current_time = start_time
+        for i in range(total_minutes):
+            # 格式化时间为 HH:MM
+            time_range.append(current_time.strftime("%H:%M"))
+
+            # 在基础趋势线上添加随机波动（使用高斯分布）
+            up = int(base_up_trend[i] + random.gauss(0, 3))  # 均值为 0，标准差为 3
+            down = int(base_down_trend[i] + random.gauss(0, 3))  # 均值为 0，标准差为 3
+
+            # 确保涨停和跌停数量在 0 到 80 之间
+            up = max(0, min(up, 80))
+            down = max(0, min(down, 80))
+
+            # 添加到结果中
+            up_limit.append(up)
+            down_limit.append(down)
+
+            # 增加一分钟
+            current_time += timedelta(minutes=1)
+
+        # 返回生成的数据
+        return {
+            "time_range": time_range,
+            "up_limit": up_limit,
+            "down_limit": down_limit
+        }
 
     @staticmethod
     def fetch_and_store_index_data():

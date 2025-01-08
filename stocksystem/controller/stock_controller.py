@@ -159,6 +159,7 @@ def limit_stocks():
 @stock_blueprint.route('/stock-limit-data')
 def stock_limit_data():
     result=StockService.get_stock_limit_data()
+    print(result)
     return result
 
 

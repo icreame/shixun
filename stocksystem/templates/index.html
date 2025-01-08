@@ -185,6 +185,29 @@
             </div>
         </div>
     </div>
+        </div>
+        <!-- 分析结果容器 -->
+        <div class="col-12 mt-4" id="analysis-container">
+            <div class="card model-analysis-card">
+                <div class="card-body" id="sh_index-analysis">
+                    <!-- 上证指数分析结果 -->
+                </div>
+                <div class="card-body" id="sz_index-analysis" style="display: none;">
+                    <!-- 深证成指分析结果 -->
+                </div>
+                <div class="card-body" id="cyb_index-analysis" style="display: none;">
+                    <!-- 创业板指分析结果 -->
+                </div>
+                <div class="card-body" id="kc50_index-analysis" style="display: none;">
+                    <!-- 科创50分析结果 -->
+                </div>
+            </div>
+        </div>
+
+        <button onclick="showAnalysis('sh_index')">上证指数</button>
+        <button onclick="showAnalysis('sz_index')">深证成指</button>
+        <button onclick="showAnalysis('cyb_index')">创业板指</button>
+        <button onclick="showAnalysis('kc50_index')">科创50</button>
 </div>
 
     <!-- 添加 ECharts 图表容器 -->
@@ -520,6 +543,73 @@
     });
 </script>
 
+<!-- 大模型建议-->
+<script>
+    // 初始加载上证指数的分析结果
+    document.addEventListener("DOMContentLoaded", function () {
+        // 从后端获取分析数据
+        fetch('/stock/composite-index-analysis')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // 解析为 JSON
+            })
+            .then(data => {
+                console.log("Fetched Data:", data);  // 打印获取的数据
+                if (!data) {
+                    throw new Error('No data received');
+                }
+                window.analysisData = data;  // 存储数据
+                loadAnalysis('sh_index');    // 初始加载上证指数的分析结果
+            })
+            .catch(error => {
+                console.error('Error fetching analysis data:', error);
+            });
+    });
+
+    // 切换分析结果的函数
+    function showAnalysis(index) {
+        // 隐藏所有分析结果
+        document.querySelectorAll('#analysis-container .card-body').forEach(function (element) {
+            element.style.display = 'none';
+        });
+
+        // 显示选中的分析结果
+        const analysisElement = document.getElementById(`${index}-analysis`);
+        if (analysisElement) {
+            analysisElement.style.display = 'block';
+        }
+
+        // 加载对应的分析数据
+        loadAnalysis(index);
+    }
+
+    // 加载分析数据的函数
+    function loadAnalysis(index) {
+        // 获取存储的分析数据
+        const analysisData = window.analysisData;
+        console.log("Analysis Data for", index, ":", analysisData[index]);  // 打印当前指数的分析数据
+
+        // 更新分析结果
+        const analysisElement = document.getElementById(`${index}-analysis`);
+        console.log("Analysis Element:", analysisElement);  // 打印目标元素
+        if (analysisElement && analysisData[index]) {
+            const data = analysisData[index];
+            analysisElement.innerHTML = `
+                <h4>${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}分析结果</h4>
+                <p><strong>情感标签:</strong> ${data['情感标签']}</p>
+                <p><strong>投资建议:</strong> ${data['投资建议']}</p>
+                <p><strong>理由:</strong> ${data['理由']}</p>
+                <p><strong>预测:</strong> ${data['预测']}</p>
+            `;
+            console.log("Updated DOM for", index);  // 打印 DOM 更新日志
+        } else {
+            console.error("Analysis element or data not found for index:", index);
+        }
+    }
+</script>
+
 <!--情感分析-->
 <script>
     // 获取 CSS 变量
@@ -592,7 +682,7 @@
 
     // 页面加载完成后渲染图表
     document.addEventListener('DOMContentLoaded', renderSentimentChart);
-</script>
+</script>-
 
 <!--涨跌柱状图-->
 <script>

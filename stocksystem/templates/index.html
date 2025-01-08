@@ -352,8 +352,8 @@
                             <span class="badge bg-primary">{{ tag }}</span>
                             {% endfor %}
                         </div>
-                        <p class="card-text text-muted mb-3">
-                            {{ news.content | truncate(100, True) }}
+                        <p class="card-text text-muted mb-3">   <!-- 0108 修改content为空导致前端显示失败的问题-->
+                            {{ news.content | truncate(100, True) if news.content else '' }}
                         </p>
                         <div class="mt-auto">
                             <!-- 点赞按钮 -->
@@ -595,7 +595,7 @@
     });
 </script>
 
-<!--情感分析-->
+<!--行业情感分析-->
 <script>
     // 获取 CSS 变量
     const positiveColor = getComputedStyle(document.documentElement).getPropertyValue('--positive-color').trim();

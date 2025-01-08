@@ -1,4 +1,4 @@
 :root {
-    --positive-color: #91cc75; /* 正面颜色 */
-    --negative-color: #ee6666; /* 负面颜色 */
+    --positive-color: #dc3545; /* 正面颜色改为红色 */
+    --negative-color: #ee6666; /* 负面颜色保持不变 */
 }

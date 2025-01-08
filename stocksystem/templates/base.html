@@ -63,7 +63,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .news-item .card-title {
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: bold;
     }
     .news-item .badge {
@@ -206,6 +206,8 @@
         /* 自定义样式 */
 .card-body {
     position: relative;
+     padding: 0.5rem; /* 减少内边距 */
+
 }
 
 .sentiment-badge {
@@ -321,6 +323,32 @@
     .tab-pane {
     width: 100%; /* 确保父容器宽度足够 */
 }
+        /* 限制行业筛选内容的高度 */
+.industry-container {
+    max-height: 35px; /* 默认显示一行的高度 */
+    overflow: hidden; /* 隐藏超出部分 */
+    transition: max-height 0.3s ease; /* 动画效果 */
+    position: relative;
+}
+
+.industry-container.expanded {
+    max-height: 300px; /* 展开后的高度 */
+    overflow-y: auto; /* 显示滚动条 */
+}
+
+/* 隐藏“展开”按钮时添加的动画效果 */
+.toggle-button {
+
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+    border: none;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
     </style>
 </head>
 <body>

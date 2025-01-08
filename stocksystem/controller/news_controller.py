@@ -165,7 +165,7 @@ def search_news():
     per_page = request.args.get('per_page', default=10, type=int)  # 每页显示的新闻数量，默认为 10
     sort_by = request.args.get('sort_by', default="publishdate")  # 排序字段，默认为 "publishdate"
     order = request.args.get('order', default="desc")  # 排序顺序，默认为 "desc"
-
+    print(industryid)
     # 调用服务层方法
     result = NewsService.search_news_by_industry_and_sentiment(
         industryid=industryid,
@@ -175,7 +175,7 @@ def search_news():
         sort_by=sort_by,
         order=order
     )
-
+    print(result)
     # 返回结果
     if result["success"]:
         return jsonify(result), 200

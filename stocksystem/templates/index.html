@@ -4,7 +4,10 @@
 
 
 {% block market_summary %}
-           <div class="card market-summary-card">
+<div class="card market-summary-card">
+    <div class="card-header">
+        <h3 class="card-title mb-0">市场一览</h3>
+    </div>
         <div class="card-body">
             <div class="row">
                 <!-- 左侧切换按钮和数据 -->
@@ -71,10 +74,6 @@
 {% block content %}
 <div class="container-fluid">
     <div class="style_module-wrapper_sA7">
-    <div class="style_module-header_eYx">
-        <h3>市场一览</h3>
-    </div>
-        <hr class="my-3">
     <div class="style_market-overview_AJA">
         <div class="row">
             <!-- 上证指数 -->
@@ -198,112 +197,46 @@
         </div>
     </div>
 
-    <!-- 筛选栏 -->
+     <!-- 筛选栏 -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
                 <form method="get" action="{{ url_for('home') }}" class="border p-3 rounded">
-                    <!-- 筛选栏标题 -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0">筛选条件</h5>
-                        <span class="badge bg-primary">总采集数据量：{{ total_news }}条</span>
-                    </div>
 
                     <!-- 行业筛选 -->
                     <div class="mb-4">
-                        <h6>涉及行业 ({{ industries|length }})</h6>
-                        <div class="d-flex flex-wrap">
-                            {% for industry in industries %}
-                                {% if loop.index <= threshold %}
+                        <h6>涉及行业</h6>
+                        <div class="industry-container position-relative">
+                            <div class="d-flex flex-wrap industry-content" id="industryContent">
+                                {% for industry in industries %}
                                     <div class="form-check me-2 mb-2">
-                                        <input type="checkbox" class="form-check-input" name="industry" value="{{ industry.industryname }}"
-                                               id="industry-{{ loop.index }}" {% if industry.industryname in selected_industries %}checked{% endif %}>
-                                        <label class="form-check-label" for="industry-{{ loop.index }}">{{ industry.industryname }} ({{ industry.count }})</label>
+                                        <input type="checkbox" class="form-check-input" name="industryid" value="{{ industry.industryid }}"
+                                               id="industry-{{ industry.industryid }}" {% if industry.industryid == selected_industry %}checked{% endif %}>
+                                        <label class="form-check-label" for="industry-{{ industry.industryid }}">{{ industry.industryname }}</label>
                                     </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        {% if industries|length > threshold %}
-                            <div class="collapse" id="industry-collapse">
-                                <div class="d-flex flex-wrap">
-                                    {% for industry in industries %}
-                                        {% if loop.index > threshold %}
-                                            <div class="form-check me-2 mb-2">
-                                                <input type="checkbox" class="form-check-input" name="industry" value="{{ industry.industryname }}" id="industry-{{ loop.index }}" {% if industry.industryname in selected_industries %}checked{% endif %}>
-                                                <label class="form-check-label" for="industry-{{ loop.index }}">{{ industry.industryname }} ({{ industry.count }})</label>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
+                                {% endfor %}
                             </div>
-                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#industry-collapse" aria-expanded="false">
-                                展开更多
+                            <!-- 展开/折叠按钮 -->
+                            <button type="button" class="btn btn-link btn-sm toggle-button mt-2" id="toggleIndustry">
+                                展开
                             </button>
-                        {% endif %}
+                        </div>
                     </div>
 
                     <!-- 情感属性筛选 -->
                     <div class="mb-4">
-                        <h6>情感属性 ({{ sentiments|length }})</h6>
-                        <div class="d-flex flex-wrap">
-                            {% for sentiment in sentiments %}
-                                {% if loop.index <= threshold %}
+                        <h6>情感属性</h6>
+                        <div class="sentiment-container">
+                            <div class="d-flex flex-wrap">
+                                {% for sentiment in sentiments %}
                                     <div class="form-check me-2 mb-2">
-                                        <input type="checkbox" class="form-check-input" name="sentiment" value="{{ sentiment.sentiment }}" id="sentiment-{{ loop.index }}" {% if sentiment.sentiment in selected_sentiments %}checked{% endif %}>
-                                        <label class="form-check-label" for="sentiment-{{ loop.index }}">{{ sentiment.sentiment }} ({{ sentiment.count }})</label>
+                                        <input type="radio" class="form-check-input" name="sentiment" value="{{ sentiment.sentiment }}"
+                                               id="sentiment-{{ loop.index }}" {% if sentiment == selected_sentiment %}checked{% endif %}>
+                                        <label class="form-check-label" for="sentiment-{{ loop.index }}">{{ sentiment.sentiment }}</label>
                                     </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        {% if sentiments|length > threshold %}
-                            <div class="collapse" id="sentiment-collapse">
-                                <div class="d-flex flex-wrap">
-                                    {% for sentiment in sentiments %}
-                                        {% if loop.index > threshold %}
-                                            <div class="form-check me-2 mb-2">
-                                                <input type="checkbox" class="form-check-input" name="sentiment" value="{{ sentiment.sentiment }}" id="sentiment-{{ loop.index }}" {% if sentiment.sentiment in selected_sentiments %}checked{% endif %}>
-                                                <label class="form-check-label" for="sentiment-{{ loop.index }}">{{ sentiment.sentiment }} ({{ sentiment.count }})</label>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
+                                {% endfor %}
                             </div>
-                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#sentiment-collapse" aria-expanded="false">
-                                展开更多
-                            </button>
-                        {% endif %}
-                    </div>
-
-                    <!-- 数据来源筛选 -->
-                    <div class="mb-4">
-                        <h6>数据来源 ({{ sources|length }})</h6>
-                        <div class="d-flex flex-wrap">
-                            {% for source in sources %}
-                                {% if loop.index <= threshold %}
-                                    <div class="form-check me-2 mb-2">
-                                        <input type="checkbox" class="form-check-input" name="source" value="{{ source.sourcename }}" id="source-{{ loop.index }}" {% if source.sourcename in selected_sources %}checked{% endif %}>
-                                        <label class="form-check-label" for="source-{{ loop.index }}">{{ source.sourcename }} ({{ source.count }})</label>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
                         </div>
-                        {% if sources|length > threshold %}
-                            <div class="collapse" id="source-collapse">
-                                <div class="d-flex flex-wrap">
-                                    {% for source in sources %}
-                                        {% if loop.index > threshold %}
-                                            <div class="form-check me-2 mb-2">
-                                                <input type="checkbox" class="form-check-input" name="source" value="{{ source.sourcename }}" id="source-{{ loop.index }}" {% if source.sourcename in selected_sources %}checked{% endif %}>
-                                                <label class="form-check-label" for="source-{{ loop.index }}">{{ source.sourcename }} ({{ source.count }})</label>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-link text-primary p-0" data-bs-toggle="collapse" data-bs-target="#source-collapse" aria-expanded="false">
-                                展开更多
-                            </button>
-                        {% endif %}
                     </div>
 
                     <!-- 提交按钮 -->
@@ -313,119 +246,110 @@
         </div>
     </div>
 
-    <!-- 舆情新闻 -->
+
+    <!-- 新闻列表 -->
     <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h5 class="mb-0">舆情新闻</h5>
-        </div>
-        <div class="card-body">
-            <div class="news-list">
-                {% for news in stock_news %}
-                <div class="news-item card mb-4 border-0">
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h5 class="card-title mb-3 font-weight-bold">
-                                {{ news.title }}
-                                <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
-                                    <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
-                                </a>
-                            </h5>
-                            <!-- 情感图标 -->
-                            <span class="sentiment-badge
-                                {% if news.sentiment == '看涨' %}bg-danger{% elif news.sentiment == '看跌' %}bg-success{% else %}bg-secondary{% endif %}
-                                text-white small p-1 rounded d-flex align-items-center">
-                                {% if news.sentiment == '看涨' %}
-                                    <i class="bi bi-graph-up-arrow me-1"></i> 看涨
-                                {% elif news.sentiment == '看跌' %}
-                                    <i class="bi bi-graph-down-arrow me-1"></i> 看跌
-                                {% else %}
-                                    <i class="bi bi-dash-circle me-1"></i> 中性
-                                {% endif %}
-                            </span>
-                        </div>
-                        <p class="text-muted small mb-3">
-                            行业：{{ news.industryname }} | {{ news.publishdate }}
-                        </p>
-                        <div class="mb-2">
-                            {% for tag in news.tags %}
-                            <span class="badge bg-primary">{{ tag }}</span>
-                            {% endfor %}
-                        </div>
-                        <p class="card-text text-muted mb-3">   <!-- 0108 修改content为空导致前端显示失败的问题-->
-                            {{ news.content | truncate(100, True) if news.content else '' }}
-                        </p>
-                        <div class="mt-auto">
-                            <!-- 点赞按钮 -->
-                            <div class="interaction-buttons">
-                                <button class="btn btn-outline-primary btn-sm mr-2">
-                                    <i class="bi bi-hand-thumbs-up"></i> 点赞
-                                </button>
-                            </div>
-                            <!-- 查看详情按钮 -->
-                           <button class="btn btn-outline-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#newsDetailModal{{ loop.index }}">
-                                <i class="bi bi-info-circle"></i> 查看详情
-                           </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 模态框 -->
-                <div class="modal fade" id="newsDetailModal{{ loop.index }}" tabindex="-1" aria-labelledby="newsDetailModalLabel{{ loop.index }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="newsDetailModalLabel{{ loop.index }}">舆情详情</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h6 class="mb-3">{{news.sentiment}}原因：</h6>
-                                <p>{{ news.reason }}</p>  <!-- 假设 news.reason 是看涨或看跌的原因 -->
-                                <hr>
-                                <h6 class="mb-3">其他信息：</h6>
-                                <ul>
-                                    <li>行业：{{ news.industryname }}</li>
-                                    <li>发布日期：{{ news.publishdate }}</li>
-                                    <li>url：{{ news.url }}</li>
-                                    <li>标签：{{ news.tags | join(', ') }}</li>
-                                </ul>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">舆情新闻</h5>
             </div>
+            <div class="card-body">
+                <div class="news-list">
+                    {% for news in news_list %}
+                    <div class="news-item card mb-4 border-0">
+                        <div class="card-body p-2 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title mb-3 font-weight-bold">
+                                    {{ news.title| truncate(20, True) }}
+                                    <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
+                                        <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
+                                    </a>
+                                </h5>
+                                <!-- 情感图标 -->
+                                <span class="sentiment-badge
+                                    {% if news.trend == '看涨' %}bg-danger{% elif news.trend == '看跌' %}bg-success{% else %}bg-secondary{% endif %}
+                                    text-white small p-1 rounded d-flex align-items-center">
+                                    {% if news.trend == '看涨' %}
+                                        <i class="bi bi-graph-up-arrow me-1"></i> 看涨
+                                    {% elif news.trend == '看跌' %}
+                                        <i class="bi bi-graph-down-arrow me-1"></i> 看跌
+                                    {% else %}
+                                        <i class="bi bi-dash-circle me-1"></i> 中性
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <p class="text-muted small mb-2">
+                                行业：{{ news.industryname }} | {{ news.publishdate }}
+                            </p>
+                            <p class="card-text text-muted mb-3">
+                                {{ news.reason | truncate(48, True) }}
 
-            <!-- 分页按钮 -->
-            <div class="pagination">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('home', page=current_page-1) }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {% for page_num in page_range %}
-                    {% if page_num == '...' %}
-                    <li class="page-item disabled"><span class="page-link">...</span></li>
-                    {% else %}
-                    <li class="page-item {% if page_num == current_page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
-                    </li>
-                    {% endif %}
+                                <!-- 查看详情按钮 -->
+                                   <button class="btn btn-outline-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#newsDetailModal{{ loop.index }}">
+                                        <i class="bi bi-info-circle"></i> 查看详情
+                                   </button>
+
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <!-- 模态框 -->
+                    <div class="modal fade" id="newsDetailModal{{ loop.index }}" tabindex="-1" aria-labelledby="newsDetailModalLabel{{ loop.index }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="newsDetailModalLabel{{ loop.index }}">舆情详情</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6 class="mb-3">{{news.trend}}原因：</h6>
+                                    <p>{{ news.reason }}</p>
+                                    <hr>
+                                    <h6 class="mb-3">其他信息：</h6>
+                                    <ul>
+                                        <li>行业：{{ news.industryname }}</li>
+                                        <li>发布日期：{{ news.publishdate }}</li>
+                                        <li>url：{{ news.url }}</li>
+                                        <li>标签：{{ news.tags | join(', ') }}</li>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
-                    <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('home', page=current_page+1) }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
+                </div>
+
+                <!-- 分页按钮 -->
+               <div class="pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home') }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% for page_num in page_range %}
+                            {% if page_num == '...' %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% else %}
+                                <li class="page-item {% if page_num == page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home') }}">{{ page_num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home') }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 {% endblock %}
 
@@ -498,10 +422,11 @@
                     {% if my_stocks %}
                         {% for stock in my_stocks %}
                         <li class="list-group-item">
-<!--                            <h5>{{ stock.stockname }}({{stock.stockcode}})</h5>-->
-<!--                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>-->
-<!--                            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">-->
-<!--                                {{ stock.change }}</span></p>-->
+                            <h5>{{ stock.stockname }}({{stock.stockcode}})</h5>
+                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
+                            <p>涨跌幅： <span class="change-rate {{ 'positive' if stock.change.replace('%', '') | float > 0 else 'negative' }}">
+                                {{  stock.get('change', 'N/A') }}
+                            </span></p>
 
                         </li>
                         {% endfor %}
@@ -595,7 +520,7 @@
     });
 </script>
 
-<!--行业情感分析-->
+<!--情感分析-->
 <script>
     // 获取 CSS 变量
     const positiveColor = getComputedStyle(document.documentElement).getPropertyValue('--positive-color').trim();
@@ -797,5 +722,24 @@
             }
         });
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const industryContainer = document.querySelector('.industry-container');
+        const toggleButton = document.getElementById('toggleIndustry');
+
+        toggleButton.addEventListener('click', function () {
+            // 切换展开/折叠状态
+            if (industryContainer.classList.contains('expanded')) {
+                industryContainer.classList.remove('expanded');
+                toggleButton.textContent = '展开';
+            } else {
+                industryContainer.classList.add('expanded');
+                toggleButton.textContent = '折叠';
+            }
+        });
+    });
+</script>
+
 
 {% endblock %}

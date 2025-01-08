@@ -160,8 +160,7 @@ def limit_stocks():
 def stock_limit_data():
     # 生成模拟数据
     result=StockService.get_stock_limit_data()
-    print(result)
-    return jsonify(result)
+    return result
 
 
 @stock_blueprint.route('/composite-index-analysis', methods=['GET'])

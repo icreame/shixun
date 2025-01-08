@@ -29,6 +29,7 @@ class SelfSelectService:
             # 查询用户自选股
             selfselects = SelfSelect.query.filter_by(userid=userid).all()
             stock_list = []
+            df = ts.realtime_list(src='dc')
             for select in selfselects:
                 stocks_item = {
                     "userid": userid
@@ -38,17 +39,32 @@ class SelfSelectService:
                     stock = Stock.query.get(select.stockid)
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
-                    df1 = pro.daily_basic(ts_code=stock.stockcode, trade_date=datetime.now().strftime('%Y%m%d'))
-                    df = ts.realtime_list(src='dc')
-                    pd.set_option('display.max_columns', 1000)
-                    pd.set_option('display.width', 1000)
-                    pd.set_option('display.max_colwidth', 1000)
+                    matching_row = df[df['TS_CODE'] == stock.stockcode]
 
-                    stocks_item["volume"] = df['VOLUME'].iloc[0]    # 成交量(单位：手)
-                    stocks_item["close"] = df['CLOSE'].iloc[0]
-                    stocks_item["pct_change"]=df['PCT_CHANGE'].iloc[0]  # 涨跌幅
-                    stocks_item['5min']=df['5MIN'].iloc[0]  # 5分钟涨幅
-                    stocks_item["totoal_mv"] = df1['total_mv'].iloc[0]
+                    if not matching_row.empty:
+                        stocks_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
+                        stocks_item["close"] = matching_row['CLOSE'].iloc[0]
+                        stocks_item["pct_change"]=matching_row['PCT_CHANGE'].iloc[0]  # 涨跌幅
+                        stocks_item['5min']=matching_row['5MIN'].iloc[0]  # 5分钟涨幅
+                        stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]  # 总市值(单位：万元)
+                        """
+                        df可选参数（按照上面格式添加就行）：'
+                        CHANGE              涨跌额
+                        AMOUNT              成交金额
+                        SWING               振幅
+                        LOW                 今日最低价
+                        HIGH                今日最高价
+                        OPEN                今日开盘价
+                        VOL_RATIO           量比
+                        TURNOVER_RATE       换手率
+                        PE                  市盈率
+                        PB                  市净率
+                        FLOAT_MV            流通市值
+                        RISE                涨速
+                        60DAY               60天涨幅
+                        1YEAR               1年涨幅
+                        """
+
 
                 stock_list.append(stocks_item)
             return stock_list  # 返回股票id的列表

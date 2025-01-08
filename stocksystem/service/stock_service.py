@@ -11,11 +11,18 @@ import tushare as ts
 import akshare as ak
 import pandas as pd
 import time
+<<<<<<< HEAD
 
 from model.index_analysis import IndexAnalysis
 from model.index_analysis_result import IndexAnalysisResult
 from model.stock import Stock, db
 from model.industry import Industry
+=======
+from flask import g
+from flask import session
+from collections import OrderedDict
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
+
 
 # 设置你的 Tushare Token
 ts.set_token('b7378a5c379a258bd7f96c9d3c411d6484b82d0ff3ce312f720abc9c')
@@ -557,11 +564,19 @@ class StockService:
         获取昨日A股的涨跌数据
         :return: 返回涨停和跌停股票的DataFrame
         """
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
+        yesterday = datetime.now() - timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
         pct_chg = df['pct_chg']
+
+        # 存储昨日收盘价
+        close = df['close']
+        for idx, price in close.items():
+            stock = Stock.query.get(idx + 1)  # 获取id为idx+1的股票
+            if stock:  # 确保找到了对应的股票
+                stock.stockprice = price
+                db.session.commit()
 
         # 定义区间边界
         bins = [-float('inf'), -8, -6, -4, -2, 0, 2, 4, 6, 8, float('inf')]
@@ -594,7 +609,28 @@ class StockService:
         return results
 
     @staticmethod
+<<<<<<< HEAD
     def fetch_and_store_index_data():
+=======
+    def get_stock_limit_data():
+        df = ts.realtime_list(src='dc')
+        changes=df['PCT_CHANGE'].tolist()
+        up_limit=0
+        down_limit=0
+        for change in changes:
+            if change>=10:
+                up_limit+=1
+            if change<=-10:
+                down_limit+=1
+        result=([
+            ("up_total", int(up_limit)),
+            ("down_total", int(down_limit))
+        ])
+        return result
+
+    @staticmethod
+    def composite_index_analysis():
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
         """
         获取当前一周的指数详情并存入数据库。
         """

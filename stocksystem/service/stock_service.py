@@ -561,7 +561,7 @@ class StockService:
         获取昨日A股的涨跌数据
         :return: 返回涨停和跌停股票的DataFrame
         """
-        yesterday = datetime.now() - timedelta(days=1)  # 当前时间减去一天
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据

@@ -170,3 +170,9 @@ def stock_limit_data():
     }
     print(data)
     return jsonify(data)
+
+
+@stock_blueprint.route('/composite-index-analysis', methods=['GET'])
+def get_composite_index_analysis():
+    analysis_data = StockService.composite_index_analysis()
+    return jsonify(analysis_data)

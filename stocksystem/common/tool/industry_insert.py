@@ -41,3 +41,5 @@ for index, row in df_cleaned.iterrows():
 # 关闭数据库连接
 cursor.close()
 conn.close()
+
+print("数据插入完成！")

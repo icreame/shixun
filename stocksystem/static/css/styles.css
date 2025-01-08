@@ -79,3 +79,107 @@ p {
 .container-fluid {
     padding: 20px;
 }
+
+/* 大模型分析建议的样式 */
+.index-analysis {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 1rem;
+}
+
+.index-analysis h6 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.index-analysis p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    background-color: #287DFF;
+    border-color: #287DFF;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1c5bbf;
+    border-color: #1c5bbf;
+}
+
+/* 折叠内容的动画效果 */
+.collapse {
+    transition: all 0.3s ease;
+}
+
+/* 卡片样式 */
+.model-analysis-card {
+    margin-top: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.model-analysis-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 1rem;
+}
+
+.model-analysis-card .card-header h5 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.model-analysis-card .card-body {
+    padding: 1.5rem;
+}
+/* 添加过渡效果 */
+.card-body {
+        transition: opacity 0.5s ease-in-out;
+    }
+
+.card-body[style*="display: none"] {
+    opacity: 0;
+}
+
+.card-body[style*="display: block"] {
+    opacity: 1;
+}
+
+/*0108 其他样式*/
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .index-analysis {
+        padding: 8px;
+    }
+
+    .index-analysis h6 {
+        font-size: 1rem;
+    }
+
+    .index-analysis p {
+        font-size: 0.8rem;
+    }
+}
+
+/* 简单的动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.index-analysis {
+    animation: fadeIn 0.5s ease-in-out;
+}

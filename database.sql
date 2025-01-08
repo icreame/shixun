@@ -67,3 +67,27 @@ CREATE TABLE IF NOT EXISTS news_analysis (
     sentiment VARCHAR(50),
     FOREIGN KEY (news_id) REFERENCES news(newsid)  -- 正确的外键关系
 );
+<<<<<<< HEAD
+
+
+CREATE TABLE index_analysis (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  -- 分析结果唯一标识，主键
+    analysis_date DATE NOT NULL,                 -- 分析日期
+    sh_index JSON,                               -- 上证指数分析结果
+    sz_index JSON,                               -- 深证成指分析结果
+    cyb_index JSON,                              -- 创业板指分析结果
+    kc50_index JSON,                             -- 科创50分析结果
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 数据创建时间
+);
+
+CREATE TABLE index_analysis_result (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  -- 分析结果唯一标识，主键
+    analysis_date DATE NOT NULL,                 -- 分析日期
+    sh_index_analysis JSON,                      -- 上证指数分析结果
+    sz_index_analysis JSON,                      -- 深证成指分析结果
+    cyb_index_analysis JSON,                     -- 创业板指分析结果
+    kc50_index_analysis JSON,                    -- 科创50分析结果
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 数据创建时间
+);
+=======
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8

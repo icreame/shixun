@@ -80,6 +80,18 @@ def create_app():
         page = request.args.get('page', 1, type=int)  # 获取当前页，默认为1
 
         # 获取新闻数据，限制每页的条数
+<<<<<<< HEAD
+        news_data = NewsService.get_all_news(page, per_page)
+        # 检查 news_data 是否包含 "data" 键
+        if isinstance(news_data, dict) and "data" in news_data:
+            news_list = news_data["data"]
+        else:
+            # 如果 "data" 键不存在，设置默认值为空列表
+            news_list = []
+
+        # 获取总新闻数，用于计算总页数
+        total_news = news_data['total']
+=======
         news_data = NewsService.search_news_by_industry_and_sentiment(
         industryid=industryid,
         sentiment=sentiment,
@@ -96,6 +108,7 @@ def create_app():
             # 获取新闻列表和分页信息
         news_list = news_data["data"]
         total_news = news_data["total"]
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
         total_pages = ceil(total_news / per_page)
         # 分页显示范围：当前页前后各两页
         page_range = list(range(max(1, page - 2), min(total_pages + 1, page + 3)))

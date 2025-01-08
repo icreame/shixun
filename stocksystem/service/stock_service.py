@@ -1,20 +1,27 @@
 # services/stock_service.py
 import logging
 import json
+import datetime
 from openai import OpenAI
-
-from model.stock import Stock,db
-from model.industry import Industry
+from flask import g, session, jsonify
+from collections import OrderedDict
 from sqlalchemy.sql import text
 from sqlalchemy import or_
 import tushare as ts
-import datetime
 import akshare as ak
 import pandas as pd
 import time
+<<<<<<< HEAD
+
+from model.index_analysis import IndexAnalysis
+from model.index_analysis_result import IndexAnalysisResult
+from model.stock import Stock, db
+from model.industry import Industry
+=======
 from flask import g
 from flask import session
 from collections import OrderedDict
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
 
 
 # 设置你的 Tushare Token
@@ -602,6 +609,9 @@ class StockService:
         return results
 
     @staticmethod
+<<<<<<< HEAD
+    def fetch_and_store_index_data():
+=======
     def get_stock_limit_data():
         df = ts.realtime_list(src='dc')
         changes=df['PCT_CHANGE'].tolist()
@@ -620,15 +630,14 @@ class StockService:
 
     @staticmethod
     def composite_index_analysis():
+>>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
         """
-        获取最近一周的大盘数据，并将其整理为 JSON 格式，传递给大模型进行分析。
-
-        :return: JSON 对象，包含四个指数的最近一周数据
+        获取当前一周的指数详情并存入数据库。
         """
         # 获取当前日期
-        end_date = datetime.now().strftime('%Y%m%d')
+        end_date = datetime.datetime.now().strftime('%Y%m%d')
         # 计算一周前的日期
-        start_date = (datetime.now() - timedelta(days=7)).strftime('%Y%m%d')
+        start_date = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y%m%d')
 
         # 获取上证指数数据
         sh_index = pro.index_daily(ts_code='000001.SH', start_date=start_date, end_date=end_date)
@@ -652,20 +661,153 @@ class StockService:
             'cyb_index': cyb_index.to_dict(orient='records'),
             'kc50_index': kc50_index.to_dict(orient='records')
         }
-        # 用户提示词，传入大盘数据
-        user_prompt = f"请分析我给你的大盘数据，用json格式给出输出，大盘数据如下：{json_data}"
-        # 构建消息列表
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
 
-        # 调用大模型
-        response = client.chat.completions.create(
-            model="deepseek-chat",
-            messages=messages,
-            response_format={'type': 'json_object'}  # 指定返回 JSON 格式
-        )
+        # 将数据存入数据库
+        try:
+            new_analysis = IndexAnalysis(
+                analysis_date=datetime.datetime.now().date(),
+                sh_index=json.dumps(json_data['sh_index']),
+                sz_index=json.dumps(json_data['sz_index']),
+                cyb_index=json.dumps(json_data['cyb_index']),
+                kc50_index=json.dumps(json_data['kc50_index'])
+            )
+            db.session.add(new_analysis)
+            db.session.commit()
+            return json_data
+        except Exception as e:
+            db.session.rollback()
+            return {"success": False, "message": str(e)}
 
-        # 解析并返回结果
-        return json.loads(response.choices[0].message.content)
+    @staticmethod
+    def get_index_data_from_db():
+        """
+        从数据库中读取本周的指数详情，如果没有则调用 fetch_and_store_index_data 函数获取数据并存入数据库。
+        """
+        # 获取当前日期
+        end_date = datetime.datetime.now().date()
+        # 计算一周前的日期
+        start_date = end_date - datetime.timedelta(days=7)
+
+        # 查询本周的数据
+        try:
+            analysis_data = IndexAnalysis.query.filter(
+                IndexAnalysis.analysis_date >= start_date,
+                IndexAnalysis.analysis_date <= end_date
+            ).first()
+
+            # 如果数据库中没有本周的数据，则调用 fetch_and_store_index_data 函数获取数据并存入数据库
+            if not analysis_data:
+                return StockService.fetch_and_store_index_data()
+            else:
+                return {
+                    'sh_index': json.loads(analysis_data.sh_index),
+                    'sz_index': json.loads(analysis_data.sz_index),
+                    'cyb_index': json.loads(analysis_data.cyb_index),
+                    'kc50_index': json.loads(analysis_data.kc50_index)
+                }
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+
+    @staticmethod
+    def composite_index_analysis():
+        """
+        获取最近一周的大盘数据，并将其整理为 JSON 格式，传递给大模型进行分析。
+        将大模型的分析结果存入数据库。
+
+        :return: JSON 对象，包含四个指数的最近一周分析结果
+        """
+        # 获取当前日期
+        end_date = datetime.datetime.now().date()
+        # 计算一周前的日期
+        start_date = end_date - datetime.timedelta(days=7)
+
+        # 检查数据库中是否已经有本周的分析结果
+        try:
+            analysis_result = IndexAnalysisResult.query.filter(
+                IndexAnalysisResult.analysis_date >= start_date,
+                IndexAnalysisResult.analysis_date <= end_date
+            ).first()
+
+            # 如果数据库中没有本周的分析结果，则调用大模型获取并存储
+            if not analysis_result:
+                # 获取本周的指数数据
+                json_data = StockService.get_index_data_from_db()
+
+                # 用户提示词，传入大盘数据
+                user_prompt = f"请分析我给你的大盘数据，用json格式给出输出，大盘数据如下：{json_data}"
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+
+                # 调用大模型
+                response = client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=messages,
+                    response_format={'type': 'json_object'}  # 指定返回 JSON 格式
+                )
+
+                # 解析大模型返回的结果
+                analysis_result = json.loads(response.choices[0].message.content)
+                print("Analysis result from model:", analysis_result)  # 打印分析结果
+
+                # 提取并组合 cyb_index 相关的数据
+                cyb_index_data = {
+                    "情感标签": analysis_result["情感标签"]["cyb_index"],
+                    "投资建议": analysis_result["投资建议"]["cyb_index"],
+                    "理由": analysis_result["理由"]["cyb_index"],
+                    "预测": analysis_result["预测"]["cyb_index"]
+                }
+
+                # 提取并组合 kc50_index 相关的数据
+                kc50_index_data = {
+                    "情感标签": analysis_result["情感标签"]["kc50_index"],
+                    "投资建议": analysis_result["投资建议"]["kc50_index"],
+                    "理由": analysis_result["理由"]["kc50_index"],
+                    "预测": analysis_result["预测"]["kc50_index"]
+                }
+
+                # 提取并组合 sh_index 相关的数据
+                sh_index_data = {
+                    "情感标签": analysis_result["情感标签"]["sh_index"],
+                    "投资建议": analysis_result["投资建议"]["sh_index"],
+                    "理由": analysis_result["理由"]["sh_index"],
+                    "预测": analysis_result["预测"]["sh_index"]
+                }
+
+                # 提取并组合 sz_index 相关的数据
+                sz_index_data = {
+                    "情感标签": analysis_result["情感标签"]["sz_index"],
+                    "投资建议": analysis_result["投资建议"]["sz_index"],
+                    "理由": analysis_result["理由"]["sz_index"],
+                    "预测": analysis_result["预测"]["sz_index"]
+                }
+
+                # 将分析结果存入数据库
+                new_analysis = IndexAnalysisResult(
+                    analysis_date=datetime.datetime.now().date(),
+                    cyb_index_analysis=json.dumps(cyb_index_data),
+                    kc50_index_analysis=json.dumps(kc50_index_data),
+                    sh_index_analysis=json.dumps(sh_index_data),
+                    sz_index_analysis=json.dumps(sz_index_data)
+                )
+                print("New analysis object:", new_analysis)  # 打印新对象
+
+                db.session.add(new_analysis)
+                print("Data added to session")  # 打印日志
+                db.session.commit()
+                print("Data committed to database")  # 打印日志
+
+                return analysis_result
+            else:
+                # 如果数据库中有本周的分析结果，则直接返回
+                return {
+                    'cyb_index': json.loads(analysis_result.cyb_index_analysis),
+                    'kc50_index': json.loads(analysis_result.kc50_index_analysis),
+                    'sh_index': json.loads(analysis_result.sh_index_analysis),
+                    'sz_index': json.loads(analysis_result.sz_index_analysis)
+                }
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error committing to database: {e}")  # 打印错误信息
+            return {"success": False, "message": str(e)}

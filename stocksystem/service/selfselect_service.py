@@ -51,7 +51,7 @@ class SelfSelectService:
                         stocks_item["close"] = matching_row['CLOSE'].iloc[0]    #收盘价
                         stocks_item["pct_change"]=matching_row['PCT_CHANGE'].iloc[0]  # 涨跌幅
                         stocks_item['5min']=matching_row['5MIN'].iloc[0]  # 5分钟涨幅
-                        stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]  # 总市值(单位：万元)
+                        stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]/10000  # 总市值(单位：万元)
                         """
                         df可选参数（按照上面格式添加就行）：'
                         CHANGE              涨跌额

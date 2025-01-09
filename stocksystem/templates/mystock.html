@@ -1,154 +1,212 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <h1>我的股票</h1>
+    <div class="container mt-4">
 
-     <!-- 搜索功能 -->
-<form method="GET" action="{{ url_for('stock.mystock') }}">
-    <div class="row mb-4">
-        <div class="col-md-9">
-            <input type="text" name="search_query" id="search_query" class="form-control" placeholder="输入股票名称或代码进行搜索" autocomplete="off" value="{{ search_query }}">
-            <div id="search_suggestions" class="list-group" style="display: none;"></div>
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-primary w-100">搜索</button>
+        <!-- 指数 -->
+        <div class="row mb-4">
+    <!-- 科创50 -->
+    <div class="col-md-3">
+        <div class="index-card">
+            <h3 class="mb-0 d-flex align-items-center justify-content-between">
+                <span>科创50</span>
+                <span class="positive">+0.30%</span>
+            </h3>
         </div>
     </div>
-</form>
-
-<!-- 搜索结果 -->
-{% if search_query %}  <!-- 只有在有搜索关键词时才显示搜索结果 -->
-<div class="card mb-4">
-    <div class="card-header">搜索结果</div>
-    <div class="card-body">
-        {% if search_results.data|length > 0 %}
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>股票名称</th>
-                    <th>股票代码</th>
-                    <th>行业</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for stock in search_results.data %}
-                <tr>
-                    <td>{{ stock.stockname }}</td>
-                    <td>{{ stock.stock_id }}</td>
-                    <td><span class="badge bg-info">{{ stock.industry }}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="addStock('{{ stock.stock_id }}')">
-                            <i class="bi bi-plus"></i> 添加
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <!-- 分页 -->
-       <nav aria-label="Page navigation">
-    <ul class="pagination">
-        <!-- 上一页 -->
-        {% if search_results.page > 1 %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page-1, search_query=search_query) }}">上一页</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一页</a>
-        </li>
-        {% endif %}
-
-        <!-- 页码范围 -->
-        {% set start_page = [1, search_results.page - 5]|max %}
-        {% set end_page = [search_results.total_pages, search_results.page + 5]|min %}
-        {% for p in range(start_page, end_page + 1) %}
-        <li class="page-item {{ 'active' if p == search_results.page else '' }}">
-            <a class="page-link" href="{{ url_for('stock.mystock', page=p, search_query=search_query) }}">{{ p }}</a>
-        </li>
-        {% endfor %}
-
-        <!-- 下一页 -->
-        {% if search_results.page < search_results.total_pages %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page+1, search_query=search_query) }}">下一页</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">下一页</a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-        {% else %}
-        <p class="text-danger mb-0">未找到与“{{ search_query }}”相关的股票。</p>
-        {% endif %}
+    <!-- 上证50 -->
+    <div class="col-md-3">
+        <div class="index-card">
+            <h3 class="mb-0 d-flex align-items-center justify-content-between">
+                <span>上证50</span>
+                <span class="negative">-0.38%</span>
+            </h3>
+        </div>
+    </div>
+    <!-- 沪深300 -->
+    <div class="col-md-3">
+        <div class="index-card">
+            <h3 class="mb-0 d-flex align-items-center justify-content-between">
+                <span>沪深300</span>
+                <span class="negative">-0.10%</span>
+            </h3>
+        </div>
+    </div>
+    <!-- 北证50 -->
+    <div class="col-md-3">
+        <div class="index-card">
+            <h3 class="mb-0 d-flex align-items-center justify-content-between">
+                <span>北证50</span>
+                <span class="positive">+1.67%</span>
+            </h3>
+        </div>
     </div>
 </div>
-{% endif %}
-        <!-- 舆情新闻 -->
-        <div class="container mt-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">舆情新闻</h5>
+        <div class="col-md-12">
+
+     <!-- 搜索功能 -->
+            <form method="GET" action="{{ url_for('stock.mystock') }}">
+            <div class="row mb-4">
+                <div class="col-md-9">
+                    <input type="text" name="search_query" id="search_query" class="form-control" placeholder="输入股票名称或代码进行搜索" autocomplete="off" value="{{ search_query }}">
+                    <div id="search_suggestions" class="list-group" style="display: none;"></div>
                 </div>
-                <div class="card-body">
-                    <!-- 新闻列表 -->
-                    <div class="news-list">
-                        {% for news in stock_news %}
-                        <div class="news-item card mb-4 border-0">
-                            <div class="card-body p-4">
-                                <!-- 新闻标题 -->
-                                <h5 class="card-title mb-3 font-weight-bold">
-                                    {{ news.title }}
-                                </h5>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">搜索</button>
+                </div>
+            </div>
+        </form>
 
-                                <!-- 新闻来源和时间 -->
-                                <p class="text-muted small mb-3">
-                                    来源：{{ news.source }} | {{ news.date }}
-                                </p>
-
-                                <!-- 新闻标签 -->
-                                <div class="mb-2">
-                                    {% for tag in news.tags %}
-                                    <span class="badge bg-primary">{{ tag }}</span>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- 新闻摘要 -->
-                                <p class="card-text text-muted mb-3">
-                                    {{ news.summary }}
-                                </p>
-
-                                <!-- 交互功能 -->
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="interaction-buttons">
-                                        <button class="btn btn-outline-primary btn-sm mr-2">
-                                            <i class="bi bi-hand-thumbs-up"></i> 点赞
-                                        </button>
-                                        <button class="btn btn-outline-secondary btn-sm mr-2">
-                                            <i class="bi bi-chat-left-text"></i> 评论
-                                        </button>
-                                        <button class="btn btn-outline-success btn-sm">
-                                            <i class="bi bi-share"></i> 分享
-                                        </button>
-                                    </div>
-
-                                    <!-- 情感分析 -->
-                                    <span class="text-muted small">{{ news.sentiment }}</span>
-                                </div>
-                            </div>
-                        </div>
+    <!-- 搜索结果 -->
+            {% if search_query %}  <!-- 只有在有搜索关键词时才显示搜索结果 -->
+            <div class="card mb-4">
+            <div class="card-header">搜索结果</div>
+            <div class="card-body">
+                {% if search_results.data|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>股票名称</th>
+                            <th>股票代码</th>
+                            <th>行业</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in search_results.data %}
+                        <tr>
+                            <td>{{ stock.stockname }}</td>
+                            <td>{{ stock.stock_id }}</td>
+                            <td><span class="badge bg-info">{{ stock.industry }}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="addStock('{{ stock.stock_id }}')">
+                                    <i class="bi bi-plus"></i> 添加
+                                </button>
+                            </td>
+                        </tr>
                         {% endfor %}
-                    </div>
-                </div>
+                    </tbody>
+                </table>
+
+                <!-- 分页 -->
+               <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- 上一页 -->
+                {% if search_results.page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page-1, search_query=search_query) }}">上一页</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一页</a>
+                </li>
+                {% endif %}
+
+                <!-- 页码范围 -->
+                {% set start_page = [1, search_results.page - 5]|max %}
+                {% set end_page = [search_results.total_pages, search_results.page + 5]|min %}
+                {% for p in range(start_page, end_page + 1) %}
+                <li class="page-item {{ 'active' if p == search_results.page else '' }}">
+                    <a class="page-link" href="{{ url_for('stock.mystock', page=p, search_query=search_query) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+
+                <!-- 下一页 -->
+                {% if search_results.page < search_results.total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('stock.mystock', page=search_results.page+1, search_query=search_query) }}">下一页</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">下一页</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+                {% else %}
+                <p class="text-danger mb-0">未找到与“{{ search_query }}”相关的股票。</p>
+                {% endif %}
+            </div>
+        </div>
+            {% endif %}
+
+        <!-- 自选股表格 -->
+            <div class="container mt-4">
+        <!-- 自选股表格 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">自选股票</h5>
+                <table class="table table-hover" id="stock-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">股票名称</th>
+                            <th scope="col">当前价</th>
+                            <th scope="col">涨跌幅</th>
+                            <th scope="col">成交量</th>
+                            <th scope="col">总市值(万元)</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 数据将由 JavaScript 动态填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+
+            <!-- 底部 -->
+            <div class="text-center text-muted">
+                <p class="mb-0">数据仅供参考，实际以交易所为准。</p>
+            </div>
+
+            <!-- 舆情新闻 -->
+            <div class="container mt-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">舆情新闻</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- 新闻列表 -->
+                        <div class="news-list">
+                            {% for news in stock_news %}
+                            <div class="news-item card mb-4 border-0">
+                                <div class="card-body p-4">
+                                    <!-- 新闻标题 -->
+                                    <h5 class="card-title mb-3 font-weight-bold">
+                                        {{ news.title }}
+                                    </h5>
+
+                                    <!-- 新闻来源和时间 -->
+                                    <p class="text-muted small mb-3">
+                                        来源：{{ news.source }} | {{ news.date }}
+                                    </p>
+
+                                    <!-- 新闻标签 -->
+                                    <div class="mb-2">
+                                        {% for tag in news.tags %}
+                                        <span class="badge bg-primary">{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- 新闻摘要 -->
+                                    <p class="card-text text-muted mb-3">
+                                        {{ news.summary }}
+                                    </p>
+
+
+
+                                        <!-- 情感分析 -->
+                                        <span class="text-muted small">{{ news.sentiment }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+        </div>
 </div>
+
 {% endblock %}
 
 {% block right_sidebar %}
@@ -200,4 +258,91 @@
         }
     });
 </script>
+<!--zixuangu-->
+ <script>
+        // 获取用户 ID（假设用户 ID 为 1）
+        const userId = 1;
+
+        // 动态获取自选股数据
+        async function fetchStocks() {
+            try {
+                const response = await fetch(`/selfselect/${userId}`);
+                if (!response.ok) {
+                    throw new Error("网络响应异常");
+                }
+                const data = await response.json();
+                renderTable(data.selfselects);
+            } catch (error) {
+                console.error("获取数据失败:", error);
+            }
+        }
+
+        // 渲染表格
+        function renderTable(stocks) {
+            const tableBody = document.querySelector("#stock-table tbody");
+
+            // 清空表格内容
+            tableBody.innerHTML = "";
+
+            // 遍历数据并生成表格行
+            stocks.forEach(stock => {
+                const row = document.createElement("tr");
+
+                // 股票名称
+                const nameCell = document.createElement("td");
+                nameCell.textContent = `${stock.stockname}(${stock.stockcode})`;
+                row.appendChild(nameCell);
+
+                // 当前价
+                const priceCell = document.createElement("td");
+                priceCell.textContent = `¥${stock.close}`;
+                row.appendChild(priceCell);
+
+                // 涨跌幅
+                const changeCell = document.createElement("td");
+                changeCell.textContent = `${stock.pct_change}%`;
+                changeCell.classList.add(stock.pct_change > 0 ? "negative" : "positive");
+                row.appendChild(changeCell);
+
+                // 成交量
+                const volumeCell = document.createElement("td");
+                volumeCell.textContent = `${stock.volume}手`;
+                row.appendChild(volumeCell);
+
+                // 总市值
+                const marketValueCell = document.createElement("td");
+                marketValueCell.textContent = `¥${formatMarketValue(stock.totoal_mv)}`;
+                row.appendChild(marketValueCell);
+
+<!--                // 年初至今-->
+<!--                const ytdCell = document.createElement("td");-->
+<!--                ytdCell.textContent = `${stock.pct_change}%`;-->
+<!--                ytdCell.classList.add(stock.pct_change > 0 ? "negative" : "positive");-->
+<!--                row.appendChild(ytdCell);-->
+
+                // 添加到表格
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 格式化总市值
+        function formatMarketValue(value) {
+            if (value >= 1e12) {
+                return `${(value / 1e12).toFixed(2)}万亿`;
+            } else if (value >= 1e8) {
+                return `${(value / 1e8).toFixed(2)}亿`;
+            } else {
+                return value;
+            }
+        }
+
+        // 页面加载完成后获取数据
+        document.addEventListener("DOMContentLoaded", () => {
+            // 首次加载数据
+            fetchStocks();
+
+            // 每分钟更新一次数据
+            setInterval(fetchStocks, 60000); // 60000 毫秒 = 1 分钟
+        });
+    </script>
 {% endblock %}

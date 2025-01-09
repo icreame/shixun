@@ -52,3 +52,14 @@ def remove_self_select():
 
     result = SelfSelectService.remove_self_select(userid, stockid)
     return jsonify(result)
+
+@selfselect_blueprint.route('news/<int:userid>', methods=['GET'])
+def get_selfselect_news(userid):
+    """
+    获取自选股新闻
+    :param userid:
+    :return:
+    """
+    result=SelfSelectService.get_selfselect_news(userid)
+    return jsonify(result)
+

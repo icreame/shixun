@@ -22,7 +22,6 @@ from model.industry import Industry
 from flask import g
 from flask import session
 from collections import OrderedDict
-from datetime import datetime, timedelta
 
 
 # 设置你的 Tushare Token

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}行业情感分析 - 新闻{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="style_module-wrapper_sA7">
+        <div class="style_market-overview_AJA">
+            <div class="row">
+                <!-- 行业情感分析表格 -->
+                <div class="col-12">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">行业情感分析</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="sentimentTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">行业</th>
+                                            <th scope="col">正面情感</th>
+                                            <th scope="col">负面情感</th>
+                                            <th scope="col">中性情感</th>
+                                            <th scope="col">总情感数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 数据将通过 JavaScript 动态填充 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block right_sidebar %}
+<!-- Right Sidebar -->
+<!-- 大盘饼图 -->
+<div class="card">
+    <div class="card-header">
+        <h5>大盘评级</h5>
+    </div>
+    <div class="hcharts-right">
+        <div class="pie" id="dppj" style="width: 200px; height: 200px;"></div>
+        <p><label>投资建议</label></p>
+        <p id="tzjy">大盘走势良好，积极参与</p>
+    </div>
+</div>
+
+<!-- Top10 涨跌 -->
+<div class="card">
+    <div class="card-header">
+        <h5>明细涨跌Top10</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- 涨幅部分 -->
+            <div class="col-6">
+                <h6 class="text-danger text-center">涨幅 Top10</h6>
+                <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
+                    {% for stock in top10_data if stock.change > 0 %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
+                        <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stock.name }}</span>
+                        <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">+{{ stock.change }}%</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- 跌幅部分 -->
+            <div class="col-6">
+                <h6 class="text-success text-center">跌幅 Top10</h6>
+                <ul class="list-group list-group-flush" style="font-size: 0.9rem;">
+                    {% for stock in top10_data if stock.change < 0 %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 0.8rem; padding: 3px 5px;">
+                        <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stock.name }}</span>
+                        <span class="badge bg-success rounded-pill" style="font-size: 0.7rem;">{{ stock.change }}%</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 自选股与自选股新闻切换 -->
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="watchlist-tab" data-bs-toggle="pill" href="#watchlist" role="tab" aria-controls="watchlist" aria-selected="true">我的自选股</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="news-tab" data-bs-toggle="pill" href="#news" role="tab" aria-controls="news" aria-selected="false">自选股新闻</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content" id="myTabContent">
+            <!-- 我的自选股 -->
+            <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+                <ul class="list-group">
+                    {% if my_stocks %}
+                        {% for stock in my_stocks %}
+                        <li class="list-group-item">
+                            <h5>{{ stock.stockname }}({{stock.stockcode}})</h5>
+                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
+                            <p>涨跌幅： <span class="change-rate {{ 'positive' if stock.change.replace('%', '') | float > 0 else 'negative' }}">
+                                {{  stock.get('change', 'N/A') }}
+                            </span></p>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">暂无自选股</li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- 自选股新闻 -->
+            <div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 1</h6>
+                        <p class="mb-1">这条新闻关于自选股的市场分析。</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 2</h6>
+                        <p class="mb-1">自选股的最新动态。</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">自选股新闻标题 3</h6>
+                        <p class="mb-1">市场反应影响自选股。</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block java_script %}
+<!-- 引入 ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- 左侧饼图 -->
+
+    <script>
+    // 从模板变量中获取后端传入的数据
+    const sentimentData = {{ sentiment_data | tojson | safe }};
+
+    // 确保从 data 字段中获取数据
+    const data = sentimentData.data;
+
+    // 在前端计算中性情感和趋势分析
+    const processedData = data.map(item => {
+        // 将 positive 和 negative 从字符串转换为数值
+        const positive = parseInt(item.positive, 10); // 转换为整数
+        const negative = parseInt(item.negative, 10); // 转换为整数
+
+        // 假设中性情感是正面和负面情感之外的固定值（例如总情感数的 20%）
+        const neutral = Math.round((positive + negative) * 0.2); // 中性情感 = 总情感数的 20%
+
+        // 趋势分析
+        let trend;
+        if (positive > negative) {  // 直接使用的已有标签的样式来写的
+            trend = `<span class="bg-danger text-white small p-1 rounded d-flex align-items-center" style="width: 60px; height: 30px;"><i class="bi bi-graph-up-arrow me-1"></i>利好</span>`;
+        } else if (negative > positive) {
+            trend = `<span class="bg-success text-white small p-1 rounded d-flex align-items-center" style="width: 60px; height: 30px;"><i class="bi bi-graph-down-arrow me-1"></i>利空</span>`;
+        } else {
+            trend = `<span class="bg-secondary text-white small p-1 rounded d-flex align-items-center" style="width: 60px; height: 30px;"><i class="bi bi-dash-circle me-1"></i>中性</span>`;
+        }
+
+        return {
+            ...item,
+            positive: positive, // 更新为数值类型
+            negative: negative, // 更新为数值类型
+            neutral: neutral,
+            trend: trend // 添加趋势分析字段
+        };
+    });
+
+    // 动态填充表格
+    const tableBody = document.querySelector("#sentimentTable tbody");
+    processedData.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.industry}</td>
+            <td>${item.positive}</td>
+            <td>${item.negative}</td>
+            <td>${item.neutral}</td>
+            <td>${item.trend}</td> <!-- 显示趋势分析结果 -->
+        `;
+        tableBody.appendChild(row);
+    });
+</script>
+
+
+    <!-- Echarts 绘制-->
+    <script>
+    // 初始化 ECharts
+    const pieChart = echarts.init(document.getElementById('dppj'));
+
+    // 饼图配置
+    const pieOption = {
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [{
+            type: 'pie',
+            radius: ['60%', '90%'], // 内半径和外半径
+            avoidLabelOverlap: false,
+            label: {
+                show: true, // 显示标签
+                position: 'center', // 标签位置在中心
+                formatter: '{c}分', // 只显示分数
+                fontSize: 24,
+                fontWeight: 'bold',
+                color: '#d75442'
+            },
+            data: [
+                { value: 6.1, name: '大盘评级', itemStyle: { color: '#d75442' } }, // 红色部分
+                { value: 3.9, name: '剩余', itemStyle: { color: '#f5f5f5' } } // 灰色部分
+            ]
+        }]
+    };
+
+    // 设置配置项
+    pieChart.setOption(pieOption);
+</script>
+{% endblock %}

@@ -114,10 +114,15 @@ def create_app():
         else:
 
             userid = None
-        my_stocks = [
-            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "change": "5.2%"},
-            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"}
-            ]
+            my_stocks = [
+                {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
+                {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
+            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
+            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
+            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
+
+
+        ]
        # 首页涨跌柱状图
        #  updowns=StockService.get_limit_stocks()
         updowns = {
@@ -128,7 +133,7 @@ def create_app():
 
        #首页情感分析图
         sentiment_by_indutry = NewsService.get_sentiment_by_industry()
-
+        selfselect_news=SelfSelectService.get_selfselect_news(userid)
         return render_template('index.html', userid=userid,my_stocks=my_stocks,
                                stock_news=news_list,top10_data=g.top10_data,total_pages=total_pages,
                                page=page,page_range=page_range,
@@ -143,7 +148,8 @@ def create_app():
                                selected_industry=industryid,  # 当前选中的行业
                                selected_sentiment=sentiment,  # 当前选中的情感标签
                                sort_by=sort_by,  # 当前排序字段
-                               order=order  # 当前排序顺序
+                               order=order, # 当前排序顺序
+                               selfselect_news=selfselect_news,
                                )
 
     return app

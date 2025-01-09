@@ -368,7 +368,7 @@ class StockService:
         :return: 包含股票代码和涨跌幅的字典列表
         """
 
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
+        yesterday = datetime.now() - timedelta(days=1)  # 当前时间减去一天
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
@@ -564,7 +564,10 @@ class StockService:
         获取昨日A股的涨跌数据
         :return: 返回涨停和跌停股票的DataFrame
         """
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)  # 当前时间减去一天
+        now = datetime.now()
+
+        # 计算前一天的时间
+        yesterday = now - timedelta(days=1)
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
@@ -742,9 +745,9 @@ class StockService:
         :return: JSON 对象，包含四个指数的最近一周分析结果
         """
         # 获取当前日期
-        end_date = datetime.datetime.now().date()
+        end_date = datetime.now().date()
         # 计算一周前的日期
-        start_date = end_date - datetime.timedelta(days=7)
+        start_date = end_date - timedelta(days=7)
 
         # 检查数据库中是否已经有本周的分析结果
         try:

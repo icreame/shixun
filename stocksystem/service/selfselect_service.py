@@ -29,7 +29,7 @@ class SelfSelectService:
     def get_user_self_selects(userid):
         try:
             # 查询用户自选股
-            selfselects = SelfSelect.query.filter_by(userid=userid).all()
+            selfselects = SelfSelect.query.filter_by(userid=userid).limit(5).all()
             stock_list = []
             df = ts.realtime_list(src='dc')
             for select in selfselects:
@@ -48,7 +48,7 @@ class SelfSelectService:
                     print(matching_row)
                     if not matching_row.empty:
                         stocks_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
-                        stocks_item["close"] = matching_row['CLOSE'].iloc[0]
+                        stocks_item["close"] = matching_row['CLOSE'].iloc[0]    #收盘价
                         stocks_item["pct_change"]=matching_row['PCT_CHANGE'].iloc[0]  # 涨跌幅
                         stocks_item['5min']=matching_row['5MIN'].iloc[0]  # 5分钟涨幅
                         stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]  # 总市值(单位：万元)

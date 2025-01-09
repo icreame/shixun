@@ -1,9 +1,17 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from service.news_service import NewsService
 import asyncio
+
+from service.stock_service import StockService
+
 news_blueprint = Blueprint('news', __name__)
 
 
+@news_blueprint.route('/', methods=['GET'])
+def news_display():
+    sentiment_data = NewsService.get_sentiment_by_industry()  # 获取行业情感分析数据
+    top10_data = StockService.get_top10_stocks() # 获取涨跌 Top10 数据
+    return render_template('news_monitor.html', sentiment_data=sentiment_data, top10_data=top10_data)
 
 @news_blueprint.route('/add', methods=['POST'])
 def add_news():
@@ -188,3 +196,5 @@ def get_sentiment_by_industry():
     """
     result = NewsService.get_sentiment_by_industry()
     return jsonify(result)
+
+

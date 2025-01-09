@@ -22,7 +22,6 @@ from model.industry import Industry
 from flask import g
 from flask import session
 from collections import OrderedDict
-from datetime import datetime, timedelta
 
 
 # 设置你的 Tushare Token
@@ -617,8 +616,8 @@ class StockService:
         down_limit = []  # 跌停股票数量
 
         # 设置起始时间和结束时间
-        start_time = datetime.strptime("09:30", "%H:%M")  # 开始时间改为 09:30
-        end_time = datetime.strptime("14:56", "%H:%M")  # 结束时间改为 14:56
+        start_time = datetime.datetime.strptime("09:30", "%H:%M")  # 开始时间改为 09:30
+        end_time = datetime.datetime.strptime("14:56", "%H:%M")  # 结束时间改为 14:56
 
         # 计算总分钟数
         total_minutes = int((end_time - start_time).total_seconds() / 60)

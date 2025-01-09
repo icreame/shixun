@@ -6,7 +6,7 @@ from openai import OpenAI
 import asyncio
 import requests
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
+from sqlalchemy import func,or_
 from model.analysis_result import AnalysisResult
 from model.news import News,db
 from model.sentiment import Sentiment
@@ -183,7 +183,12 @@ class NewsService:
                 db.session.query(
                     Industry.industryname,
                     func.sum(func.if_(AnalysisResult.sentiment == '正面', 1, 0)).label('positive_count'),
-                    func.sum(func.if_(AnalysisResult.sentiment == '负面', 1, 0)).label('negative_count')
+                    func.sum(
+                        func.if_(or_(
+                            AnalysisResult.sentiment == '负面',
+                            AnalysisResult.sentiment == '中性'
+                        ), 1, 0)
+                    ).label('negative_count')
                 )
                 .join(News, News.industryid == Industry.industryid)
                 .join(AnalysisResult, AnalysisResult.news_id == News.newsid)

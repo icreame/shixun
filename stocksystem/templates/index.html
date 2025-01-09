@@ -379,21 +379,21 @@
 {% block right_sidebar %}
 <!-- Right Sidebar -->
 <!--大盘饼图-->
-<div class="card">
+<div class="card" style="margin-bottom: 5px; ">
     <div class="card-header">
-        <h5>大盘评级</h5>
+        <h7>大盘评级</h7>
     </div>
     <div class="hcharts-right">
-        <div class="pie" id="dppj" style="width: 200px; height: 200px;"></div>
-        <p><label>投资建议</label></p>
-        <p id="tzjy">大盘走势良好，积极参与</p>
+        <div class="pie" id="dppj" style="width: 180px; height: 180px;"></div>
+        <p style=" margin-bottom: 5px; ">投资建议</p>
+        <p id="tzjy" style=" margin-top: 0;margin-bottom: 0; ">大盘走势良好，积极参与</p>
     </div>
 </div>
 
 <!--top10-->
-<div class="card">
+<div class="card" style="margin-bottom: 5px; ">
     <div class="card-header">
-        <h5>明细涨跌Top10</h5>
+        <h7>明细涨跌Top10</h7>
     </div>
     <div class="card-body">
         <div class="row">
@@ -426,8 +426,8 @@
 </div>
 
 <!-- 自选股与自选股新闻切换 -->
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin-bottom: 5px; ">
+    <div class="card-header" style=" height: 36px;">
         <ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="watchlist-tab" data-bs-toggle="pill" href="#watchlist" role="tab" aria-controls="watchlist" aria-selected="true">我的自选股</a>
@@ -441,14 +441,14 @@
         <div class="tab-content" id="myTabContent">
             <!-- 我的自选股 -->
             <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
-                <ul class="list-group">
+                <ul class="list-group" style=" margin-bottom: 0;">
                     {% if my_stocks %}
                         {% for stock in my_stocks %}
-                        <li class="list-group-item">
-                            <h5>{{ stock.stockname }}({{stock.stockcode}})</h5>
-                            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
-                            <p>涨跌幅： <span class="change-rate {{ 'positive' if stock.change.replace('%', '') | float > 0 else 'negative' }}">
-                                {{  stock.get('change', 'N/A') }}
+                        <li class="list-group-item" style="padding: 8px 8px; ">
+                            <h5 style=" font-size: 14px;margin-bottom: 5px;line-height: 1.2; ">{{ stock.stockname }}({{stock.stockcode}})</h5>
+                            <p style="font-size: 12px; margin-bottom: 0;line-height: 1.2; ">总市值：<span class="price">¥{{ stock.totoal_mv }}</span>
+                            涨跌幅： <span class="change-rate ">
+                                {{  stock.pct_change}}
                             </span></p>
 
                         </li>
@@ -461,18 +461,28 @@
             <!-- 自选股新闻 -->
             <div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
                 <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <h6 class="mb-1">自选股新闻标题 1</h6>
-                        <p class="mb-1">这条新闻关于自选股的市场分析。</p>
+                    {% for news in selfselect_news[:5] %}  <!-- 只展示前五条新闻 -->
+                    <a href="{{ news.url }}" class="list-group-item list-group-item-action" target="_blank" style="padding: 8px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <h6 class="mb-1" style="font-size: 14px; margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ news.title }}  <!-- 新闻标题 -->
+                        </h6>
+                     <p class="mb-1" style="font-size: 11px; margin-bottom: 0; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <!-- 行业 -->
+                        <span>{{ news.sector }}</span>
+                        &nbsp;|&nbsp;
+                        <!-- 趋势图标 -->
+                        {% if news.trend == "看涨" %}
+                            <span style="color: red;">▲</span>  <!-- 红色图标 -->
+                        {% elif news.trend == "看跌" %}
+                            <span style="color: green;">▼</span>  <!-- 绿色图标 -->
+                        {% else %}
+                            <span style="color: gray;">●</span>  <!-- 灰色图标 -->
+                        {% endif %}
+                        <!-- 趋势文字 -->
+                        <span>{{ news.trend }}</span>
+                    </p>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <h6 class="mb-1">自选股新闻标题 2</h6>
-                        <p class="mb-1">自选股的最新动态。</p>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <h6 class="mb-1">自选股新闻标题 3</h6>
-                        <p class="mb-1">市场反应影响自选股。</p>
-                    </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -486,7 +496,11 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 动态显示typewritre代码 -->
 <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+
 <!--左侧饼图-->
 <script>
     // 初始化 ECharts
@@ -624,75 +638,7 @@
         }
     }
 </script>
-{#<script>#}
-{#    // 初始加载上证指数的分析结果#}
-{#    document.addEventListener("DOMContentLoaded", function () {#}
-{#        // 从后端获取分析数据#}
-{#        fetch('/stock/composite-index-analysis')#}
-{#            .then(response => {#}
-{#                if (!response.ok) {#}
-{#                    throw new Error('Network response was not ok');#}
-{#                }#}
-{#                return response.json();  // 解析为 JSON#}
-{#            })#}
-{#            .then(data => {#}
-{#                console.log("Fetched Data:", data);  // 打印获取的数据#}
-{#                if (!data) {#}
-{#                    throw new Error('No data received');#}
-{#                }#}
-{#                window.analysisData = data;  // 存储数据#}
-{#                loadAnalysis('sh_index');    // 初始加载上证指数的分析结果#}
-{#            })#}
-{#            .catch(error => {#}
-{#                console.error('Error fetching analysis data:', error);#}
-{#            });#}
-{#    });#}
-{##}
-{#    // 切换分析结果的函数#}
-{#    function showAnalysis(index) {#}
-{#        console.log("切换分析结果，index:", index);  // 调试日志#}
-{##}
-{#        // 隐藏所有分析结果#}
-{#        document.querySelectorAll('#analysis-container .card-body').forEach(function (element) {#}
-{#            element.style.display = 'none';#}
-{#        });#}
-{##}
-{#        // 显示选中的分析结果#}
-{#        const analysisElement = document.getElementById(`${index}-analysis`);#}
-{#        if (analysisElement) {#}
-{#            analysisElement.style.display = 'block';#}
-{#        } else {#}
-{#            console.error("未找到分析结果元素:", `${index}-analysis`);  // 调试日志#}
-{#        }#}
-{##}
-{#        // 加载对应的分析数据#}
-{#        loadAnalysis(index);#}
-{#    }#}
-{##}
-{#    // 加载分析数据的函数#}
-{#    function loadAnalysis(index) {#}
-{#        // 获取存储的分析数据#}
-{#        const analysisData = window.analysisData;#}
-{#        console.log("Analysis Data for", index, ":", analysisData[index]);  // 打印当前指数的分析数据#}
-{##}
-{#        // 更新分析结果#}
-{#        const analysisElement = document.getElementById(`${index}-analysis`);#}
-{#        console.log("Analysis Element:", analysisElement);  // 打印目标元素#}
-{#        if (analysisElement && analysisData[index]) {#}
-{#            const data = analysisData[index];#}
-{#            analysisElement.innerHTML = `#}
-{#                <h4>AI分析：${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}</h4>#}
-{#                <p><strong>标签:</strong> ${data['情感标签'] || '无数据'}</p>#}
-{#                <p><strong>投资建议:</strong> ${data['投资建议'] || '无数据'}</p>#}
-{#                <p><strong>AI分析:</strong> ${data['理由'] || '无数据'}</p>#}
-{#                <p><strong>AI预测:</strong> ${data['预测'] || '无数据'}</p>#}
-{#            `;#}
-{#            console.log("Updated DOM for", index);  // 打印 DOM 更新日志#}
-{#        } else {#}
-{#            console.error("Analysis element or data not found for index:", index);  // 调试日志#}
-{#        }#}
-{#    }#}
-{#</script>#}
+
 
 <!--情感分析-->
 <script>

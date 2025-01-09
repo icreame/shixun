@@ -25,11 +25,11 @@ class SelfSelectService:
             db.session.rollback()
             return {"success": False, "message": f"自选股添加失败: {str(e)}"}
 
-    @staticmethod
-    def get_user_self_selects(userid):
+
+    def get_user_self_selects(self,userid):
         try:
             # 查询用户自选股
-            selfselects = SelfSelect.query.filter_by(userid=userid).all()
+            selfselects = SelfSelect.query.filter_by(userid=userid).limit(5).all()
             stock_list = []
             df = ts.realtime_list(src='dc')
             for select in selfselects:
@@ -48,10 +48,11 @@ class SelfSelectService:
                     print(matching_row)
                     if not matching_row.empty:
                         stocks_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
-                        stocks_item["close"] = matching_row['CLOSE'].iloc[0]
+                        stocks_item["close"] = matching_row['CLOSE'].iloc[0]    #收盘价
                         stocks_item["pct_change"]=matching_row['PCT_CHANGE'].iloc[0]  # 涨跌幅
                         stocks_item['5min']=matching_row['5MIN'].iloc[0]  # 5分钟涨幅
-                        stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]  # 总市值(单位：万元)
+                        stocks_item["totoal_mv"] = matching_row['TOTAL_MV'].iloc[0]/10000  # 总市值(单位：万元)
+                        stocks_item["news"]= self.get_selfstock_news(stock.stockid)
                         """
                         df可选参数（按照上面格式添加就行）：'
                         CHANGE              涨跌额
@@ -114,6 +115,30 @@ class SelfSelectService:
                             news_item['sentiment']=analysis_analysis.sentiment if analysis_analysis.sentiment else None
                             news_item['sector']=analysis_analysis.sector if analysis_analysis.sector else None
                             news_list.append(news_item)
+            return news_list  # 返回股票id的列表
+        except Exception as e:
+            # 记录异常信息
+            return {"success": False, "message": str(e)}
+
+
+
+    def get_selfstock_news(self,stockid):
+        try:
+            news_list = []
+            news = News.query.filter_by(stockid=stockid).all()
+            for news_news in news:
+                news_item = {}
+                analysis = AnalysisResult.query.filter_by(news_id=news_news.newsid).all()
+                for analysis_analysis in analysis:
+                    news_item["title"] = news_news.title if news_news.title else None
+                    news_item["url"] = news_news.url if news_news.url else None
+                    news_item['date'] = news_news.publishdate if news_news.publishdate else None
+
+                    news_item['trend']=analysis_analysis.trend if analysis_analysis.trend else None
+                    news_item['reason']=analysis_analysis.reason if analysis_analysis.reason else None
+                    news_item['sentiment']=analysis_analysis.sentiment if analysis_analysis.sentiment else None
+                    news_item['sector']=analysis_analysis.sector if analysis_analysis.sector else None
+                    news_list.append(news_item)
             return news_list  # 返回股票id的列表
         except Exception as e:
             # 记录异常信息

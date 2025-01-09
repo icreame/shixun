@@ -1,46 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container mt-4">
 
-        <!-- 指数 -->
-        <div class="row mb-4">
-    <!-- 科创50 -->
-    <div class="col-md-3">
-        <div class="index-card">
-            <h3 class="mb-0 d-flex align-items-center justify-content-between">
-                <span>科创50</span>
-                <span class="positive">+0.30%</span>
-            </h3>
-        </div>
+<div class="container mt-4">
+    <h3>我的股票</h3>
+    <div class="market-summary">
+    <div class="index">
+        <div class="index-value">3211.39</div>
+<!--        <div class="chart" id="chart1"></div>-->
+        <img src="//webquotepic.eastmoney.com/GetPic.aspx?nid=1.000001&amp;imageType=RTOPH&amp;token=e1fc716525030b5517f9968fe65eb25d&amp;timespan=807968&amp;wbp2u=|0|0|0|web" alt="">
+        <div class="index-change negative">上证指数 -0.58%</div>
     </div>
-    <!-- 上证50 -->
-    <div class="col-md-3">
-        <div class="index-card">
-            <h3 class="mb-0 d-flex align-items-center justify-content-between">
-                <span>上证50</span>
-                <span class="negative">-0.38%</span>
-            </h3>
-        </div>
+    <div class="index">
+        <div class="index-value">9976.00</div>
+        <div class="chart" id="chart2"></div>
+        <div class="index-change positive">深证成指 +0.32%</div>
     </div>
-    <!-- 沪深300 -->
-    <div class="col-md-3">
-        <div class="index-card">
-            <h3 class="mb-0 d-flex align-items-center justify-content-between">
-                <span>沪深300</span>
-                <span class="negative">-0.10%</span>
-            </h3>
-        </div>
-    </div>
-    <!-- 北证50 -->
-    <div class="col-md-3">
-        <div class="index-card">
-            <h3 class="mb-0 d-flex align-items-center justify-content-between">
-                <span>北证50</span>
-                <span class="positive">+1.67%</span>
-            </h3>
-        </div>
+    <div class="index">
+        <div class="index-value">2010.66</div>
+        <div class="chart" id="chart3"></div>
+        <div class="index-change positive">创业板指 +0.11%</div>
     </div>
 </div>
+
         <!-- 搜索-->
         <div class="col-md-12">
 
@@ -57,7 +38,7 @@
             </div>
         </form>
 
-    <!-- 搜索结果 -->
+            <!-- 搜索结果 -->
             {% if search_query %}  <!-- 只有在有搜索关键词时才显示搜索结果 -->
             <div class="card mb-4">
             <div class="card-header">搜索结果</div>
@@ -130,7 +111,7 @@
         </div>
             {% endif %}
         </div>
-<!--    自选股-->
+    <!--    自选股-->
         <div class="container mt-4">
             <div class="card mb-4">
                 <div class="card-body">
@@ -152,14 +133,21 @@
                                 <!-- 股票信息 -->
                                 <td>{{ item.stockname }}</td>
                                 <td>¥{{ item.close }}</td>
-                                <td class="{% if item.pct_change > 0 %}positive{% else %}negative{% endif %}">
+                                <td class="{% if item.pct_change > 0 %}negative{% else %}positive{% endif %}">
                                     {{ item.pct_change }}%
                                 </td>
                                 <td>{{ item.volume }}手</td>
                                 <td>¥{{ item.totoal_mv }}</td>
-                                <!-- 展开/收起按钮 -->
+                                <!-- 操作栏 -->
                                 <td>
-                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#news-{{ item.stockcode }}">
+                                    <!-- 移除自选股按钮 -->
+
+                                    <button class="btn btn-danger btn-sm remove-btn" data-userid="{{ userid }}" data-stockid="{{ item.stockcode }}">
+                                        移除自选股
+                                    </button>
+
+                                    <!-- 展开/收起按钮 -->
+                                    <button class="btn btn-link btn-sm float-end" data-bs-toggle="collapse" data-bs-target="#news-{{ item.stockcode }}">
                                         <i class="fas fa-chevron-down"></i>
                                     </button>
                                 </td>
@@ -206,11 +194,12 @@
                 </div>
             </div>
         </div>
+
             <!-- 底部 -->
         <div class="text-center text-muted">
                 <p class="mb-0">数据仅供参考，实际以交易所为准。</p>
-            </div>
-    </div>
+        </div>
+</div>
 
 {% endblock %}
 
@@ -350,73 +339,100 @@
             setInterval(fetchStocks, 60000); // 60000 毫秒 = 1 分钟
         });
     </script>
-<!--<script>-->
-<!--    // 显示舆情新闻模态框-->
-<!--async function showNewsModal(stockCode) {-->
-<!--    try {-->
-<!--        // 获取舆情新闻数据-->
-<!--        const response = await fetch(`/news/${stockCode}`);-->
-<!--        if (!response.ok) {-->
-<!--            throw new Error("网络响应异常");-->
-<!--        }-->
-<!--        const newsData = await response.json();-->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const removeButtons = document.querySelectorAll('.remove-btn');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            console.log("移除按钮被点击"); // 调试日志
+            // 使用 dataset 获取 data-* 属性
+            const userid = button.dataset.userid;
+            const stockid = button.dataset.stockid;
 
-<!--        // 渲染新闻列表-->
-<!--        const newsList = document.getElementById("news-list");-->
-<!--        newsList.innerHTML = newsData.map(news => `-->
-<!--            <div class="card mb-3">-->
-<!--                <div class="card-body">-->
-<!--                    &lt;!&ndash; 新闻标题和链接 &ndash;&gt;-->
-<!--                    <h6 class="card-title">-->
-<!--                        <a href="${news.url}" target="_blank">${news.title}</a>-->
-<!--                    </h6>-->
-<!--                    &lt;!&ndash; 发布时间 &ndash;&gt;-->
-<!--                    <p class="card-text text-muted">-->
-<!--                        <small>发布时间：${new Date(news.date).toLocaleString()}</small>-->
-<!--                    </p>-->
-<!--                    &lt;!&ndash; 趋势、情感和行业 &ndash;&gt;-->
-<!--                    <p class="card-text">-->
-<!--                        <span class="badge ${getTrendBadgeClass(news.trend)}">${news.trend}</span>-->
-<!--                        <span class="badge ${getSentimentBadgeClass(news.sentiment)}">${news.sentiment}</span>-->
-<!--                        <span class="badge bg-secondary">${news.sector}</span>-->
-<!--                    </p>-->
-<!--                    &lt;!&ndash; 原因分析 &ndash;&gt;-->
-<!--                    <p class="card-text">${news.reason}</p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        `).join("");-->
+            console.log("userid:", userid); // 调试日志
+            console.log("stockid:", stockid); // 调试日志
 
-<!--        // 显示模态框-->
-<!--        const newsModal = new bootstrap.Modal(document.getElementById("newsModal"));-->
-<!--        newsModal.show();-->
-<!--    } catch (error) {-->
-<!--        console.error("获取新闻数据失败:", error);-->
-<!--        alert("获取新闻数据失败，请稍后重试。");-->
-<!--    }-->
-<!--}-->
+            removeSelfSelect(userid, stockid);
+        });
+    });
+});
 
-<!--// 根据趋势返回对应的 Bootstrap 徽章类-->
-<!--function getTrendBadgeClass(trend) {-->
-<!--    switch (trend) {-->
-<!--        case "看涨":-->
-<!--            return "bg-success";-->
-<!--        case "看跌":-->
-<!--            return "bg-danger";-->
-<!--        default:-->
-<!--            return "bg-secondary";-->
-<!--    }-->
-<!--}-->
+function removeSelfSelect(userid, stockid) {
+    console.log("调用 removeSelfSelect，参数：", userid, stockid); // 调试日志
+    fetch(`http://127.0.0.1:5000/selfselect/remove`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+         body: JSON.stringify({ userid, stockid }), // 传递 JSON 请求体
+    })
+    .then(response => {
+        console.log("响应状态码：", response.status); // 调试日志
+        return response.json();
+    })
+    .then(data => {
+        console.log("响应数据：", data); // 调试日志
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // 刷新页面以重新渲染
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error); // 调试日志
+    });
+}
+</script>
+<!-- 引入 ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script>
+    // 初始化 ECharts 实例
+    function initChart(containerId, data) {
+        const chart = echarts.init(document.getElementById(containerId));
+        const option = {
+            xAxis: {
+                type: 'category',
+                show: false, // 隐藏 X 轴
+            },
+            yAxis: {
+                type: 'value',
+                show: false, // 隐藏 Y 轴
+            },
+            series: [
+                {
+                    data: data,
+                    type: 'line',
+                    smooth: true, // 平滑曲线
+                    lineStyle: {
+                        color: '#007bff', // 线条颜色
+                        width: 2, // 线条宽度
+                    },
+                    areaStyle: {
+                        color: 'rgba(0, 123, 255, 0.1)', // 填充颜色
+                    },
+                    symbol: 'none', // 隐藏数据点
+                },
+            ],
+            grid: {
+                left: 0, // 左边距
+                right: 0, // 右边距
+                top: 0, // 上边距
+                bottom: 0, // 下边距
+            },
+        };
+        chart.setOption(option);
+    }
 
-<!--// 根据情感返回对应的 Bootstrap 徽章类-->
-<!--function getSentimentBadgeClass(sentiment) {-->
-<!--    switch (sentiment) {-->
-<!--        case "正面":-->
-<!--            return "bg-success";-->
-<!--        case "负面":-->
-<!--            return "bg-danger";-->
-<!--        default:-->
-<!--            return "bg-secondary";-->
-<!--    }-->
-<!--}-->
-<!--</script>-->
+    // 示例数据
+    const data1 = [30, 40, 35, 50, 45]; // 上证指数数据
+    const data2 = [20, 30, 25, 40, 35]; // 深证成指数据
+    const data3 = [10, 20, 15, 30, 25]; // 创业板指数据
+
+    // 初始化图表
+    initChart('chart1', data1);
+    initChart('chart2', data2);
+    initChart('chart3', data3);
+</script>
+
 {% endblock %}

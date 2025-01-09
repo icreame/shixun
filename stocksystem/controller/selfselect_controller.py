@@ -39,7 +39,7 @@ def get_user_self_selects(userid):
     return jsonify({"success": True, "selfselects": selfselects})
 
 
-@selfselect_blueprint.route('/remove', methods=['POST'])
+@selfselect_blueprint.route('/remove', methods=['GEt','POST'])
 def remove_self_select():
     """
     移除自选股

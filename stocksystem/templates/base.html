@@ -370,6 +370,99 @@
     text-decoration: underline;
     cursor: pointer;
 }
+/* 市场摘要容器 */
+.market-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+/* 每个指数容器 */
+.market-summary .index {
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+}
+
+/* 指数数值 */
+.market-summary .index-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* 涨跌幅 */
+.market-summary .index-change {
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.market-summary .index-change.positive {
+    color: green;
+}
+
+.market-summary .index-change.negative {
+    color: red;
+}
+
+/* 图表容器 */
+.market-summary .chart {
+    width: 100px; /* 图表宽度 */
+    height: 50px; /* 图表高度 */
+    margin: 0 auto;
+}
+        <style>
+    .market-summary {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .index {
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .index-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .index-value {
+        font-size: 1rem;
+        margin-top: 5px;
+    }
+
+    .price_up {
+        color: green;
+    }
+
+    .price_down {
+        color: red;
+    }
+
+    .chart-container {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 100px;
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+</style>
 
     </style>
 </head>

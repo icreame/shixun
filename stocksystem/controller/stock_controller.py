@@ -141,8 +141,8 @@ def mystock():
     stock_list=SelfSelectService()
     stock_list=stock_list.get_user_self_selects(user_id)
 
-    return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
-                           userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks,stocks_with_news=stock_list)
+    return render_template('mystock.html', userid=user_id,page=page,search_query=search_query, search_results=search_results,
+                           s=search_results, stock_news=news_list,my_stocks=my_stocks,stocks_with_news=stock_list)
 
 
 @stock_blueprint.route('/get_index_data', methods=['GET'])

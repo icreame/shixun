@@ -5,6 +5,7 @@ from flask_cors import CORS
 from service.stock_service import StockService
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import g
+import numpy as np
 
 from stocksystem.service.selfselect_service import SelfSelectService
 
@@ -169,3 +170,26 @@ def stock_limit_data():
 def get_composite_index_analysis():
     analysis_data = StockService.composite_index_analysis()
     return jsonify(analysis_data)
+
+
+@stock_blueprint.route('/company_info',methods=['GET'])
+def get_company_info():
+    stock_id = request.args.get('stockid')  # 获取 GET 请求的 'stockid' 参数
+    if not stock_id:
+        return jsonify({'error': 'stockid 参数缺失'}), 400  # 如果参数缺失，返回错误提示
+
+    try:
+        # 从服务层获取公司信息
+        result = StockService.get_company_info(stock_id)
+
+        # 检查服务层是否返回了有效结果
+        if not result:
+            return jsonify({'error': f'未找到股票 ID 为 {stock_id} 的信息'}), 404
+        for key, value in result.items():
+            if isinstance(value, np.generic):
+                result[key] = value.item()
+        # 渲染模板并传递数据
+        return render_template('stocks_info.html', company_data=result)
+    except Exception as e:
+        # 捕获异常并返回错误信息
+        return jsonify({'error': '服务器内部错误', 'details': str(e)}), 500

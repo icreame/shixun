@@ -42,10 +42,6 @@ class SelfSelectService:
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
                     matching_row = df[df['TS_CODE'] == stock.stockcode]
-                    pd.set_option('display.max_columns', 1000)
-                    pd.set_option('display.width', 1000)
-                    pd.set_option('display.max_colwidth', 1000)
-                    print(matching_row)
                     if not matching_row.empty:
                         stocks_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
                         stocks_item["close"] = matching_row['CLOSE'].iloc[0]    #收盘价

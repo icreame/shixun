@@ -14,7 +14,6 @@ import tushare as ts
 import akshare as ak
 import pandas as pd
 import time
-from datetime import datetime, timedelta
 from model.index_analysis import IndexAnalysis
 from model.index_analysis_result import IndexAnalysisResult
 from model.stock import Stock, db
@@ -364,16 +363,15 @@ class StockService:
     def get_top10_stocks():
         """
         获取涨跌幅前10的股票数据
-        :param trade_date: 交易日期，默认为'20250102'
         :return: 包含股票代码和涨跌幅的字典列表
         """
 
 
         # 获取当前时间
-        now = datetime.now()
+        now = datetime.datetime.now()
 
         # 当前时间减去一天
-        yesterday = now - timedelta(days=1)
+        yesterday = now - datetime.timedelta(days=1)
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
@@ -569,10 +567,10 @@ class StockService:
         获取昨日A股的涨跌数据
         :return: 返回涨停和跌停股票的DataFrame
         """
-        now = datetime.now()
+        now = datetime.datetime.now()
 
         # 计算前一天的时间
-        yesterday = now - timedelta(days=1)
+        yesterday = now - datetime.timedelta(days=1)
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据
@@ -653,7 +651,7 @@ class StockService:
             down_limit.append(down)
 
             # 增加一分钟
-            current_time += timedelta(minutes=1)
+            current_time += datetime.timedelta(minutes=1)
 
         # 返回生成的数据
         return {
@@ -750,9 +748,9 @@ class StockService:
         :return: JSON 对象，包含四个指数的最近一周分析结果
         """
         # 获取当前日期
-        end_date = datetime.now().date()
+        end_date = datetime.datetime.now().date()
         # 计算一周前的日期
-        start_date = end_date - timedelta(days=7)
+        start_date = end_date - datetime.timedelta(days=7)
 
         # 检查数据库中是否已经有本周的分析结果
         try:
@@ -843,4 +841,88 @@ class StockService:
         except Exception as e:
             db.session.rollback()
             print(f"Error committing to database: {e}")  # 打印错误信息
+            return {"success": False, "message": str(e)}
+
+
+    @staticmethod
+    def get_company_info(stockid):
+        try:
+            stock_item={}
+            stock = Stock.query.get(stockid)
+            industry=Industry.query.get(stock.industryid)
+            stock_item["stockname"] = stock.stockname
+            stock_item["stockcode"] = stock.stockcode
+            stock_item["industry"] = industry.industryname
+            stock_item["price"]=stock.stockprice
+            df = ts.realtime_list(src='dc')
+            matching_row = df[df['TS_CODE'] == stock.stockcode]
+            # 股票今日信息
+            if not matching_row.empty:
+                stock_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
+                stock_item["close"] = matching_row['CLOSE'].iloc[0]
+                stock_item["pct_change"]=matching_row['PCT_CHANGE'].iloc[0]  # 涨跌幅
+                stock_item['min']=matching_row['5MIN'].iloc[0]  # 5分钟涨幅
+                stock_item["total_mv"] = matching_row['TOTAL_MV'].iloc[0]/10000  # 总市值(单位：万元)
+                stock_item["change"] = matching_row['CHANGE'].iloc[0]  # 变化额
+                stock_item["amount"] = matching_row['AMOUNT'].iloc[0]  # 成交额
+                stock_item["swing"] = matching_row['SWING'].iloc[0]  # 振幅
+                stock_item["low"] = matching_row['LOW'].iloc[0]  # 今日最低价
+                stock_item["high"] = matching_row['HIGH'].iloc[0]  # 今日最高价
+                stock_item["open"] = matching_row['OPEN'].iloc[0]  # 今日开盘价
+                stock_item["vol_ratio"] = matching_row['VOL_RATIO'].iloc[0]  # 量比
+                stock_item["turnover_rate"] = matching_row['TURNOVER_RATE'].iloc[0]  # 换手率
+                stock_item["pe"] = matching_row['PE'].iloc[0]  # 市盈率
+                stock_item["pb"] = matching_row['PB'].iloc[0]  # 市净率
+                stock_item["float_mv"] = matching_row['FLOAT_MV'].iloc[0]/10000  # 流通市值
+                stock_item["rise"] = matching_row['RISE'].iloc[0]  # 涨速
+                stock_item["day"] = matching_row['60DAY'].iloc[0]  # 60天涨幅
+                stock_item["year"] = matching_row['1YEAR'].iloc[0]  # 1年涨幅
+
+            # 股票对应的公司信息
+            df1=pro.stock_company(ts_code=stock.stockcode,)
+            pd.set_option('display.max_columns', 1000)
+            pd.set_option('display.width', 1000)
+            pd.set_option('display.max_colwidth', 1000)
+            stock_item["introduction"]=df1['introduction'].iloc[0]
+            stock_item["exchange"]=df1['exchange'].iloc[0]  # 交易所代码
+            stock_item["chairman"]=df1['chairman'].iloc[0]  # 法人代表
+            stock_item["reg_capital"]=df1['reg_capital'].iloc[0]  # 注册资本
+            stock_item["setup_date"]=df1['setup_date'].iloc[0] # 注册日期
+            stock_item["province"]=df1['province'].iloc[0]  # 所在省份
+            stock_item["city"]=df1['city'].iloc[0]  # 所在城市
+            stock_item["website"]=df1['website'].iloc[0] # 公司主页
+            stock_item["email"]=df1['email'].iloc[0]  # 电子邮件
+            stock_item["employees"]=df1['employees'].iloc[0] # 员工人数
+            stock_item["main_business"]=df1['main_business'].iloc[0] # 主要业务及产品
+            stock_item["business_scope"]=df1['business_scope'].iloc[0]  # 经营范围
+
+            # 营收信息
+            now = datetime.datetime.now()
+            df2 = pro.income(ts_code=stock.stockcode,
+                             start_date=(now - datetime.timedelta(weeks=52)).strftime('%Y%m%d'),
+                             end_date=now.strftime('%Y%m%d'),
+                             fields='total_revenue,n_income,ann_date')
+            print(df2)
+            for i in range(4):
+                stock_item[f"total_revenue_{i}"] = df2['total_revenue'].iloc[4-1-i]
+                stock_item[f"n_income_{i}"] = df2['n_income'].iloc[4-1-i]
+                stock_item[f"ann_date_{i}"]=df2['ann_date'].iloc[4-1-i]
+
+
+            # 股价变化信息
+            df3 = pro.daily(ts_code=stock.stockcode,
+                            start_date=(now - datetime.timedelta(days=10 )).strftime('%Y%m%d'),
+                            end_date=now.strftime('%Y%m%d'),
+                            fields='trade_date,open,close,high,low,pct_chg')
+            num_of_days = len(df3)
+            for i in range(num_of_days):
+                stock_item[f"date_{i}"] = df3['trade_date'].iloc[num_of_days - 1 - i]
+                stock_item[f"open_{i}"] = df3['open'].iloc[num_of_days - 1 - i]
+                stock_item[f"close_{i}"] = df3['close'].iloc[num_of_days - 1 - i]
+                stock_item[f"high_{i}"] = df3['high'].iloc[num_of_days - 1 - i]
+                stock_item[f"low_{i}"] = df3['low'].iloc[num_of_days - 1 - i]
+                stock_item[f"pct_chg_{i}"] = df3['pct_chg'].iloc[num_of_days - 1 - i]
+            return stock_item  # 返回股票id的列表
+        except Exception as e:
+            # 记录异常信息
             return {"success": False, "message": str(e)}

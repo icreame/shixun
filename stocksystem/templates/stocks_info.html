@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票详情</title>
+    <style>
+        /* 设置全局字体 */
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+
+        header h1 {
+            margin: 0;
+        }
+
+        /* 主体内容 */
+        main {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* 左侧表格部分 */
+        .left-column {
+            flex: 0 0 65%;
+        }
+
+        .info-item {
+            display: flex; /* 设置为flexbox布局，使内容横向排列 */
+            flex-wrap: nowrap; /* 不换行 */
+            align-items: center;
+            margin-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        .info-item strong {
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 8px;
+            min-width: 100px;
+        }
+
+        .info-item p {
+            display: inline-block;
+            font-size: 1em;
+            margin: 0;
+        }
+
+        .right-column {
+            flex: 0 0 25%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .right-column p {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* 表格样式 */
+        .stock-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .stock-details-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .stock-details-table td:first-child {
+            font-weight: bold;
+        }
+
+        .stock-details-table td span {
+            font-size: 1.1em;
+        }
+
+        /* 每行4个字段的表格设计 */
+        .stock-details-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .stock-details-table tr:hover {
+            background-color: #e0f7fa;
+        }
+
+        /* 样式美化按钮 */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .right-column h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .info-block {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column; /* 在小屏幕上，改为垂直排列 */
+            }
+
+            .left-column,
+            .right-column {
+                flex: 0 0 100%; /* 都占满宽度 */
+                margin-bottom: 20px;
+            }
+
+            .info-item {
+                flex: 1 1 100%; /* 小屏幕下，每个项占据100%的宽度 */
+            }
+        }
+        /* 行业标签样式 */
+        .industry-tag {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .code-tag{
+            display: inline-block;
+            background-color: grey;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        /* 添加自选按钮 */
+        .add-to-watchlist-btn {
+            background-color: beige;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+        /* 图表容器的样式 */
+        #revenue-chart,
+        #stock-price-chart {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <!-- 左侧主要信息 -->
+        <section class="left-column">
+            <div>
+                <h1 id="stock-name">{{ company_data.stockname }}</h1>
+                <button class="add-to-watchlist-btn">添加自选</button>
+            </div>
+            <div>
+                <p id="stock-info">
+                    <span class="industry-tag">{{ company_data.industry }}</span>
+                </p>
+                <p id="code">
+                    <span class="code-tag">{{company_data.stockcode}}</span>
+                </p>
+            </div>
+
+            <h2>股票行情数据</h2>
+            <!-- 行情数据表格 -->
+            <table class="stock-details-table">
+                <tbody>
+                    <tr>
+                        <td><strong>当前价格</strong></td>
+                        <td><span id="current-price">{{ company_data.close }} 元</span></td>
+                        <td><strong>涨跌幅</strong></td>
+                        <td><span id="pct-change">{{ company_data.pct_change }} %</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>今开</strong></td>
+                        <td><span id="open-price">{{ company_data.open }} 元</span></td>
+                        <td><strong>最高</strong></td>
+                        <td><span id="high-price">{{ company_data.high }} 元</span></td>
+                        <td><strong>成交量</strong></td>
+                        <td><span id="volume">{{ company_data.volume }} 手</span></td>
+                        <td><strong>总市值</strong></td>
+                        <td><span id="total-mv">{{ company_data.total_mv }} 万元</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>昨收</strong></td>
+                        <td><span id="close-price">{{ company_data.price }} 元</span></td>
+                        <td><strong>最低</strong></td>
+                        <td><span id="low-price">{{ company_data.low }} 元</span></td>
+                        <td><strong>成交额</strong></td>
+                        <td><span id="amount">{{ company_data.amount }} 元</span></td>
+                        <td><strong>流通市值</strong></td>
+                        <td><span id="float-mv">{{ company_data.float_mv }} 元</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5分钟涨幅</strong></td>
+                        <td><span id="5min">{{ company_data.min }}% </span></td>
+                        <td><strong>涨速</strong></td>
+                        <td><span id="rise">{{ company_data.rise }}% </span></td>
+                        <td><strong>60天涨幅</strong></td>
+                        <td><span id="60day">{{ company_data.day }}%</span></td>
+                        <td><strong>1年涨幅</strong></td>
+                        <td><span id="1year">{{ company_data.year }}% </span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>换手率</strong></td>
+                        <td><span id="turnover">{{ company_data.turnover_rate }} %</span></td>
+                        <td><strong>市盈率</strong></td>
+                        <td><span id="pe">{{ company_data.pe }}</span></td>
+                        <td><strong>市净率</strong></td>
+                        <td><span id="pb">{{ company_data.pe }}</span></td>
+                        <td><strong>量比</strong></td>
+                        <td><span id="vol_ratio">{{ company_data.pe }}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 添加图表 -->
+            <h3>营收趋势</h3>
+            <div id="revenue-chart"></div>
+
+            <h3>股价变化趋势</h3>
+            <div id="stock-price-chart"></div>
+        </section>
+
+        <!-- 右侧公司简介与评论 -->
+        <aside class="right-column">
+            <h3>公司简介</h3>
+            <p id="company-intro">{{ company_data.stockname }} {{ company_data.introduction }}</p>
+
+            <h3>公司信息</h3>
+            <div class="info-block">
+                <div class="info-item">
+                    <strong>法人代表:</strong>
+                    <p id="chairman">{{ company_data.chairman }}</p>
+                </div>
+            </div>
+            <div class="info-block">
+                <div class="info-item">
+                    <strong>注册资本：</strong>
+                    <p id="reg_capital">{{ company_data.reg_capital }} 万元</p>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <div class="info-item">
+                    <strong>所在地区：</strong>
+                    <p id="address">{{ company_data.province }} {{ company_data.city }}</p>
+                </div>
+            </div>
+            <div class="info-block">
+                <div class="info-item">
+                    <strong>公司主页：</strong>
+                    <p id="website">{{ company_data.website }}</p>
+                </div>
+            </div>
+            <div class="info-block">
+                <div class="info-item">
+                    <strong>电子邮件：</strong>
+                    <p id="email">{{ company_data.email }}</p>
+                </div>
+            </div>
+
+            <h3>主要业务及产品</h3>
+            <p id="main_business">{{ company_data.main_business }}</p>
+
+            <h3>经营范围</h3>
+            <p id="business_scope">{{ company_data.business_scope }}</p>
+        </aside>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.0/dist/echarts.min.js"></script>
+    <script>
+        const companyData = {{ company_data | tojson | safe }};
+
+        // 近四个季度的营收数据
+        const revenueData = [];
+        for(let i=0; i<4;i++){
+            const rawDate = companyData[`ann_date_${i}`];
+            const formattedDate = `${rawDate.slice(0, 4)}.${rawDate.slice(4, 6)}.${rawDate.slice(6, 8)}`;
+            revenueData.push({
+                quarter: formattedDate,
+                revenue: companyData[`total_revenue_${i}`],
+                n_income: companyData[`n_income_${i}`]
+            })
+        }
+
+        const numOfStockData = Object.keys(companyData).filter(key => key.startsWith('date_')).length;
+
+        const stockPriceData = [];
+        for (let i = 0; i < numOfStockData; i++) {
+            const rawDate = companyData[`date_${i}`];
+            const formattedDate = `${rawDate.slice(0, 4)}.${rawDate.slice(4, 6)}.${rawDate.slice(6, 8)}`;
+            stockPriceData.push({
+                date: formattedDate,  // 获取日期
+                open: companyData[`open_${i}`],   // 获取开盘价
+                close: companyData[`close_${i}`], // 获取收盘价
+                high: companyData[`high_${i}`],   // 获取最高价
+                low: companyData[`low_${i}`],     // 获取最低价
+                pct_chg: companyData[`pct_chg_${i}`] // 获取涨跌幅
+            });
+        }
+
+        // 营收趋势图配置：柱状图
+        const revenueChart = echarts.init(document.getElementById('revenue-chart'));
+        const revenueOption = {
+            title: {
+                text: '近四个季度的营收'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['总收入', '净利润']
+            },
+            xAxis: {
+                type: 'category',
+                data: revenueData.map(item => item.quarter)
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '总收入',
+                    data: revenueData.map(item => item.revenue),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                },
+                {
+                    name: '净利润',
+                    data: revenueData.map(item => item.n_income),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                }
+            ]
+        };
+        revenueChart.setOption(revenueOption);
+
+        // 股价变化趋势图配置：双y轴，pct_chg使用右侧y轴
+        const stockPriceChart = echarts.init(document.getElementById('stock-price-chart'));
+        const stockPriceOption = {
+            title: {
+                text: '近日股价变化'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['开盘价', '收盘价', '最高价', '最低价', '涨跌率']
+            },
+            xAxis: {
+                type: 'category',
+                data: stockPriceData.map(item => item.date)
+            },
+            yAxis: [
+                {
+                    type: 'value',  // 左侧y轴：股价
+                    name: '股价（元）',
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: '#333'
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',  // 右侧y轴：涨跌幅
+                    name: '涨跌幅（%）',
+                    position: 'right',
+                    axisLine: {
+                        lineStyle: {
+                            color: '#ff5722'  // 设置右侧y轴的颜色
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}%'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '开盘价',
+                    data: stockPriceData.map(item => item.open),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                },
+                {
+                    name: '收盘价',
+                    data: stockPriceData.map(item => item.close),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                },
+                {
+                    name: '最高价',
+                    data: stockPriceData.map(item => item.high),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                },
+                {
+                    name: '最低价',
+                    data: stockPriceData.map(item => item.low),
+                    type: 'bar',  // 改为柱状图
+                    smooth: true
+                },
+                {
+                    name: '涨跌率',
+                    data: stockPriceData.map(item => item.pct_chg),
+                    type: 'line',  // 保留为折线图
+                    smooth: true,
+                    yAxisIndex: 1  // 使用右侧y轴
+                }
+            ]
+        };
+        stockPriceChart.setOption(stockPriceOption);
+    </script>
+
+
+
+</body>
+
+</html>

@@ -3,6 +3,8 @@ from model.selfselect import SelfSelect,db
 from model.stock import  Stock
 from datetime import datetime,timedelta
 from model.industry import Industry
+from model.analysis_result import AnalysisResult
+from model.news import News
 import tushare as ts
 import pandas as pd
 
@@ -40,7 +42,10 @@ class SelfSelectService:
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
                     matching_row = df[df['TS_CODE'] == stock.stockcode]
-
+                    pd.set_option('display.max_columns', 1000)
+                    pd.set_option('display.width', 1000)
+                    pd.set_option('display.max_colwidth', 1000)
+                    print(matching_row)
                     if not matching_row.empty:
                         stocks_item["volume"] = matching_row['VOLUME'].iloc[0]    # 成交量(单位：手)
                         stocks_item["close"] = matching_row['CLOSE'].iloc[0]
@@ -83,3 +88,31 @@ class SelfSelectService:
         db.session.commit()
 
         return {"success": True, "message": "股票已从自选股中移除"}
+
+
+    @staticmethod
+    def get_selfselect_news(userid):
+        try:
+            selfselects = SelfSelect.query.filter_by(userid=userid).all()
+            news_list = []
+            for select in selfselects:
+                if select.stockid:
+                    news = News.query.filter_by(stockid=select.stockid).all()
+                    for news_news in news:
+                        news_item = {}
+                        analysis = AnalysisResult.query.filter_by(news_id=news_news.newsid).all()
+                        for analysis_analysis in analysis:
+                            news_item["title"] = news_news.title if news_news.title else None
+                            news_item["url"] = news_news.url if news_news.url else None
+                            news_item['date'] = news_news.publishdate if news_news.publishdate else None
+
+                            news_item['trend']=analysis_analysis.trend if analysis_analysis.trend else None
+                            news_item['reason']=analysis_analysis.reason if analysis_analysis.reason else None
+                            news_item['sentiment']=analysis_analysis.sentiment if analysis_analysis.sentiment else None
+                            news_item['sector']=analysis_analysis.sector if analysis_analysis.sector else None
+                            news_list.append(news_item)
+            return news_list  # 返回股票id的列表
+        except Exception as e:
+            # 记录异常信息
+            return {"success": False, "message": str(e)}
+

@@ -4,30 +4,6 @@ import asyncio
 news_blueprint = Blueprint('news', __name__)
 
 
-# 假设这是你的20个行业标签，中英文一一对应
-industry_tags = {
-    "科技": "Technology",
-    "金融": "Finance",
-    "医疗": "Healthcare",
-    "教育": "Education",
-    "能源": "Energy",
-    "制造": "Manufacturing",
-    "零售": "Retail",
-    "房地产": "Real Estate",
-    "交通": "Transportation",
-    "娱乐": "Entertainment",
-    "旅游": "Tourism",
-    "农业": "Agriculture",
-    "电信": "Telecommunications",
-    "媒体": "Media",
-    "环保": "Environmental Protection",
-    "食品": "Food",
-    "汽车": "Automotive",
-    "服装": "Apparel",
-    "建筑": "Construction",
-    "化工": "Chemical"
-}
-
 
 @news_blueprint.route('/add', methods=['POST'])
 def add_news():
@@ -183,13 +159,16 @@ def search_news():
         return jsonify(result), 400
 
 
+"""
+不要用这个接口，我本地跑的，没改这里，上传前记得删除
+"""
 @news_blueprint.route('/analyze-all', methods=['GET','POST'])
 async def analyze_all_news():
     """
     批量处理所有预定义的行业标签
     """
     # 获取所有预定义的行业标签
-    keywords = list(industry_tags.values())
+    keywords = None
 
     # 并发处理每个标签
     tasks = [NewsService.fetch_and_analyze_news(keyword) for keyword in keywords]

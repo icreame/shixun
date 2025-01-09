@@ -100,8 +100,11 @@ class SelfSelectService:
                     news = News.query.filter_by(stockid=select.stockid).all()
                     for news_news in news:
                         news_item = {}
+                        stock = Stock.query.get(news_news.stockid)
                         analysis = AnalysisResult.query.filter_by(news_id=news_news.newsid).all()
                         for analysis_analysis in analysis:
+                            news_item["stockname"]=stock.stockname if stock else None
+                            news_item["stockcode"]=stock.stockcode if stock else None
                             news_item["title"] = news_news.title if news_news.title else None
                             news_item["url"] = news_news.url if news_news.url else None
                             news_item['date'] = news_news.publishdate if news_news.publishdate else None

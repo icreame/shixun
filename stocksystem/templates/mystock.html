@@ -3,24 +3,11 @@
 
 <div class="container mt-4">
     <h3>我的股票</h3>
-    <div class="market-summary">
-    <div class="index">
-        <div class="index-value">3211.39</div>
-<!--        <div class="chart" id="chart1"></div>-->
-        <img src="//webquotepic.eastmoney.com/GetPic.aspx?nid=1.000001&amp;imageType=RTOPH&amp;token=e1fc716525030b5517f9968fe65eb25d&amp;timespan=807968&amp;wbp2u=|0|0|0|web" alt="">
-        <div class="index-change negative">上证指数 -0.58%</div>
-    </div>
-    <div class="index">
-        <div class="index-value">9976.00</div>
-        <div class="chart" id="chart2"></div>
-        <div class="index-change positive">深证成指 +0.32%</div>
-    </div>
-    <div class="index">
-        <div class="index-value">2010.66</div>
-        <div class="chart" id="chart3"></div>
-        <div class="index-change positive">创业板指 +0.11%</div>
-    </div>
-</div>
+<img src="{{ url_for('static', filename='image/stock.png') }}" alt="上证指数" style="max-width: 88%; height: auto;display: block;
+        margin: 0 auto;">
+    <p></p>
+ <p></p>
+
 
         <!-- 搜索-->
         <div class="col-md-12">
@@ -206,21 +193,104 @@
 
 {% block right_sidebar %}
 <div class="tab-pane fade show active" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
-    <ul class="list-group">
-        {% if my_stocks %}
-        {% for stock in my_stocks %}
-        <li class="list-group-item">
-            <h5>{{ stock.name }}</h5>
-            <p>最新价格：<span class="price">¥{{ stock.latest }}</span></p>
-            <p>涨跌幅：<span class="change-rate {{ 'positive' if stock.change | float > 0 else 'negative' }}">
-                {{ stock.change }}
-            </span></p>
-        </li>
-        {% endfor %}
-        {% else %}
-        <li class="list-group-item">暂无自选股</li>
-        {% endif %}
-    </ul>
+    <!-- 沪深热股榜 -->
+    <div class="hot-stocks">
+        <h5>沪深热股榜</h5>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="rank">1</span>
+                <span class="stock-name">中兴通讯</span>
+                <span class="change-rate positive">
+                    +10.01% <i class="bi bi-arrow-up"></i>
+                </span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">2</span>
+                <span class="stock-name">五洲新春</span>
+                <span class="change-rate positive">
+                    +10.00% <i class="bi bi-arrow-up"></i>
+                </span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">3</span>
+                <span class="stock-name">中远海控</span>
+                <span class="change-rate negative">-3.94%</span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">4</span>
+                <span class="stock-name">海得控制</span>
+                <span class="change-rate positive">+9.99%</span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">5</span>
+                <span class="stock-name">芭田股份</span>
+                <span class="change-rate positive">+9.99%</span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">6</span>
+                <span class="stock-name">利欧股份</span>
+                <span class="change-rate positive">+9.91%</span>
+            </li>
+            <li class="list-group-item">
+                <span class="rank">7</span>
+                <span class="stock-name">麦格米特</span>
+                <span class="change-rate positive">+0.50%</span>
+            </li>
+             <li class="list-group-item">
+                <span class="rank">8</span>
+                <span class="stock-name">中远海控</span>
+                <span class="change-rate negative">-3.94%</span>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- 新股预告 -->
+    <div class="new-stock-preview mt-4">
+        <h5>新股预告</h5>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>股票名称</th>
+                    <th>申购代码</th>
+                    <th>申购日期</th>
+                    <th>预计发行量（万股）</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>兴福电子</td>
+                    <td>787545</td>
+                    <td>2025-01-13</td>
+                    <td>10000.00</td>
+                </tr>
+                <tr>
+                    <td>超研股份</td>
+                    <td>301602</td>
+                    <td>2025-01-13</td>
+                    <td>6424.94</td>
+                </tr>
+                <tr>
+                    <td>富岭股份</td>
+                    <td>001356</td>
+                    <td>2025-01-14</td>
+                    <td>14733.00</td>
+                </tr>
+                <tr>
+                    <td>海博思创</td>
+                    <td>787411</td>
+                    <td>2025-01-16</td>
+                    <td>4443.25</td>
+                </tr>
+                <tr>
+                    <td>亚联机械</td>
+                    <td>001395</td>
+                    <td>2025-01-16</td>
+                    <td>2181.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
 

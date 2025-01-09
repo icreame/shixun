@@ -118,18 +118,13 @@ def create_app():
             my_stocks = [
                 {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
                 {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
-            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
-            {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
-            {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
-
-
         ]
        # 首页涨跌柱状图
        #  updowns=StockService.get_limit_stocks()
         updowns = {
-            'up_total': 4393,  # 上涨股票总数
-            'down_total': 902,  # 下跌股票总数
-            'data': [18, 2000, 1731, 1674, 1500, 1000, 689, 677, 500, 201, 104]  # 涨跌分布数据
+            'up_total': 2765,  # 上涨股票总数
+            'down_total': 2409,  # 下跌股票总数
+            'data': [12,9,66,292,2030,2213,469,131,46,165]  # 涨跌分布数据
         }
 
        #首页情感分析图

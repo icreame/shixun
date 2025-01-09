@@ -33,6 +33,29 @@
         </div>
     </div>
 </div>
+
+<!-- 创业板 PE 百分比饼图 -->
+<div class="card">
+
+<div class="pe-pie-chart mt-4">
+        <h5>创业板 PE 百分比</h5>
+        <div id="pe-pie-chart" style="width: 100%; height: 300px;"></div>
+    </div>
+
+</div>
+
+<div class="card">
+
+     <!-- 上证 PE 百分比饼图 -->
+    <div class="shanghai-pe-pie-chart mt-4">
+        <h5>上证 PE 百分比</h5>
+        <p style="height=100px; "></p>
+        <p></p>
+        <p></p>
+        <div id="shanghai-pe-pie-chart" style="width: 100%; height: 300px;"></div>
+
+    </div>
+</div>
 {% endblock %}
 
 {% block java_script %}
@@ -224,5 +247,131 @@ ipoShIndexChart.setOption({
         ipoChart.resize();
         indexChart.resize();
     });
+</script>
+
+<script>
+    // 初始化 ECharts 实例
+    const pieChart = echarts.init(document.getElementById('pe-pie-chart'));
+
+    // 饼图数据
+    const pieData = [
+        { value: 4.69, name: '100 to+（4.69%）' },
+        { value: 0, name: '1to10（0%）' },
+        { value: 26.67, name: '70to100（26.67%）' },
+        { value: 50.7, name: '40to70（50.7%）' }
+    ];
+
+    // 饼图配置
+    const option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c}%'
+        },
+        legend: {
+            bottom: '10%',
+            left: 'center',
+            textStyle: {
+                color: '#333', // 图例文字颜色
+                fontSize: 12
+            }
+        },
+        series: [
+            {
+                name: '创业板 PE 百分比',
+                type: 'pie',
+                radius: '50%',
+                data: pieData,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+                label: {
+                    show: true,
+                    formatter: '{b}: {c}%',
+                    color: '#333', // 标签文字颜色
+                    fontSize: 12
+                },
+                itemStyle: {
+                    color: function (params) {
+                        // 自定义颜色
+                        const colorList = ['#5470C6', '#91CC75', '#EE6666', '#FAC858'];
+                        return colorList[params.dataIndex];
+                    }
+                }
+            }
+        ]
+    };
+
+    // 渲染饼图
+    pieChart.setOption(option);
+</script>
+
+<script>
+    // 初始化 ECharts 实例
+    const shanghaiPieChart = echarts.init(document.getElementById('shanghai-pe-pie-chart'));
+
+    // 饼图数据
+    const shanghaiPieData = [
+        { value: 1.59, name: '1to10（1.59%）' },
+        { value: 20.14, name: '40to100（20.14%）' },
+        { value: 43.65, name: '10to20（43.65%）' },
+        { value: 34.61, name: '20to40（34.61%）' }
+    ];
+
+    // 饼图配置
+    const shanghaiOption = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c}%'
+        },
+        legend: {
+            top: '3%',
+            left: 'center',
+            textStyle: {
+                color: '#333', // 图例文字颜色
+                fontSize: 12
+            }
+        },
+        series: [
+            {
+                name: '上证 PE 百分比',
+                type: 'pie',
+                radius: '50%',
+                data: shanghaiPieData,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+                label: {
+                    show: true,
+                    formatter: '{b}: {c}%',
+                    color: '#333', // 标签文字颜色
+                    fontSize: 12
+
+                },
+                itemStyle: {
+                    color: function (params) {
+                        // 蓝色系渐变颜色
+                        const colorList = [
+                            '#5470C6', // 深蓝
+                            '#73C0DE', // 浅蓝
+                            '#91D5FF', // 更浅的蓝
+                            '#B0E0E6'  // 淡蓝
+                        ];
+                        return colorList[params.dataIndex];
+                    }
+                }
+            }
+        ]
+    };
+
+    // 渲染饼图
+    shanghaiPieChart.setOption(shanghaiOption);
 </script>
 {% endblock %}

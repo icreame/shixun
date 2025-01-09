@@ -318,11 +318,11 @@
     }
 
     .up .count, .up-limit .count {
-        color: green;
+        color: red;
     }
 
     .down .count, .down-limit .count {
-        color: red;
+        color: green;
     }
     .hcharts-right {
         text-align: center;
@@ -462,7 +462,183 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 10;
     }
-</style>
+        <style>
+    /* 左侧切换框样式 */
+    .list-group-item {
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .list-group-item label {
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* 右侧图片区域样式 */
+    #chart-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: none; /* 默认隐藏所有图片 */
+    }
+
+    /* 根据 Radio Button 的选中状态显示对应的图片 */
+    #shanghai:checked ~ #chart-image #shanghai-img,
+    #shenzhen:checked ~ #chart-image #shenzhen-img,
+    #chuangye:checked ~ #chart-image #chuangye-img,
+    #hushen:checked ~ #chart-image #hushen-img {
+        display: block;
+    }
+        /* 沪深热股榜样式 */
+    .hot-stocks {
+        margin-bottom: 20px;
+    }
+
+    .hot-stocks h5 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .hot-stocks .list-group-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+
+    .hot-stocks .rank {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-right: 10px;
+        color: #666;
+    }
+
+    .hot-stocks .stock-name {
+        font-size: 1rem;
+        font-weight: bold;
+        flex: 1;
+    }
+
+    .hot-stocks .change-rate {
+        font-size: 0.9rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+    }
+
+    .hot-stocks .change-rate.positive {
+        color: red; /* 上涨为红色 */
+    }
+
+    .hot-stocks .change-rate.negative {
+        color: green; /* 下跌为绿色 */
+    }
+
+    .hot-stocks .change-rate i {
+        margin-left: 5px;
+    }
+
+    /* 自选股列表样式 */
+    .list-group-item h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .list-group-item .price {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .list-group-item .change-rate {
+        font-size: 0.9rem;
+    }
+
+    .list-group-item .change-rate.positive {
+        color: red; /* 上涨为红色 */
+    }
+
+    .list-group-item .change-rate.negative {
+        color: green; /* 下跌为绿色 */
+    }
+
+    .list-group-item .change-rate i {
+        margin-left: 5px;
+    }
+
+    /* 上证指数样式 */
+    .index {
+        text-align: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .index .index-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .index .index-change {
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .index .index-change.positive {
+        color: red; /* 上涨为红色 */
+    }
+
+    .index .index-change.negative {
+        color: green; /* 下跌为绿色 */
+    }
+
+    .index img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+         /* 新股预告样式 */
+    .new-stock-preview {
+        margin-bottom: 20px;
+    }
+
+    .new-stock-preview h5 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .new-stock-preview table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .new-stock-preview th,
+    .new-stock-preview td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .new-stock-preview th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .new-stock-preview tr:hover {
+        background-color: #f1f1f1;
+    }
+<style>
 
     </style>
 </head>

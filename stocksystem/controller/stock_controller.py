@@ -139,7 +139,7 @@ def mystock():
 
     # 自选股
     stock_list=SelfSelectService()
-    stock_list=stock_list.get_user_self_selects(user_id)
+    stock_list=stock_list.get_user_self_selects_all(user_id)
 
     return render_template('mystock.html', userid=user_id,page=page,search_query=search_query, search_results=search_results,
                            s=search_results, stock_news=news_list,my_stocks=my_stocks,stocks_with_news=stock_list)

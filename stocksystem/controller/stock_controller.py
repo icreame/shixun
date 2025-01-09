@@ -6,6 +6,8 @@ from service.stock_service import StockService
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import g
 
+from stocksystem.service.selfselect_service import SelfSelectService
+
 stock_blueprint = Blueprint('stock', __name__)
 CORS(stock_blueprint)  # 允许跨域请求
 
@@ -130,17 +132,17 @@ def mystock():
     # 搜索条件
     search_query = request.args.get('search_query', '').strip()
     page = int(request.args.get('page', 1))
-
     search_results = None  # 初始化为空
-
     if search_query:  # 如果存在搜索条件
         # 分页查询与搜索逻辑
         search_results = StockService.search_stocks(search_query, page=page)
 
-    # 调用 Service 层获取搜索结果
+    # 自选股
+    stock_list=SelfSelectService()
+    stock_list=stock_list.get_user_self_selects(user_id)
 
     return render_template('mystock.html', page=page,search_query=search_query, search_results=search_results,
-                           userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks)
+                           userid=user_id, s=search_results, stock_news=news_list,my_stocks=my_stocks,stocks_with_news=stock_list)
 
 
 @stock_blueprint.route('/get_index_data', methods=['GET'])

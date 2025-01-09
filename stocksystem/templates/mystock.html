@@ -41,6 +41,7 @@
         </div>
     </div>
 </div>
+        <!-- 搜索-->
         <div class="col-md-12">
 
      <!-- 搜索功能 -->
@@ -128,84 +129,88 @@
             </div>
         </div>
             {% endif %}
-
-        <!-- 自选股表格 -->
-            <div class="container mt-4">
-        <!-- 自选股表格 -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">自选股票</h5>
-                <table class="table table-hover" id="stock-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">股票名称</th>
-                            <th scope="col">当前价</th>
-                            <th scope="col">涨跌幅</th>
-                            <th scope="col">成交量</th>
-                            <th scope="col">总市值(万元)</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- 数据将由 JavaScript 动态填充 -->
-                    </tbody>
-                </table>
+        </div>
+<!--    自选股-->
+        <div class="container mt-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">自选股票</h5>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">股票名称</th>
+                                <th scope="col">当前价</th>
+                                <th scope="col">涨跌幅</th>
+                                <th scope="col">成交量</th>
+                                <th scope="col">总市值(万元)</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in stocks_with_news %}
+                            <tr>
+                                <!-- 股票信息 -->
+                                <td>{{ item.stockname }}</td>
+                                <td>¥{{ item.close }}</td>
+                                <td class="{% if item.pct_change > 0 %}positive{% else %}negative{% endif %}">
+                                    {{ item.pct_change }}%
+                                </td>
+                                <td>{{ item.volume }}手</td>
+                                <td>¥{{ item.totoal_mv }}</td>
+                                <!-- 展开/收起按钮 -->
+                                <td>
+                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#news-{{ item.stockcode }}">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- 新闻列表 -->
+                            <tr class="collapse" id="news-{{ item.stockcode }}">
+                                <td colspan="6">
+                                    <div class="news-container">
+                                        <h6>舆情新闻</h6>
+                                        <div class="news-list">
+                                            {% for news in item.news %}
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <!-- 新闻标题和链接 -->
+                                                    <h6 class="card-title">
+                                                        <a href="{{ news.url }}" target="_blank">{{ news.title }}</a>
+                                                    </h6>
+                                                    <!-- 发布时间 -->
+                                                    <p class="card-text text-muted">
+                                                        <small>发布时间：{{ news.date.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                                                    </p>
+                                                    <!-- 趋势、情感和行业 -->
+                                                    <p class="card-text">
+                                                        <span class="badge {{ 'bg-success' if news.trend == '看涨' else 'bg-danger' if news.trend == '看跌' else 'bg-secondary' }}">
+                                                            {{ news.trend }}
+                                                        </span>
+                                                        <span class="badge {{ 'bg-success' if news.sentiment == '正面' else 'bg-danger' if news.sentiment == '负面' else 'bg-secondary' }}">
+                                                            {{ news.sentiment }}
+                                                        </span>
+                                                        <span class="badge bg-secondary">{{ news.sector }}</span>
+                                                    </p>
+                                                    <!-- 原因分析 -->
+                                                    <p class="card-text">{{ news.reason }}</p>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-
             <!-- 底部 -->
-            <div class="text-center text-muted">
+        <div class="text-center text-muted">
                 <p class="mb-0">数据仅供参考，实际以交易所为准。</p>
             </div>
-
-            <!-- 舆情新闻 -->
-            <div class="container mt-4">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">舆情新闻</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- 新闻列表 -->
-                        <div class="news-list">
-                            {% for news in stock_news %}
-                            <div class="news-item card mb-4 border-0">
-                                <div class="card-body p-4">
-                                    <!-- 新闻标题 -->
-                                    <h5 class="card-title mb-3 font-weight-bold">
-                                        {{ news.title }}
-                                    </h5>
-
-                                    <!-- 新闻来源和时间 -->
-                                    <p class="text-muted small mb-3">
-                                        来源：{{ news.source }} | {{ news.date }}
-                                    </p>
-
-                                    <!-- 新闻标签 -->
-                                    <div class="mb-2">
-                                        {% for tag in news.tags %}
-                                        <span class="badge bg-primary">{{ tag }}</span>
-                                        {% endfor %}
-                                    </div>
-
-                                    <!-- 新闻摘要 -->
-                                    <p class="card-text text-muted mb-3">
-                                        {{ news.summary }}
-                                    </p>
-
-
-
-                                        <!-- 情感分析 -->
-                                        <span class="text-muted small">{{ news.sentiment }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-        </div>
-</div>
+    </div>
 
 {% endblock %}
 
@@ -345,4 +350,73 @@
             setInterval(fetchStocks, 60000); // 60000 毫秒 = 1 分钟
         });
     </script>
+<!--<script>-->
+<!--    // 显示舆情新闻模态框-->
+<!--async function showNewsModal(stockCode) {-->
+<!--    try {-->
+<!--        // 获取舆情新闻数据-->
+<!--        const response = await fetch(`/news/${stockCode}`);-->
+<!--        if (!response.ok) {-->
+<!--            throw new Error("网络响应异常");-->
+<!--        }-->
+<!--        const newsData = await response.json();-->
+
+<!--        // 渲染新闻列表-->
+<!--        const newsList = document.getElementById("news-list");-->
+<!--        newsList.innerHTML = newsData.map(news => `-->
+<!--            <div class="card mb-3">-->
+<!--                <div class="card-body">-->
+<!--                    &lt;!&ndash; 新闻标题和链接 &ndash;&gt;-->
+<!--                    <h6 class="card-title">-->
+<!--                        <a href="${news.url}" target="_blank">${news.title}</a>-->
+<!--                    </h6>-->
+<!--                    &lt;!&ndash; 发布时间 &ndash;&gt;-->
+<!--                    <p class="card-text text-muted">-->
+<!--                        <small>发布时间：${new Date(news.date).toLocaleString()}</small>-->
+<!--                    </p>-->
+<!--                    &lt;!&ndash; 趋势、情感和行业 &ndash;&gt;-->
+<!--                    <p class="card-text">-->
+<!--                        <span class="badge ${getTrendBadgeClass(news.trend)}">${news.trend}</span>-->
+<!--                        <span class="badge ${getSentimentBadgeClass(news.sentiment)}">${news.sentiment}</span>-->
+<!--                        <span class="badge bg-secondary">${news.sector}</span>-->
+<!--                    </p>-->
+<!--                    &lt;!&ndash; 原因分析 &ndash;&gt;-->
+<!--                    <p class="card-text">${news.reason}</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        `).join("");-->
+
+<!--        // 显示模态框-->
+<!--        const newsModal = new bootstrap.Modal(document.getElementById("newsModal"));-->
+<!--        newsModal.show();-->
+<!--    } catch (error) {-->
+<!--        console.error("获取新闻数据失败:", error);-->
+<!--        alert("获取新闻数据失败，请稍后重试。");-->
+<!--    }-->
+<!--}-->
+
+<!--// 根据趋势返回对应的 Bootstrap 徽章类-->
+<!--function getTrendBadgeClass(trend) {-->
+<!--    switch (trend) {-->
+<!--        case "看涨":-->
+<!--            return "bg-success";-->
+<!--        case "看跌":-->
+<!--            return "bg-danger";-->
+<!--        default:-->
+<!--            return "bg-secondary";-->
+<!--    }-->
+<!--}-->
+
+<!--// 根据情感返回对应的 Bootstrap 徽章类-->
+<!--function getSentimentBadgeClass(sentiment) {-->
+<!--    switch (sentiment) {-->
+<!--        case "正面":-->
+<!--            return "bg-success";-->
+<!--        case "负面":-->
+<!--            return "bg-danger";-->
+<!--        default:-->
+<!--            return "bg-secondary";-->
+<!--    }-->
+<!--}-->
+<!--</script>-->
 {% endblock %}

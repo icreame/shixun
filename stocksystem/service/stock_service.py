@@ -14,7 +14,7 @@ import tushare as ts
 import akshare as ak
 import pandas as pd
 import time
-
+from datetime import datetime, timedelta
 from model.index_analysis import IndexAnalysis
 from model.index_analysis_result import IndexAnalysisResult
 from model.stock import Stock, db
@@ -368,7 +368,12 @@ class StockService:
         :return: 包含股票代码和涨跌幅的字典列表
         """
 
-        yesterday = datetime.now() - timedelta(days=1)  # 当前时间减去一天
+
+        # 获取当前时间
+        now = datetime.now()
+
+        # 当前时间减去一天
+        yesterday = now - timedelta(days=1)
         trade_time = yesterday.strftime('%Y%m%d')
 
         df = pro.daily(trade_date=trade_time)  # 获取指定日期的股票数据

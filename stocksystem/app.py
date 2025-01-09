@@ -110,7 +110,8 @@ def create_app():
         # 检查会话中是否存在userid
         if 'userid' in session:  # 判断session中是否有userid
             userid = session['userid']  # 从会话中获取userid
-            my_stocks = SelfSelectService.get_user_self_selects(userid)
+            my_stocks = SelfSelectService()
+            my_stocks = my_stocks.get_user_self_selects(userid)
         else:
 
             userid = None

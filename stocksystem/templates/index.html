@@ -486,7 +486,7 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 <!--左侧饼图-->
 <script>
     // 初始化 ECharts
@@ -544,7 +544,7 @@
 </script>
 
 <!-- 大模型建议-->
-<script>
+    <script>
     // 初始加载上证指数的分析结果
     document.addEventListener("DOMContentLoaded", function () {
         // 从后端获取分析数据
@@ -600,19 +600,99 @@
         console.log("Analysis Element:", analysisElement);  // 打印目标元素
         if (analysisElement && analysisData[index]) {
             const data = analysisData[index];
-            analysisElement.innerHTML = `
+            const text = `
                 <h4>AI分析：${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}</h4>
                 <p><strong>标签:</strong> ${data['情感标签'] || '无数据'}</p>
                 <p><strong>投资建议:</strong> ${data['投资建议'] || '无数据'}</p>
                 <p><strong>AI分析:</strong> ${data['理由'] || '无数据'}</p>
                 <p><strong>AI预测:</strong> ${data['预测'] || '无数据'}</p>
             `;
-            console.log("Updated DOM for", index);  // 打印 DOM 更新日志
+
+            // 清空内容并初始化 Typewriter.js
+            analysisElement.innerHTML = '';
+            const typewriter = new Typewriter(analysisElement, {
+                loop: false, // 不循环
+                delay: 50,   // 每个字符的显示延迟（毫秒）
+            });
+
+            // 逐字显示内容
+            typewriter
+                .typeString(text)
+                .start();
         } else {
             console.error("Analysis element or data not found for index:", index);  // 调试日志
         }
     }
 </script>
+{#<script>#}
+{#    // 初始加载上证指数的分析结果#}
+{#    document.addEventListener("DOMContentLoaded", function () {#}
+{#        // 从后端获取分析数据#}
+{#        fetch('/stock/composite-index-analysis')#}
+{#            .then(response => {#}
+{#                if (!response.ok) {#}
+{#                    throw new Error('Network response was not ok');#}
+{#                }#}
+{#                return response.json();  // 解析为 JSON#}
+{#            })#}
+{#            .then(data => {#}
+{#                console.log("Fetched Data:", data);  // 打印获取的数据#}
+{#                if (!data) {#}
+{#                    throw new Error('No data received');#}
+{#                }#}
+{#                window.analysisData = data;  // 存储数据#}
+{#                loadAnalysis('sh_index');    // 初始加载上证指数的分析结果#}
+{#            })#}
+{#            .catch(error => {#}
+{#                console.error('Error fetching analysis data:', error);#}
+{#            });#}
+{#    });#}
+{##}
+{#    // 切换分析结果的函数#}
+{#    function showAnalysis(index) {#}
+{#        console.log("切换分析结果，index:", index);  // 调试日志#}
+{##}
+{#        // 隐藏所有分析结果#}
+{#        document.querySelectorAll('#analysis-container .card-body').forEach(function (element) {#}
+{#            element.style.display = 'none';#}
+{#        });#}
+{##}
+{#        // 显示选中的分析结果#}
+{#        const analysisElement = document.getElementById(`${index}-analysis`);#}
+{#        if (analysisElement) {#}
+{#            analysisElement.style.display = 'block';#}
+{#        } else {#}
+{#            console.error("未找到分析结果元素:", `${index}-analysis`);  // 调试日志#}
+{#        }#}
+{##}
+{#        // 加载对应的分析数据#}
+{#        loadAnalysis(index);#}
+{#    }#}
+{##}
+{#    // 加载分析数据的函数#}
+{#    function loadAnalysis(index) {#}
+{#        // 获取存储的分析数据#}
+{#        const analysisData = window.analysisData;#}
+{#        console.log("Analysis Data for", index, ":", analysisData[index]);  // 打印当前指数的分析数据#}
+{##}
+{#        // 更新分析结果#}
+{#        const analysisElement = document.getElementById(`${index}-analysis`);#}
+{#        console.log("Analysis Element:", analysisElement);  // 打印目标元素#}
+{#        if (analysisElement && analysisData[index]) {#}
+{#            const data = analysisData[index];#}
+{#            analysisElement.innerHTML = `#}
+{#                <h4>AI分析：${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}</h4>#}
+{#                <p><strong>标签:</strong> ${data['情感标签'] || '无数据'}</p>#}
+{#                <p><strong>投资建议:</strong> ${data['投资建议'] || '无数据'}</p>#}
+{#                <p><strong>AI分析:</strong> ${data['理由'] || '无数据'}</p>#}
+{#                <p><strong>AI预测:</strong> ${data['预测'] || '无数据'}</p>#}
+{#            `;#}
+{#            console.log("Updated DOM for", index);  // 打印 DOM 更新日志#}
+{#        } else {#}
+{#            console.error("Analysis element or data not found for index:", index);  // 调试日志#}
+{#        }#}
+{#    }#}
+{#</script>#}
 
 <!--情感分析-->
 <script>

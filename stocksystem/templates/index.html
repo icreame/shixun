@@ -317,34 +317,54 @@
                         </div>
                     </div>
 
-                    <!-- 模态框 -->
-                    <div class="modal fade" id="newsDetailModal{{ loop.index }}" tabindex="-1" aria-labelledby="newsDetailModalLabel{{ loop.index }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="newsDetailModalLabel{{ loop.index }}">舆情详情</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <h6 class="mb-3">{{news.trend}}原因：</h6>
-                                    <p>{{ news.reason }}</p>
-                                    <hr>
-                                    <h6 class="mb-3">其他信息：</h6>
-                                    <ul>
-                                        <li>行业：{{ news.industryname }}</li>
-                                        <li>发布日期：{{ news.publishdate }}</li>
-                                        <li>url：{{ news.url }}</li>
-                                        <li>标签：{{ news.tags | join(', ') }}</li>
-                                    </ul>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        <!-- 模态框 -->
+                        <div class="modal fade" id="newsDetailModal{{ loop.index }}" tabindex="-1" aria-labelledby="newsDetailModalLabel{{ loop.index }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <!-- 模态框头部 -->
+                                    <div class="modal-header bg-light">
+                                        <h5 class="modal-title" id="newsDetailModalLabel{{ loop.index }}">舆情详情</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <!-- 模态框主体 -->
+                                    <div class="modal-body" data-reason={{ news.reason }}>
+                                        <!-- 原因部分 -->
+                                        <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#reasonCollapse{{ loop.index }}" aria-expanded="false" aria-controls="reasonCollapse{{ loop.index }}">
+                                            {{ news.trend }}原因
+                                        </button>
+                                        <div class="collapse" id="reasonCollapse{{ loop.index }}">
+                                            <div class="card card-body">
+                                                <p id="typewriter{{ loop.index }}"></p>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <!-- 其他信息部分 -->
+                                        <button class="btn btn-outline-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#infoCollapse{{ loop.index }}" aria-expanded="false" aria-controls="infoCollapse{{ loop.index }}">
+                                            其他信息
+                                        </button>
+                                        <div class="collapse" id="infoCollapse{{ loop.index }}">
+                                            <div class="card card-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">行业：{{ news.industryname }}</li>
+                                                    <li class="list-group-item">发布日期：{{ news.publishdate }}</li>
+                                                    <li class="list-group-item">URL：<a href="{{ news.url }}" target="_blank" class="text-decoration-none">{{ news.url }}</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 模态框底部 -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 模态框结束-->
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
 
                 <!-- 分页按钮 -->
                <div class="pagination">
@@ -782,6 +802,30 @@
             } else {
                 industryContainer.classList.add('expanded');
                 toggleButton.textContent = '折叠';
+            }
+        });
+    });
+</script>
+
+<!--  模态框显示 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.modal').forEach((modal, index) => {
+            const reasonButton = modal.querySelector('[data-bs-toggle="collapse"]');
+            const reasonText = modal.querySelector('.modal-body').getAttribute('data-reason');
+            const typewriterElement = document.getElementById(`typewriter${index + 1}`);
+
+            if (reasonButton && typewriterElement && reasonText) {
+                reasonButton.addEventListener('click', function() {
+                    const typewriter = new Typewriter(typewriterElement, {
+                        loop: false,
+                        delay: 50,
+                    });
+
+                    typewriter
+                        .typeString(reasonText)
+                        .start();
+                });
             }
         });
     });

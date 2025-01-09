@@ -204,10 +204,10 @@
             </div>
         </div>
 
-        <button onclick="showAnalysis('sh_index')">上证指数</button>
-        <button onclick="showAnalysis('sz_index')">深证成指</button>
-        <button onclick="showAnalysis('cyb_index')">创业板指</button>
-        <button onclick="showAnalysis('kc50_index')">科创50</button>
+        <button type="button" class="btn btn-link btn-sm  mt-2" onclick="showAnalysis('sh_index')">上证指数</button>
+        <button type="button" class="btn btn-link btn-sm  mt-2" onclick="showAnalysis('sz_index')">深证成指</button>
+        <button type="button" class="btn btn-link btn-sm  mt-2" onclick="showAnalysis('cyb_index')">创业板指</button>
+        <button type="button" class="btn btn-link btn-sm  mt-2" onclick="showAnalysis('kc50_index')">科创50</button>
 </div>
 
     <!-- 添加 ECharts 图表容器 -->
@@ -570,6 +570,8 @@
 
     // 切换分析结果的函数
     function showAnalysis(index) {
+        console.log("切换分析结果，index:", index);  // 调试日志
+
         // 隐藏所有分析结果
         document.querySelectorAll('#analysis-container .card-body').forEach(function (element) {
             element.style.display = 'none';
@@ -579,6 +581,8 @@
         const analysisElement = document.getElementById(`${index}-analysis`);
         if (analysisElement) {
             analysisElement.style.display = 'block';
+        } else {
+            console.error("未找到分析结果元素:", `${index}-analysis`);  // 调试日志
         }
 
         // 加载对应的分析数据
@@ -597,15 +601,15 @@
         if (analysisElement && analysisData[index]) {
             const data = analysisData[index];
             analysisElement.innerHTML = `
-                <h4>${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}分析结果</h4>
-                <p><strong>情感标签:</strong> ${data['情感标签']}</p>
-                <p><strong>投资建议:</strong> ${data['投资建议']}</p>
-                <p><strong>理由:</strong> ${data['理由']}</p>
-                <p><strong>预测:</strong> ${data['预测']}</p>
+                <h4>AI分析：${index === 'sh_index' ? '上证指数' : index === 'sz_index' ? '深证成指' : index === 'cyb_index' ? '创业板指' : '科创50'}</h4>
+                <p><strong>标签:</strong> ${data['情感标签'] || '无数据'}</p>
+                <p><strong>投资建议:</strong> ${data['投资建议'] || '无数据'}</p>
+                <p><strong>AI分析:</strong> ${data['理由'] || '无数据'}</p>
+                <p><strong>AI预测:</strong> ${data['预测'] || '无数据'}</p>
             `;
             console.log("Updated DOM for", index);  // 打印 DOM 更新日志
         } else {
-            console.error("Analysis element or data not found for index:", index);
+            console.error("Analysis element or data not found for index:", index);  // 调试日志
         }
     }
 </script>

@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS news_analysis (
     sentiment VARCHAR(50),
     FOREIGN KEY (news_id) REFERENCES news(newsid)  -- 正确的外键关系
 );
-<<<<<<< HEAD
+
 
 
 CREATE TABLE index_analysis (
@@ -89,5 +89,12 @@ CREATE TABLE index_analysis_result (
     kc50_index_analysis JSON,                    -- 科创50分析结果
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 数据创建时间
 );
-=======
->>>>>>> 13b4d3ea45c4f41d7a4a123c11a9e18d8b6f45a8
+
+CREATE TABLE industry_sentiment_analysis (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  -- 分析结果唯一标识，主键
+    analysis_date DATE NOT NULL,                 -- 分析日期
+    whole_analysis JSON,                         -- 整体分析结果
+    recommend_sector JSON,                       -- 推荐的优质投资板块
+    reason JSON,                                 -- 推荐理由
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 数据创建时间
+);

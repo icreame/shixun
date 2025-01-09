@@ -11,7 +11,11 @@ news_blueprint = Blueprint('news', __name__)
 def news_display():
     sentiment_data = NewsService.get_sentiment_by_industry()  # 获取行业情感分析数据
     top10_data = StockService.get_top10_stocks() # 获取涨跌 Top10 数据
-    return render_template('news_monitor.html', sentiment_data=sentiment_data, top10_data=top10_data)
+    industry_analysis_recommend = NewsService.get_industry_sentiment_analysis()
+    return render_template('news_monitor.html',
+                           sentiment_data=sentiment_data,
+                           top10_data=top10_data,
+                           industry_analysis_recommend=industry_analysis_recommend)
 
 @news_blueprint.route('/add', methods=['POST'])
 def add_news():
@@ -196,5 +200,16 @@ def get_sentiment_by_industry():
     """
     result = NewsService.get_sentiment_by_industry()
     return jsonify(result)
+
+
+@news_blueprint.route('/analyze_industry_news', methods=['GET'])
+def analyze_industry_news():
+    # sentiment_data = NewsService.get_sentiment_by_industry()
+    # industry_analysis_data = NewsService.analyze_industry_sentiment_with_llm_t(sentiment_data)
+    # # industry_analysis_data = NewsService.analyze_industry_sentiment_with_llm_t()
+    industry_analysis_data = NewsService.get_industry_sentiment_analysis()
+    return jsonify(industry_analysis_data)
+
+
 
 

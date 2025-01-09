@@ -1,0 +1,41 @@
+/* 整体分析样式 */
+    .typewriter-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    /* 推荐板块样式 */
+    .sector-item {
+        text-align: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        transition: background-color 0.3s ease;
+    }
+
+    .sector-item:hover {
+        background-color: #e9ecef;
+    }
+
+    .sector-badge {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #007bff;
+    }
+
+    /* 推荐理由样式 */
+    #reason {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }

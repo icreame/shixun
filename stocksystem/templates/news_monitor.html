@@ -1,9 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}行业情感分析 - 新闻{% endblock %}
+{% block title %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业情感分析 - 新闻</title>
+    <!-- 引入 monitor.css -->
+    <link rel="stylesheet" href="../static/css/monitor.css">
+</head>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
+    <!-- 新增：行业情感分析数据展示 -->
+    <div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">行业情感分析结果</h5>
+    </div>
+    <div class="card-body">
+        <!-- 整体分析 -->
+        <div class="mb-4">
+            <h6>整体分析</h6>
+            <div id="whole-analysis" class="typewriter-text"></div>
+        </div>
+
+        <!-- 推荐板块 -->
+        <div class="mb-4">
+            <h6>推荐板块</h6>
+            <div id="recommend-sector" class="row">
+                <!-- 推荐板块将通过 JavaScript 动态填充 -->
+            </div>
+        </div>
+
+        <!-- 推荐理由 -->
+        <div>
+            <h6>推荐理由</h6>
+            <div id="reason" class="typewriter-text"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- 行业情感表格展示 -->
     <div class="style_module-wrapper_sA7">
         <div class="style_market-overview_AJA">
             <div class="row">
@@ -22,7 +59,7 @@
                                             <th scope="col">正面情感</th>
                                             <th scope="col">负面情感</th>
                                             <th scope="col">中性情感</th>
-                                            <th scope="col">总情感数</th>
+                                            <th scope="col">趋势分析</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -149,6 +186,8 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- 引入 Typewriter.js -->
+<script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 
 <!-- 左侧饼图 -->
 
@@ -200,6 +239,45 @@
         `;
         tableBody.appendChild(row);
     });
+
+    // 逐字打印函数
+    function typeWriter(elementId, text, speed = 50) {
+        const typewriter = new Typewriter(elementId, {
+            loop: false,
+            delay: speed,
+        });
+
+        typewriter
+            .typeString(text)
+            .start();
+    }
+
+    // 渲染行业情感分析数据
+    function renderIndustryAnalysis() {
+        const industryAnalysisData = {{ industry_analysis_recommend | tojson | safe }};
+
+        // 渲染整体分析
+        typeWriter('#whole-analysis', industryAnalysisData.whole_analysis);
+
+        // 渲染推荐板块
+        const sectorList = document.getElementById('recommend-sector');
+        industryAnalysisData.recommend_sector.forEach((sector, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-md-2 col-sm-4 col-6 mb-3'; // 每行显示 5 个板块
+            col.innerHTML = `
+                <div class="sector-item">
+                    <span class="sector-badge">${sector}</span>
+                </div>
+            `;
+            sectorList.appendChild(col);
+        });
+
+        // 渲染推荐理由
+        typeWriter('#reason', industryAnalysisData.reason);
+    }
+
+    // 页面加载完成后渲染数据
+    window.onload = renderIndustryAnalysis;
 </script>
 
 

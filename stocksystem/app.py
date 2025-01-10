@@ -116,8 +116,49 @@ def create_app():
 
             userid = None
             my_stocks = [
-                {"stockcode": "301252", "stockname": "阿里云科技", "latest": "37.08", "pct_change": "5.2%"},
-                {"stockcode": "603686", "stockname": "海尔之家", "latest": "13.17", "change": "10.03%"},
+                {
+                    "5min": -0.08,
+                    "close": 11.84,
+                    "news": [],
+                    "pct_change": 0.34,
+                    "stockcode": "688222.SH",
+                    "stockname": "成都先导",
+                    "totoal_mv": 474405.12,
+                    "userid": 1,
+                    "volume": 29815
+                },
+                {
+                    "5min": 0,
+                    "close": 4.37,
+                    "news": [
+                        {
+                            "date": "Thu, 19 Dec 2024 00:00:00 GMT",
+                            "reason": "该新闻标题提到的是成都路桥2024年第四次临时股东大会的决议，没有提供具体的决议内容或对公司未来业绩有直接影响的信息。因此，无法直接判断该新闻对公司股价的正面或负面影响。",
+                            "sector": "建筑工程",
+                            "sentiment": "中性",
+                            "title": "成都路桥(002628):2024年第四次临时股东大会决议- CFi.CN 中财网",
+                            "trend": "中性",
+                            "url": "http://www.cfi.net.cn/p20241219001355.html"
+                        }
+                    ],
+                    "pct_change": -0.23,
+                    "stockcode": "002628.SZ",
+                    "stockname": "成都路桥",
+                    "totoal_mv": 330852.8814,
+                    "userid": 1,
+                    "volume": 280297
+                },
+                {
+                    "5min": 0,
+                    "close": 8.58,
+                    "news": [],
+                    "pct_change": -0.58,
+                    "stockcode": "000009.SZ",
+                    "stockname": "中国宝安",
+                    "totoal_mv": 2212965.582,
+                    "userid": 1,
+                    "volume": 111298
+                }
         ]
        # 首页涨跌柱状图
        #  updowns=StockService.get_limit_stocks()

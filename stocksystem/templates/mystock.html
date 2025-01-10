@@ -161,10 +161,10 @@
                                                     </p>
                                                     <!-- 趋势、情感和行业 -->
                                                     <p class="card-text">
-                                                        <span class="badge {{ 'bg-success' if news.trend == '看涨' else 'bg-danger' if news.trend == '看跌' else 'bg-secondary' }}">
+                                                        <span class="badge {{ 'bg-danger' if news.trend == '看涨' else 'bg-success' if news.trend == '看跌' else 'bg-secondary' }}">
                                                             {{ news.trend }}
                                                         </span>
-                                                        <span class="badge {{ 'bg-success' if news.sentiment == '正面' else 'bg-danger' if news.sentiment == '负面' else 'bg-secondary' }}">
+                                                        <span class="badge {{ 'bg-danger' if news.sentiment == '正面' else 'bg-success' if news.sentiment == '负面' else 'bg-secondary' }}">
                                                             {{ news.sentiment }}
                                                         </span>
                                                         <span class="badge bg-secondary">{{ news.sector }}</span>

@@ -118,7 +118,9 @@
                             {% for item in stocks_with_news %}
                             <tr>
                                 <!-- 股票信息 -->
-                                <td>{{ item.stockname }}</td>
+                                <td>
+                                    <a href="{{ url_for('stock.get_company_info', stockid=item.stockid) }}">{{ item.stockname }}</a>
+                                </td>
                                 <td>¥{{ item.close }}</td>
                                 <td class="{% if item.pct_change > 0 %}negative{% else %}positive{% endif %}">
                                     {{ item.pct_change }}%

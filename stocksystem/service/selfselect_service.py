@@ -39,6 +39,7 @@ class SelfSelectService:
 
                 if select.stockid:
                     stock = Stock.query.get(select.stockid)
+                    stocks_item["stockid"]=stock.stockid if stock else None
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
                     matching_row = df[df['TS_CODE'] == stock.stockcode]
@@ -86,6 +87,7 @@ class SelfSelectService:
 
                 if select.stockid:
                     stock = Stock.query.get(select.stockid)
+                    stocks_item["stockid"] = stock.stockid if stock else None
                     stocks_item["stockname"] = stock.stockname if stock else None
                     stocks_item["stockcode"] = stock.stockcode if stock else None
                     matching_row = df[df['TS_CODE'] == stock.stockcode]

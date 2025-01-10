@@ -172,19 +172,20 @@ def get_composite_index_analysis():
     return jsonify(analysis_data)
 
 
-@stock_blueprint.route('/company_info',methods=['GET'])
-def get_company_info():
-    stock_id = request.args.get('stockid')  # 获取 GET 请求的 'stockid' 参数
-    if not stock_id:
+@stock_blueprint.route('company_info/<stockid>',methods=['GET'])
+def get_company_info(stockid):
+    # stock_id = request.args.get('stockid')  # 获取 GET 请求的 'stockid' 参数
+    print(f"Received stock_id: {stockid}")  # 调试打印
+    if not stockid:
         return jsonify({'error': 'stockid 参数缺失'}), 400  # 如果参数缺失，返回错误提示
 
     try:
         # 从服务层获取公司信息
-        result = StockService.get_company_info(stock_id)
+        result = StockService.get_company_info(stockid)
 
         # 检查服务层是否返回了有效结果
         if not result:
-            return jsonify({'error': f'未找到股票 ID 为 {stock_id} 的信息'}), 404
+            return jsonify({'error': f'未找到股票 ID 为 {stockid} 的信息'}), 404
         for key, value in result.items():
             if isinstance(value, np.generic):
                 result[key] = value.item()

@@ -212,7 +212,7 @@
                         <div class="card-body p-2 d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h5 class="card-title mb-3 font-weight-bold">
-                                    {{ news.title|truncate(40, True) }}
+                                    {{ news.title| default("", true)|truncate(40, True) }}
                                     <a href="{{ news.url }}" class="text-decoration-none" target="_blank">
                                         <i class="bi bi-arrow-right-circle-fill arrow-icon"></i>
                                     </a>
@@ -234,7 +234,7 @@
                                 行业：{{ news.industryname }} | {{ news.publishdate }}
                             </p>
                             <p class="card-text text-muted mb-3">
-                                {{ news.reason |truncate(45, True) }}
+                                {{ news.reason | default("", true) | truncate(45, True) }}
 
                                 <!-- 查看详情按钮 -->
                                    <button class="btn btn-outline-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#newsDetailModal{{ loop.index }}">

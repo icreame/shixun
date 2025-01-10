@@ -3,57 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Stock System</title>
+    <title>Login - 舆股通</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa; /* 浅灰色背景 */
+            background: linear-gradient(135deg, #f0f4f8, #d9e4f2); /* 浅蓝色渐变背景 */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .login-container {
+        .login-card {
+            background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
             width: 100%;
             max-width: 400px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'); /* 蓝色系动漫风格背景图 */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2; /* 背景图透明度 */
+            z-index: 1;
+        }
+        .login-card > * {
+            position: relative;
+            z-index: 2; /* 确保内容在背景图之上 */
+        }
+        .system-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .system-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
         }
         .form-control {
             margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
         }
         .btn-login {
             width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            background: #007bff;
+            border: none;
+            transition: background 0.3s ease;
+        }
+        .btn-login:hover {
+            background: #0056b3;
         }
         .message {
             margin-top: 10px;
             text-align: center;
-            color: red;
+            color: #dc3545;
+            font-size: 14px;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .register-link a:hover {
+            color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-<div class="login-container">
-    <h3 class="text-center mb-4">Login</h3>
+<div class="login-card">
+    <!-- 系统标题 -->
+    <div class="system-header">
+        <p class="system-title">舆股通</p>
+        <p class="system-subtitle">基于网络舆情的股票分析系统</p>
+    </div>
+
+    <!-- 登录表单 -->
     <form method="POST" action="{{ url_for('user.login') }}">
         {% if message %}
         <div class="message">{{ message }}</div>
         {% endif %}
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username">
+            <label for="username" class="form-label">用户名</label>
+            <input type="text" class="form-control" id="username" name="username" required placeholder="请输入用户名">
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+            <label for="password" class="form-label">密码</label>
+            <input type="password" class="form-control" id="password" name="password" required placeholder="请输入密码">
         </div>
-        <button type="submit" class="btn btn-primary btn-login">Login</button>
-        <div class="text-center mt-3">
-            <a href="{{ url_for('user.register') }}" class="text-decoration-none">没有账户，去注册</a>
+        <button type="submit" class="btn btn-primary btn-login">登录</button>
+        <div class="register-link">
+            <a href="{{ url_for('user.register') }}">没有账户，去注册</a>
         </div>
     </form>
 </div>
